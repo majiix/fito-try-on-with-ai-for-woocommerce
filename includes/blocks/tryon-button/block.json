@@ -1,0 +1,28 @@
+{
+  "$schema": "https://schemas.wp.org/trunk/block.json",
+  "apiVersion": 3,
+  "name": "fito/tryon-button",
+  "version": "1.3.0",
+  "title": "AI Try-On Button",
+  "category": "woocommerce",
+  "icon": "camera",
+  "description": "Insert a virtual AI Try-On button into your product templates or posts.",
+  "keywords": ["try-on", "ai", "virtual fitting", "fashion", "fitting room"],
+  "textdomain": "fito-try-on-with-ai-for-woocommerce",
+  "attributes": {
+    "buttonText": {
+      "type": "string",
+      "default": "Try It On with AI"
+    },
+    "alignment": {
+      "type": "string",
+      "default": "left"
+    }
+  },
+  "supports": {
+    "html": false,
+    "align": ["left", "center", "right"]
+  },
+  "editorScript": "file:./index.js",
+  "style": "fito-tryon-public"
+}

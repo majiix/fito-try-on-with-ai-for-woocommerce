@@ -1,0 +1,1215 @@
+/**
+ * Fito Try-On with AI - Modern Public Stylesheet
+ */
+
+:root {
+    --fito-accent: #6366f1;
+    --fito-accent-rgb: 99, 102, 241;
+    --fito-accent-hover: #4f46e5;
+    --fito-btn-bg: #18181b;
+    --fito-btn-color: #ffffff;
+    --fito-bg: #ffffff;
+    --fito-surface: #f8fafc;
+    --fito-surface-hover: #f1f5f9;
+    --fito-border: #e2e8f0;
+    --fito-border-focus: #cbd5e1;
+    --fito-text: #0f172a;
+    --fito-text-muted: #64748b;
+    --fito-radius-sm: 8px;
+    --fito-radius: 14px;
+    --fito-radius-lg: 20px;
+    --fito-shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.06), 0 1px 2px rgba(0, 0, 0, 0.04);
+    --fito-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.08), 0 8px 10px -6px rgba(0, 0, 0, 0.04);
+    --fito-shadow-lg: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+    --fito-font: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    --fito-transition: all 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* Injected Buttons */
+.fito-tryon-button-wrapper {
+    margin: 16px 0;
+    clear: both;
+}
+
+.fito-tryon-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    background: var(--fito-btn-bg);
+    color: var(--fito-btn-color) !important;
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: var(--fito-radius-sm);
+    padding: 12px 22px;
+    font-family: var(--fito-font);
+    font-size: 15px;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    cursor: pointer;
+    box-shadow: var(--fito-shadow-sm);
+    transition: var(--fito-transition);
+    text-decoration: none !important;
+    position: relative;
+    overflow: hidden;
+    user-select: none;
+}
+
+.fito-tryon-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px -4px rgba(0, 0, 0, 0.2);
+    filter: brightness(1.1);
+}
+
+.fito-tryon-btn:active {
+    transform: translateY(0);
+}
+
+.fito-tryon-btn--single {
+    width: 100%;
+    padding: 14px 24px;
+    font-size: 16px;
+    border-radius: var(--fito-radius);
+}
+
+.fito-tryon-btn--archive {
+    width: 100%;
+    margin-top: 8px;
+    padding: 8px 14px;
+    font-size: 13px;
+    border-radius: var(--fito-radius-sm);
+    background: #0f172a;
+    color: #ffffff !important;
+}
+
+/* Custom Image Overlay Badge */
+.fito-custom-image-wrapper {
+    position: relative !important;
+    display: inline-block;
+    max-width: 100%;
+}
+
+.fito-tryon-btn--overlay {
+    position: absolute !important;
+    bottom: 12px !important;
+    right: 12px !important;
+    left: auto !important;
+    top: auto !important;
+    z-index: 25 !important;
+    padding: 7px 14px !important;
+    font-size: 13px !important;
+    font-weight: 600 !important;
+    line-height: 1.3 !important;
+    border-radius: 24px !important;
+    background: rgba(15, 23, 42, 0.88) !important;
+    color: #ffffff !important;
+    border: 1px solid rgba(255, 255, 255, 0.22) !important;
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.28) !important;
+    backdrop-filter: blur(8px) !important;
+    -webkit-backdrop-filter: blur(8px) !important;
+    opacity: 0.95;
+    transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), background 0.2s ease, opacity 0.2s ease, box-shadow 0.2s ease !important;
+    cursor: pointer !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    gap: 6px !important;
+    width: auto !important;
+    margin: 0 !important;
+}
+
+.fito-tryon-btn--overlay:hover {
+    opacity: 1 !important;
+    background: #0f172a !important;
+    transform: translateY(-2px) scale(1.03) !important;
+    box-shadow: 0 8px 22px rgba(0, 0, 0, 0.38) !important;
+}
+
+.fito-tryon-btn--overlay:active {
+    transform: translateY(0) scale(0.98) !important;
+}
+
+.fito-tryon-btn--overlay .fito-btn-icon-spark {
+    color: #fbbf24;
+    display: inline-flex;
+    align-items: center;
+}
+
+/* RTL positioning for overlay button */
+body.rtl .fito-tryon-btn--overlay {
+    right: auto !important;
+    left: 12px !important;
+}
+
+@media (max-width: 640px) {
+    .fito-tryon-btn--overlay {
+        bottom: 8px !important;
+        right: 8px !important;
+        padding: 6px 11px !important;
+        font-size: 12px !important;
+    }
+    body.rtl .fito-tryon-btn--overlay {
+        right: auto !important;
+        left: 8px !important;
+    }
+}
+
+.fito-btn-icon-spark {
+    display: inline-flex;
+    align-items: center;
+    color: #fbbf24;
+    animation: fito-pulse 2.5s infinite ease-in-out;
+}
+
+@keyframes fito-pulse {
+    0%, 100% { transform: scale(1); opacity: 1; }
+    50% { transform: scale(1.18); opacity: 0.85; }
+}
+
+/* Modal Overlay */
+body.fito-modal-open {
+    overflow: hidden !important;
+}
+
+.fito-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 999999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    box-sizing: border-box;
+    font-family: var(--fito-font);
+}
+
+.fito-modal-backdrop {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(15, 23, 42, 0.7);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    opacity: 0;
+    transition: opacity 0.28s ease;
+}
+
+.fito-modal.is-open .fito-modal-backdrop {
+    opacity: 1;
+}
+
+.fito-modal-dialog {
+    position: relative;
+    z-index: 10;
+    width: 100%;
+    max-width: 560px;
+    max-height: 90vh;
+    background: var(--fito-bg);
+    color: var(--fito-text);
+    border: 1px solid var(--fito-border);
+    border-radius: var(--fito-radius-lg);
+    box-shadow: var(--fito-shadow-lg);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    transform: scale(0.95) translateY(12px);
+    opacity: 0;
+    transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.fito-modal.is-open .fito-modal-dialog {
+    transform: scale(1) translateY(0);
+    opacity: 1;
+}
+
+/* Modal Header */
+.fito-modal-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 20px 24px;
+    border-bottom: 1px solid var(--fito-border);
+    background: var(--fito-surface);
+}
+
+.fito-header-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: rgba(var(--fito-accent-rgb), 0.12);
+    color: var(--fito-accent);
+    padding: 4px 10px;
+    border-radius: 999px;
+    font-size: 12px;
+    font-weight: 600;
+    margin-bottom: 0;
+}
+
+.fito-modal-title {
+    margin: 0;
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--fito-text);
+    letter-spacing: -0.02em;
+    line-height: 1.3;
+}
+
+.fito-modal-header-actions {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.fito-modal-close {
+    background: transparent;
+    border: 1px solid var(--fito-border);
+    color: var(--fito-text-muted);
+    border-radius: var(--fito-radius-sm);
+    width: 36px;
+    height: 36px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: var(--fito-transition);
+}
+
+.fito-modal-close:hover {
+    background: var(--fito-surface-hover);
+    color: var(--fito-text);
+}
+
+/* Modal Body */
+.fito-modal-body {
+    padding: 24px;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+}
+
+/* Guidance card */
+.fito-guidance-card {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    background: rgba(var(--fito-accent-rgb), 0.08);
+    border: 1px solid rgba(var(--fito-accent-rgb), 0.2);
+    border-radius: var(--fito-radius-sm);
+    padding: 12px 16px;
+    font-size: 13px;
+    line-height: 1.45;
+    color: var(--fito-text);
+}
+
+.fito-guidance-icon {
+    font-size: 18px;
+    line-height: 1;
+}
+
+/* Dropzone */
+.fito-dropzone {
+    border: 2px dashed var(--fito-border);
+    border-radius: var(--fito-radius);
+    padding: 32px 20px;
+    text-align: center;
+    background: var(--fito-surface);
+    transition: var(--fito-transition);
+    cursor: pointer;
+}
+
+.fito-dropzone:hover,
+.fito-dropzone.is-dragover {
+    border-color: var(--fito-accent);
+    background: rgba(var(--fito-accent-rgb), 0.04);
+}
+
+.fito-upload-cloud-icon {
+    color: var(--fito-accent);
+    margin-bottom: 12px;
+}
+
+.fito-dropzone-title {
+    margin: 0 0 6px 0;
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--fito-text);
+}
+
+.fito-dropzone-subtitle {
+    margin: 0 0 18px 0;
+    font-size: 13px;
+    color: var(--fito-text-muted);
+}
+
+.fito-upload-buttons {
+    display: flex;
+    justify-content: center;
+    gap: 12px;
+    margin-bottom: 14px;
+}
+
+.fito-dropzone-formats {
+    display: block;
+    font-size: 11px;
+    color: var(--fito-text-muted);
+}
+
+/* Generic Buttons */
+.fito-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    border-radius: var(--fito-radius-sm);
+    font-family: var(--fito-font);
+    font-size: 14px;
+    font-weight: 600;
+    padding: 10px 18px;
+    cursor: pointer;
+    transition: var(--fito-transition);
+    border: none;
+    text-decoration: none;
+    box-sizing: border-box;
+}
+
+.fito-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.fito-btn--primary {
+    background: var(--fito-accent);
+    color: #ffffff;
+}
+
+.fito-btn--primary:hover:not(:disabled) {
+    background: var(--fito-accent-hover);
+    transform: translateY(-1px);
+}
+
+.fito-btn--secondary {
+    background: var(--fito-bg);
+    color: var(--fito-text);
+    border: 1px solid var(--fito-border);
+}
+
+.fito-btn--secondary:hover {
+    background: var(--fito-surface-hover);
+    border-color: var(--fito-border-focus);
+}
+
+.fito-btn--outline {
+    background: transparent;
+    border: 1px solid var(--fito-border);
+    color: var(--fito-text);
+}
+
+.fito-btn--ghost {
+    background: transparent;
+    color: var(--fito-text-muted);
+}
+
+.fito-btn--ghost:hover {
+    color: var(--fito-text);
+}
+
+.fito-btn--full {
+    width: 100%;
+    padding: 13px 20px;
+    font-size: 15px;
+    border-radius: var(--fito-radius-sm);
+}
+
+/* Camera feed */
+.fito-camera-container {
+    position: relative;
+    border-radius: var(--fito-radius);
+    overflow: hidden;
+    background: #000000;
+    aspect-ratio: 4/3;
+    display: flex;
+    flex-direction: column;
+}
+
+#fito-camera-stream {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.fito-camera-controls {
+    position: absolute;
+    bottom: 16px;
+    left: 0;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    gap: 12px;
+    z-index: 2;
+}
+
+/* Photo Preview (Uncropped Full Proportions) */
+.fito-crop-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+    width: 100%;
+}
+
+.fito-crop-preview-wrapper {
+    width: 100%;
+    max-height: min(68vh, 520px);
+    border-radius: var(--fito-radius);
+    overflow: hidden;
+    background: #09090b;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: var(--fito-shadow-sm);
+    margin: 0 auto;
+}
+
+.fito-crop-preview-wrapper img {
+    max-width: 100%;
+    max-height: min(68vh, 520px);
+    width: auto;
+    height: auto;
+    object-fit: contain;
+}
+
+/* Consent Gate */
+.fito-consent-wrapper {
+    background: var(--fito-surface);
+    border: 1px solid var(--fito-border);
+    border-radius: var(--fito-radius-sm);
+    padding: 14px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.fito-consent-label {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    cursor: pointer;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--fito-text);
+    line-height: 1.4;
+}
+
+.fito-consent-label input[type="checkbox"] {
+    margin-top: 2px;
+    accent-color: var(--fito-accent);
+    cursor: pointer;
+    width: 16px;
+    height: 16px;
+}
+
+.fito-privacy-notice {
+    margin: 0;
+    font-size: 11.5px;
+    color: var(--fito-text-muted);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding-top: 6px;
+    border-top: 1px solid var(--fito-border);
+}
+
+/* Step 2: Loading State */
+.fito-loading-wrapper {
+    padding: 40px 20px;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.fito-loading-avatar-duo {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    margin-bottom: 28px;
+}
+
+.fito-avatar {
+    width: 84px;
+    height: 84px;
+    border-radius: 50%;
+    overflow: hidden;
+    border: 3px solid var(--fito-bg);
+    box-shadow: var(--fito-shadow);
+    background: var(--fito-surface);
+}
+
+.fito-avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.fito-avatar-user {
+    transform: translateX(12px);
+    z-index: 1;
+}
+
+.fito-avatar-product {
+    transform: translateX(-12px);
+    z-index: 1;
+}
+
+.fito-avatar-spark {
+    position: absolute;
+    z-index: 3;
+    background: var(--fito-accent);
+    color: #ffffff;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 0 20px var(--fito-accent);
+    animation: fito-spin-spark 4s infinite linear;
+}
+
+@keyframes fito-spin-spark {
+    0% { transform: rotate(0deg) scale(1); }
+    50% { transform: rotate(180deg) scale(1.15); }
+    100% { transform: rotate(360deg) scale(1); }
+}
+
+.fito-loading-title {
+    margin: 0 0 16px 0;
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--fito-text);
+}
+
+.fito-progress-track {
+    width: 100%;
+    max-width: 320px;
+    height: 8px;
+    background: var(--fito-surface-hover);
+    border-radius: 999px;
+    overflow: hidden;
+    margin-bottom: 14px;
+}
+
+.fito-progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--fito-accent) 0%, #a855f7 100%);
+    border-radius: 999px;
+    transition: width 0.35s ease-out;
+}
+
+.fito-loading-message {
+    font-size: 13.5px;
+    color: var(--fito-text-muted);
+    margin: 0;
+    min-height: 22px;
+    animation: fito-fade 0.4s ease;
+}
+
+@keyframes fito-fade {
+    from { opacity: 0; transform: translateY(4px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* Step 3: Result & Comparison Slider */
+.fito-slider-stage {
+    position: relative;
+    width: 100%;
+    min-height: 300px;
+    max-height: min(72vh, 580px);
+    border-radius: var(--fito-radius);
+    overflow: hidden;
+    background: #09090b;
+    box-shadow: var(--fito-shadow);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto;
+}
+
+.fito-slider-container {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    user-select: none;
+    -webkit-user-select: none;
+    touch-action: none;
+    cursor: ew-resize;
+}
+
+.fito-slider-before,
+.fito-slider-after {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+}
+
+.fito-slider-before img,
+.fito-slider-after img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    pointer-events: none;
+}
+
+.fito-slider-after {
+    z-index: 2;
+    clip-path: polygon(0 0, 50% 0, 50% 100%, 0 100%);
+    -webkit-clip-path: polygon(0 0, 50% 0, 50% 100%, 0 100%);
+}
+
+.fito-tag {
+    position: absolute;
+    bottom: 12px;
+    padding: 4px 10px;
+    background: rgba(0, 0, 0, 0.65);
+    backdrop-filter: blur(4px);
+    color: #ffffff;
+    font-size: 11px;
+    font-weight: 600;
+    border-radius: 6px;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    z-index: 4;
+}
+
+.fito-tag--before { right: 12px; }
+.fito-tag--after { left: 12px; }
+
+.fito-slider-handle {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 50%;
+    width: 2px;
+    z-index: 5;
+    transform: translateX(-50%);
+    pointer-events: none;
+}
+
+.fito-handle-line {
+    width: 2px;
+    height: 100%;
+    background: #ffffff;
+    box-shadow: 0 0 6px rgba(0, 0, 0, 0.5);
+}
+
+.fito-handle-circle {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: #ffffff;
+    color: #0f172a;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Stage Fullscreen Controls & Responsive Overlay */
+.fito-stage-fullscreen-btn {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    z-index: 15;
+    width: 38px;
+    height: 38px;
+    border-radius: 10px;
+    background: rgba(15, 23, 42, 0.65);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    color: #ffffff;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
+    transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.fito-stage-fullscreen-btn:hover {
+    background: rgba(15, 23, 42, 0.9);
+    border-color: rgba(255, 255, 255, 0.4);
+    transform: scale(1.08);
+}
+
+.fito-exit-fullscreen-btn {
+    position: absolute;
+    top: 18px;
+    right: 18px;
+    z-index: 30;
+    display: none;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 18px;
+    border-radius: 30px;
+    background: rgba(15, 23, 42, 0.85);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    color: #ffffff;
+    font-size: 13.5px;
+    font-weight: 600;
+    border: 1px solid rgba(255, 255, 255, 0.25);
+    cursor: pointer;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+    transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.fito-exit-fullscreen-btn:hover {
+    background: rgba(239, 68, 68, 0.95);
+    border-color: rgba(255, 255, 255, 0.5);
+    transform: scale(1.04);
+}
+
+body.rtl .fito-stage-fullscreen-btn {
+    right: auto;
+    left: 12px;
+}
+
+body.rtl .fito-exit-fullscreen-btn {
+    right: auto;
+    left: 18px;
+}
+
+/* Fullscreen Mode Display (Native & CSS Fallback) */
+.fito-slider-stage:fullscreen,
+.fito-slider-stage:-webkit-full-screen,
+.fito-slider-stage.fito-is-fullscreen {
+    position: fixed !important;
+    inset: 0 !important;
+    width: 100vw !important;
+    height: 100vh !important;
+    max-height: 100vh !important;
+    max-width: 100vw !important;
+    border-radius: 0 !important;
+    margin: 0 !important;
+    padding: 24px !important;
+    box-sizing: border-box !important;
+    z-index: 999999 !important;
+    background: #09090b !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+}
+
+.fito-slider-stage:fullscreen .fito-stage-fullscreen-btn,
+.fito-slider-stage:-webkit-full-screen .fito-stage-fullscreen-btn,
+.fito-slider-stage.fito-is-fullscreen .fito-stage-fullscreen-btn {
+    display: none !important;
+}
+
+.fito-slider-stage:fullscreen .fito-exit-fullscreen-btn,
+.fito-slider-stage:-webkit-full-screen .fito-exit-fullscreen-btn,
+.fito-slider-stage.fito-is-fullscreen .fito-exit-fullscreen-btn {
+    display: flex !important;
+}
+
+.fito-slider-stage:fullscreen .fito-slider-container,
+.fito-slider-stage:-webkit-full-screen .fito-slider-container,
+.fito-slider-stage.fito-is-fullscreen .fito-slider-container {
+    max-width: 100%;
+    max-height: 100%;
+    margin: auto;
+}
+
+/* Result Toolbar */
+.fito-result-toolbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+    gap: 8px;
+    background: var(--fito-surface);
+    border: 1px solid var(--fito-border);
+    border-radius: var(--fito-radius-sm);
+    padding: 6px;
+}
+
+.fito-tool-btn {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    background: transparent;
+    border: none;
+    color: var(--fito-text);
+    font-family: var(--fito-font);
+    font-size: 12.5px;
+    font-weight: 600;
+    padding: 8px 12px;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: var(--fito-transition);
+}
+
+.fito-tool-btn:hover {
+    background: var(--fito-surface-hover);
+    color: var(--fito-accent);
+}
+
+.fito-result-footer {
+    display: flex;
+    gap: 12px;
+    margin-top: 4px;
+}
+
+.fito-result-footer .fito-btn {
+    flex: 1;
+}
+
+/* WooCommerce My Account Tab */
+.fito-account-tryons h3 {
+    margin-bottom: 20px;
+}
+
+.fito-account-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 20px;
+    margin-top: 16px;
+}
+
+.fito-account-card {
+    border: 1px solid var(--fito-border);
+    border-radius: var(--fito-radius);
+    overflow: hidden;
+    background: var(--fito-bg);
+    box-shadow: var(--fito-shadow-sm);
+    display: flex;
+    flex-direction: column;
+}
+
+.fito-account-card-img {
+    aspect-ratio: 1;
+    overflow: hidden;
+    background: #000;
+}
+
+.fito-account-card-img img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.fito-account-card-content {
+    padding: 14px;
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+}
+
+.fito-account-card-content h4 {
+    margin: 0 0 4px 0;
+    font-size: 15px;
+}
+
+.fito-account-card-content .fito-date {
+    font-size: 12px;
+    color: var(--fito-text-muted);
+    margin-bottom: 12px;
+}
+
+.fito-btn-view-prod {
+    margin-top: auto;
+    text-align: center;
+    padding: 8px 12px !important;
+    font-size: 13px !important;
+}
+
+/* RTL Support (Persian / Arabic) */
+html[dir="rtl"] .fito-modal,
+body.rtl .fito-modal {
+    direction: rtl;
+    text-align: right;
+}
+
+html[dir="rtl"] .fito-tag--before,
+body.rtl .fito-tag--before {
+    right: auto;
+    left: 12px;
+}
+
+html[dir="rtl"] .fito-tag--after,
+body.rtl .fito-tag--after {
+    left: auto;
+    right: 12px;
+}
+
+html[dir="rtl"] .fito-slider-after,
+body.rtl .fito-slider-after {
+    left: 0;
+    right: 0;
+}
+
+/* Mobile full-screen takeover */
+@media (max-width: 640px) {
+    .fito-modal {
+        padding: 0;
+    }
+    .fito-modal-dialog {
+        max-width: 100%;
+        height: 100%;
+        max-height: 100%;
+        border-radius: 0;
+        border: none;
+    }
+    .fito-slider-stage {
+        height: 320px;
+    }
+    .fito-result-toolbar {
+        flex-wrap: wrap;
+    }
+}
+
+/* Gallery Image Quick Try-On Button */
+.woocommerce-product-gallery__image {
+    position: relative !important;
+}
+
+.fito-tryon-btn--gallery {
+    position: absolute;
+    bottom: 14px;
+    right: 14px;
+    z-index: 20;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 7px 14px;
+    font-size: 13px;
+    font-weight: 500;
+    line-height: 1.2;
+    background: rgba(24, 24, 27, 0.88);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    color: #ffffff !important;
+    border: 1px solid rgba(255, 255, 255, 0.22);
+    border-radius: 9999px;
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.18);
+    cursor: pointer;
+    transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+    opacity: 0.95;
+    text-decoration: none !important;
+}
+
+.fito-tryon-btn--gallery:hover {
+    opacity: 1;
+    background: rgba(24, 24, 27, 0.98);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.25);
+    color: #ffffff !important;
+}
+
+.fito-tryon-btn--gallery svg {
+    flex-shrink: 0;
+    stroke: currentColor;
+}
+
+html[dir="rtl"] .fito-tryon-btn--gallery,
+body.rtl .fito-tryon-btn--gallery {
+    right: auto;
+    left: 14px;
+}
+
+/* Dedicated Variation Try-On Button */
+.fito-variation-tryon-wrapper {
+    margin: 12px 0;
+    clear: both;
+}
+
+.fito-tryon-btn--variation {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    background: var(--fito-btn-bg);
+    color: var(--fito-btn-color) !important;
+    border: 1px solid rgba(0, 0, 0, 0.12);
+    border-radius: var(--fito-radius-sm);
+    padding: 10px 18px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: var(--fito-transition);
+    box-shadow: var(--fito-shadow-sm);
+    text-decoration: none !important;
+}
+
+.fito-tryon-btn--variation:hover {
+    opacity: 0.92;
+    transform: translateY(-1px);
+    box-shadow: var(--fito-shadow);
+    color: var(--fito-btn-color) !important;
+}
+
+/* -------------------------------------------------------------
+   Step: Login / Signup Required (Guest Access Restricted)
+   ------------------------------------------------------------- */
+.fito-step-login-required {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 380px;
+    padding: 32px 24px;
+    text-align: center;
+}
+
+.fito-login-prompt-wrapper {
+    max-width: 440px;
+    width: 100%;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.fito-login-sample-card {
+    position: relative;
+    width: 100%;
+    max-width: 380px;
+    margin: 0 auto 20px;
+    border-radius: var(--fito-radius);
+    overflow: hidden;
+    background: #0f172a;
+    border: 1px solid var(--fito-border);
+    box-shadow: var(--fito-shadow);
+    transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.25s ease;
+}
+
+.fito-login-sample-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 16px 32px -6px rgba(0, 0, 0, 0.18);
+}
+
+.fito-login-sample-badge {
+    position: absolute;
+    top: 12px;
+    left: 12px;
+    z-index: 2;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 5px 12px;
+    border-radius: 999px;
+    background: rgba(15, 23, 42, 0.82);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    color: #ffffff;
+    font-size: 11.5px;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
+}
+
+.fito-login-sample-badge svg {
+    color: #fbbf24;
+}
+
+.fito-login-sample-media {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 16 / 10;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #0f172a;
+}
+
+.fito-login-sample-media img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.fito-login-sample-card:hover .fito-login-sample-media img {
+    transform: scale(1.03);
+}
+
+@media (max-width: 480px) {
+    .fito-login-sample-card {
+        max-width: 100%;
+        margin-bottom: 16px;
+    }
+    .fito-login-sample-badge {
+        top: 8px;
+        left: 8px;
+        font-size: 11px;
+        padding: 4px 10px;
+    }
+}
+
+.fito-login-prompt-title {
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--fito-text);
+    margin: 0 0 10px;
+    letter-spacing: -0.01em;
+}
+
+.fito-login-prompt-text {
+    font-size: 14.5px;
+    color: var(--fito-text-muted);
+    line-height: 1.55;
+    margin: 0 0 24px;
+}
+
+.fito-login-prompt-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    width: 100%;
+    max-width: 320px;
+}
+
+.fito-btn--login {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 12px 20px;
+    font-size: 15px;
+    font-weight: 600;
+    text-decoration: none !important;
+    border-radius: var(--fito-radius-sm);
+    box-shadow: 0 4px 14px rgba(var(--fito-accent-rgb), 0.25);
+    transition: var(--fito-transition);
+}
+
+.fito-btn--login:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 6px 18px rgba(var(--fito-accent-rgb), 0.35);
+    color: #ffffff !important;
+}
+
+.fito-btn--login svg {
+    stroke: currentColor;
+}
+
+#fito-btn-login-close {
+    width: 100%;
+    padding: 10px 16px;
+    font-size: 14px;
+}
+
