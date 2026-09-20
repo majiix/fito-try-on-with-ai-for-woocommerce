@@ -5,7 +5,6 @@
  * Description:       Enable customers to virtually try on clothing, shoes, glasses, jewelry, and accessories with AI (OpenRouter, Google Gemini, OpenAI).
  * Version:           1.3.0
  * Author:            micromax
- * Author URI:        https://wordpress.org/plugins/fito-try-on-with-ai-for-woocommerce/
  * License:           GPL-2.0-or-later
  * License URI:       https://www.gnu.org/licenses/gpl-2.0.html
  * Text Domain:       fito-try-on-with-ai-for-woocommerce
