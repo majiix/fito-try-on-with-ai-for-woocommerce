@@ -29,13 +29,8 @@ class Fito_Tryon_Privacy {
         $storage = Fito_Tryon::instance()->storage;
 
         // 1. Clean up temporary try-on jobs & customer photos
-        if (!Fito_Tryon::is_pro_active()) {
-            // Free tier: Maximum 30 minutes photo retention window for strict privacy
-            $retention_minutes = 30;
-        } else {
-            $retention_hours = (int) get_option('fito_tryon_retention_hours', 24);
-            $retention_minutes = max(1, $retention_hours * 60);
-        }
+        $retention_hours = (int) apply_filters('fito_tryon_retention_hours', (int) get_option('fito_tryon_retention_hours', 24));
+        $retention_minutes = max(1, $retention_hours * 60);
 
         if ($retention_minutes > 0) {
             $expired = $db->get_expired_jobs($retention_minutes);

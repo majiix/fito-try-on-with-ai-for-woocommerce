@@ -2,8 +2,8 @@
 /**
  * Plugin Name:       Fito Try-On with AI for WooCommerce
  * Plugin URI:        https://wordpress.org/plugins/fito-try-on-with-ai-for-woocommerce/
- * Description:       Enable customers to virtually try on clothing, shoes, glasses, jewelry, and accessories with AI (OpenRouter, Google Gemini, OpenAI).
- * Version:           1.3.0
+ * Description:       Enable customers to virtually try on clothing, shoes, glasses, jewelry, and accessories with AI using OpenRouter.
+ * Version:           1.4.0
  * Author:            micromax
  * Author URI:        https://wordpress.org/plugins/fito-try-on-with-ai-for-woocommerce/
  * License:           GPL-2.0-or-later
@@ -20,7 +20,7 @@
 defined('ABSPATH') || exit;
 
 // Core plugin constants.
-define('FITO_TRYON_VERSION', '1.3.0');
+define('FITO_TRYON_VERSION', '1.4.0');
 define('FITO_TRYON_FILE', __FILE__);
 define('FITO_TRYON_PATH', plugin_dir_path(__FILE__));
 define('FITO_TRYON_URL', plugin_dir_url(__FILE__));
@@ -79,10 +79,6 @@ register_activation_hook(__FILE__, function () {
     Fito_Tryon_Database::create_tables();
     Fito_Tryon_Storage::setup_storage_directory();
     Fito_Tryon_Privacy::schedule_cleanup_cron();
-
-    // Register My Account rewrite endpoint and flush rewrite rules
-    add_rewrite_endpoint('fito-tryons', EP_ROOT | EP_PAGES);
-    flush_rewrite_rules(false);
 });
 
 /**
@@ -91,5 +87,4 @@ register_activation_hook(__FILE__, function () {
 register_deactivation_hook(__FILE__, function () {
     require_once FITO_TRYON_PATH . 'includes/class-fito-tryon-privacy.php';
     Fito_Tryon_Privacy::clear_cleanup_cron();
-    flush_rewrite_rules(false);
 });

@@ -28,35 +28,23 @@ class Fito_Tryon_Public {
             add_filter('woocommerce_product_tabs', [$this, 'add_product_tab']);
         }
 
-        $is_pro = Fito_Tryon::is_pro_active();
-
-        // Shop archive loop quick try-on (Pro)
-        if ($is_pro && get_option('fito_tryon_archive_button', 'no') === 'yes') {
-            add_action('woocommerce_after_shop_loop_item', [$this, 'render_archive_button'], 15);
-        }
-
-        // Gallery image buttons (Pro)
-        if ($is_pro && get_option('fito_tryon_gallery_buttons', 'no') === 'yes') {
-            add_filter('woocommerce_single_product_image_thumbnail_html', [$this, 'filter_gallery_image_html'], 10, 2);
-        }
-
-        // Variation image buttons (Pro)
-        if ($is_pro && get_option('fito_tryon_variation_images', 'no') === 'yes') {
-            add_action('woocommerce_single_variation', [$this, 'render_variation_button'], 18);
-        }
-
         // Modal output in footer
         add_action('wp_footer', [$this, 'render_modal_markup']);
 
-        // My Account integration
-        add_action('init', [$this, 'register_account_endpoint']);
-        add_filter('woocommerce_account_menu_items', [$this, 'add_account_menu_item']);
-        add_action('woocommerce_account_fito-tryons_endpoint', [$this, 'render_account_tryons']);
+        // Filter contract for external plugins to query product eligibility cleanly.
+        add_filter('fito_tryon_is_product_allowed', [$this, 'filter_is_product_allowed'], 10, 2);
+
+        // Allow extensions to attach public hooks.
+        do_action('fito_tryon_public_init', $this);
     }
 
     public function enqueue_assets(): void {
         global $post;
-        $has_tryon_tag = is_a($post, 'WP_Post') && (has_shortcode((string) $post->post_content, 'fito_tryon') || has_block('fito-tryon/button', $post));
+        $has_tryon_tag = is_a($post, 'WP_Post') && (
+            has_shortcode((string) $post->post_content, 'fito_tryon') ||
+            has_block('fito/tryon-button', $post) ||
+            has_block('fito-tryon/button', $post)
+        );
         if (!is_product() && !is_shop() && !is_product_category() && !is_account_page() && !$has_tryon_tag) {
             return;
         }
@@ -88,7 +76,7 @@ class Fito_Tryon_Public {
             }
         }
 
-        wp_localize_script('fito-tryon-public', 'fitoTryonData', [
+        $script_data = apply_filters('fito_tryon_public_script_data', [
             'restUrl'              => esc_url_raw(rest_url('fito-tryon/v1/')),
             'nonce'                => wp_create_nonce('wp_rest'),
             'isUserLoggedIn'       => is_user_logged_in(),
@@ -98,9 +86,6 @@ class Fito_Tryon_Public {
             'loginNotice'          => $login_cfg['login_notice'],
             'sampleImageUrl'       => esc_url_raw($login_cfg['sample_image']),
             'isProductAllowed'     => $is_prod_allowed,
-            'galleryButtons'       => ($is_prod_allowed && Fito_Tryon::is_pro_active()) ? get_option('fito_tryon_gallery_buttons', 'no') : 'no',
-            'variationImages'      => ($is_prod_allowed && Fito_Tryon::is_pro_active()) ? get_option('fito_tryon_variation_images', 'no') : 'no',
-            'customImageSelectors' => ($is_prod_allowed && Fito_Tryon::is_pro_active()) ? trim((string) get_option('fito_tryon_custom_image_selectors', '')) : '',
             'consentText'          => Fito_Tryon_Privacy::get_consent_text(),
             'statusMessages'       => [
                 __('Connecting to fitting engine...', 'fito-try-on-with-ai-for-woocommerce'),
@@ -110,10 +95,6 @@ class Fito_Tryon_Public {
                 __('Finalizing your try-on preview...', 'fito-try-on-with-ai-for-woocommerce'),
             ],
             'i18n'                 => [
-                'tryOnGallery'   => __('Try on this look', 'fito-try-on-with-ai-for-woocommerce'),
-                'tryOnImage'     => __('Try on this look', 'fito-try-on-with-ai-for-woocommerce'),
-                'saveAccount'    => __('Save to account', 'fito-try-on-with-ai-for-woocommerce'),
-                'saved'          => __('Saved to account', 'fito-try-on-with-ai-for-woocommerce'),
                 'invalidImage'   => __('Choose a JPG, PNG, or WebP image.', 'fito-try-on-with-ai-for-woocommerce'),
                 'fileTooLarge'   => __('Choose an image smaller than 10 MB.', 'fito-try-on-with-ai-for-woocommerce'),
                 'cameraError'    => __('Unable to access camera. Check browser permissions or upload a photo.', 'fito-try-on-with-ai-for-woocommerce'),
@@ -126,6 +107,8 @@ class Fito_Tryon_Public {
                 'exitFullscreen' => __('Exit full screen', 'fito-try-on-with-ai-for-woocommerce'),
             ],
         ]);
+
+        wp_localize_script('fito-tryon-public', 'fitoTryonData', $script_data);
     }
 
     private function get_login_config(): array {
@@ -141,7 +124,7 @@ class Fito_Tryon_Public {
             $login_notice = __('Please sign up or log in to your account to use our AI Virtual Try-On feature and preview how this item looks on you.', 'fito-try-on-with-ai-for-woocommerce');
         }
 
-        $sample_img_id = Fito_Tryon::is_pro_active() ? absint(get_option('fito_tryon_sample_image_id', 0)) : 0;
+        $sample_img_id = absint(get_option('fito_tryon_sample_image_id', 0));
         $sample_image_url = $sample_img_id ? wp_get_attachment_image_url($sample_img_id, 'large') : '';
         if (empty($sample_image_url)) {
             $sample_image_url = FITO_TRYON_URL . 'assets/images/sample-tryon.jfif';
@@ -221,6 +204,17 @@ class Fito_Tryon_Public {
         return false;
     }
 
+    /**
+     * Filter callback to check whether a product is allowed for virtual try-on.
+     *
+     * @param bool $default
+     * @param mixed $product_or_id
+     * @return bool
+     */
+    public function filter_is_product_allowed(bool $default, mixed $product_or_id): bool {
+        return $this->is_product_allowed($product_or_id);
+    }
+
     public function render_product_button(): void {
         global $product;
         $current_product = $product instanceof WC_Product ? $product : wc_get_product(get_the_ID());
@@ -231,106 +225,6 @@ class Fito_Tryon_Public {
         $this->print_button_html($current_product);
     }
 
-    public function render_archive_button(): void {
-        if (!Fito_Tryon::is_pro_active()) {
-            return;
-        }
-
-        global $product;
-        $current_product = $product instanceof WC_Product ? $product : wc_get_product(get_the_ID());
-        if (!$current_product || !$this->is_product_allowed($current_product)) {
-            return;
-        }
-
-        $btn_text = get_option('fito_tryon_archive_button_text', __('Quick Try-On', 'fito-try-on-with-ai-for-woocommerce'));
-        ?>
-        <button type="button"
-                class="fito-tryon-btn fito-tryon-btn--archive"
-                data-product-id="<?php echo esc_attr($current_product->get_id()); ?>"
-                data-product-title="<?php echo esc_attr($current_product->get_name()); ?>"
-                data-product-image="<?php echo esc_url(wp_get_attachment_image_url($current_product->get_image_id(), 'large')); ?>">
-            <svg class="fito-icon" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z"/><path d="M3 6h18"/><path d="M16 10a4 4 0 0 1-8 0"/>
-            </svg>
-            <span><?php echo esc_html($btn_text); ?></span>
-        </button>
-        <?php
-    }
-
-    public function filter_gallery_image_html(string $html, int $attachment_id = 0): string {
-        if (!Fito_Tryon::is_pro_active()) {
-            return $html;
-        }
-
-        global $product;
-        $current_product = $product instanceof WC_Product ? $product : wc_get_product(get_the_ID());
-        if (!$current_product || !$this->is_product_allowed($current_product)) {
-            return $html;
-        }
-
-        $image_url = $attachment_id ? wp_get_attachment_image_url($attachment_id, 'large') : '';
-        if (empty($image_url) && preg_match('/src=["\']([^"\']+)["\']/', $html, $matches)) {
-            $image_url = $matches[1];
-        }
-        if (empty($image_url)) {
-            return $html;
-        }
-
-        $quick_label = __('Try On This Look', 'fito-try-on-with-ai-for-woocommerce');
-        $btn_html = sprintf(
-            '<button type="button" class="fito-tryon-btn fito-tryon-btn--gallery" data-product-id="%d" data-product-title="%s" data-product-image="%s" data-image-id="%d" title="%s" aria-label="%s">'
-            . '<svg class="fito-icon" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">'
-            . '<path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z"/><path d="M3 6h18"/><path d="M16 10a4 4 0 0 1-8 0"/>'
-            . '</svg>'
-            . '<span>%s</span>'
-            . '</button>',
-            esc_attr($current_product->get_id()),
-            esc_attr($current_product->get_name()),
-            esc_url($image_url),
-            esc_attr($attachment_id),
-            esc_attr($quick_label),
-            esc_attr($quick_label),
-            esc_html($quick_label)
-        );
-
-        if (str_contains($html, '</div>')) {
-            $last_div_pos = strrpos($html, '</div>');
-            return substr($html, 0, $last_div_pos) . $btn_html . '</div>' . substr($html, $last_div_pos + 6);
-        }
-
-        return $html . $btn_html;
-    }
-
-    public function render_variation_button(): void {
-        if (!Fito_Tryon::is_pro_active()) {
-            return;
-        }
-
-        global $product;
-        $current_product = $product instanceof WC_Product ? $product : wc_get_product(get_the_ID());
-        if (!$current_product || !$this->is_product_allowed($current_product)) {
-            return;
-        }
-
-        $quick_label = __('Try On This Variation', 'fito-try-on-with-ai-for-woocommerce');
-        ?>
-        <div id="fito-variation-tryon-wrapper" class="fito-variation-tryon-wrapper" style="display: none;">
-            <button type="button"
-                    id="fito-variation-tryon-btn"
-                    class="fito-tryon-btn fito-tryon-btn--variation"
-                    data-product-id="<?php echo esc_attr($current_product->get_id()); ?>"
-                    data-product-title="<?php echo esc_attr($current_product->get_name()); ?>"
-                    data-product-image=""
-                    data-variation-id="0">
-                <svg class="fito-icon" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z"/><path d="M3 6h18"/><path d="M16 10a4 4 0 0 1-8 0"/>
-                </svg>
-                <span><?php echo esc_html($quick_label); ?></span>
-            </button>
-        </div>
-        <?php
-    }
-
     public function add_product_tab(array $tabs): array {
         global $product;
         $current_product = $product instanceof WC_Product ? $product : wc_get_product(get_the_ID());
@@ -338,7 +232,7 @@ class Fito_Tryon_Public {
             return $tabs;
         }
 
-        $default_title = __('Try It On with AI', 'fito-try-on-with-ai-for-woocommerce');
+        $default_title = $this->get_button_text();
         $tab_title = apply_filters('fito_tryon_button_text', $default_title, $current_product);
 
         $tabs['fito_tryon_tab'] = [
@@ -393,11 +287,24 @@ class Fito_Tryon_Public {
         return $this->render_shortcode(['text' => $btn_text]);
     }
 
+    /**
+     * Get configured try-on button text with fallback to default.
+     *
+     * @return string
+     */
+    public function get_button_text(): string {
+        $configured = trim((string) get_option('fito_tryon_button_text', ''));
+        if ($configured !== '') {
+            return $configured;
+        }
+        return __('Try It On with AI', 'fito-try-on-with-ai-for-woocommerce');
+    }
+
     private function print_button_html(WC_Product $product, string $custom_text = ''): void {
-        $default_text = __('Try It On with AI', 'fito-try-on-with-ai-for-woocommerce');
+        $default_text  = $this->get_button_text();
         $resolved_text = apply_filters('fito_tryon_button_text', $default_text, $product);
-        $btn_text = !empty($custom_text) ? $custom_text : $resolved_text;
-        $prod_image = wp_get_attachment_image_url($product->get_image_id(), 'large') ?: '';
+        $btn_text      = !empty($custom_text) ? $custom_text : $resolved_text;
+        $prod_image    = wp_get_attachment_image_url($product->get_image_id(), 'large') ?: '';
         ?>
         <div class="fito-tryon-button-wrapper">
             <button type="button"
@@ -627,12 +534,7 @@ class Fito_Tryon_Public {
                             <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
                             <span><?php esc_html_e('Share', 'fito-try-on-with-ai-for-woocommerce'); ?></span>
                         </button>
-                        <?php if (Fito_Tryon::is_pro_active() && get_option('fito_tryon_save_to_account', 'yes') === 'yes' && is_user_logged_in()) : ?>
-                            <button type="button" class="fito-tool-btn" id="fito-btn-save-account" title="<?php esc_attr_e('Save to account', 'fito-try-on-with-ai-for-woocommerce'); ?>">
-                                <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
-                                <span id="fito-save-text"><?php esc_html_e('Save to account', 'fito-try-on-with-ai-for-woocommerce'); ?></span>
-                            </button>
-                        <?php endif; ?>
+                        <?php do_action('fito_tryon_modal_result_actions'); ?>
                     </div>
 
                     <!-- Bottom navigation -->
@@ -650,76 +552,5 @@ class Fito_Tryon_Public {
             </div>
         </div>
         <?php
-    }
-
-    public function register_account_endpoint(): void {
-        add_rewrite_endpoint('fito-tryons', EP_ROOT | EP_PAGES);
-    }
-
-    public function add_account_menu_item(array $items): array {
-        if (!Fito_Tryon::is_pro_active() || get_option('fito_tryon_save_to_account', 'yes') !== 'yes') {
-            return $items;
-        }
-        $new_items = [];
-        foreach ($items as $key => $title) {
-            $new_items[$key] = $title;
-            if ($key === 'orders') {
-                $new_items['fito-tryons'] = __('My Try-Ons', 'fito-try-on-with-ai-for-woocommerce');
-            }
-        }
-        if (!isset($new_items['fito-tryons'])) {
-            $new_items['fito-tryons'] = __('My Try-Ons', 'fito-try-on-with-ai-for-woocommerce');
-        }
-        return $new_items;
-    }
-
-    public function render_account_tryons(): void {
-        if (!Fito_Tryon::is_pro_active() || get_option('fito_tryon_save_to_account', 'yes') !== 'yes') {
-            echo '<p class="fito-empty-account">' . esc_html__('This feature is currently unavailable.', 'fito-try-on-with-ai-for-woocommerce') . '</p>';
-            return;
-        }
-        $user_id = get_current_user_id();
-        $jobs = $this->plugin->db->get_user_jobs($user_id, 30);
-
-        echo '<div class="fito-account-tryons">';
-        echo '<h3>' . esc_html__('My Virtual Try-On History', 'fito-try-on-with-ai-for-woocommerce') . '</h3>';
-
-        if (empty($jobs)) {
-            echo '<p class="fito-empty-account">' . esc_html__('You have not saved any try-on previews to your account yet.', 'fito-try-on-with-ai-for-woocommerce') . '</p>';
-            return;
-        }
-
-        $product_ids = array_filter(array_unique(array_map('intval', array_column($jobs, 'product_id'))));
-        if (!empty($product_ids)) {
-            _prime_post_caches($product_ids, true, true);
-        }
-
-        echo '<div class="fito-account-grid">';
-        foreach ($jobs as $job) {
-            $pid = (int) $job->product_id;
-            $product = $pid > 0 ? wc_get_product($pid) : null;
-            if ($product) {
-                $p_title = $product->get_name();
-                $p_link  = get_permalink($pid);
-            } elseif ($pid > 0) {
-                // translators: %d: Product ID number
-                $p_title = sprintf(__('Deleted Product (ID %d)', 'fito-try-on-with-ai-for-woocommerce'), $pid);
-                $p_link  = '#';
-            } else {
-                $p_title = __('Product', 'fito-try-on-with-ai-for-woocommerce');
-                $p_link  = '#';
-            }
-
-            echo '<div class="fito-account-card">';
-            echo '<div class="fito-account-card-img"><img src="' . esc_url($job->result_image_url) . '" alt="' . esc_attr($p_title) . '"></div>';
-            echo '<div class="fito-account-card-content">';
-            echo '<h4><a href="' . esc_url($p_link) . '">' . esc_html($p_title) . '</a></h4>';
-            echo '<span class="fito-date">' . esc_html(wp_date(get_option('date_format'), strtotime($job->created_at))) . '</span>';
-            echo '<a href="' . esc_url($p_link) . '" class="button fito-btn-view-prod">' . esc_html__('View Product', 'fito-try-on-with-ai-for-woocommerce') . '</a>';
-            echo '</div>';
-            echo '</div>';
-        }
-        echo '</div>';
-        echo '</div>';
     }
 }

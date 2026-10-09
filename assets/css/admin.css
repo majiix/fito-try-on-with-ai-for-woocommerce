@@ -390,14 +390,6 @@
     color: #b91c1c;
 }
 
-.fito-badge--pro {
-    background: #e0e7ff;
-    color: #4338ca;
-    border: 1px solid #c7d2fe;
-    vertical-align: middle;
-    margin-inline-start: 8px;
-}
-
 /* Key Test Box */
 .fito-key-input-row {
     display: flex;
@@ -1086,34 +1078,6 @@ body.rtl .fito-prompt-cat-id {
     line-height: 1 !important;
 }
 
-#fito-btn-preview-watermark {
-    display: inline-flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-    gap: 6px !important;
-    height: auto !important;
-    min-height: 32px !important;
-    line-height: 1 !important;
-    padding: 0 12px !important;
-    vertical-align: middle;
-}
-
-#fito-btn-preview-watermark .dashicons {
-    font-size: 16px !important;
-    width: 16px !important;
-    height: 16px !important;
-    line-height: 16px !important;
-    margin: 0 !important;
-    display: inline-flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-}
-
-#fito-btn-preview-watermark .dashicons:before {
-    font-size: 16px !important;
-    line-height: 1 !important;
-}
-
 .fito-prompt-header-right .button {
     display: inline-flex !important;
     align-items: center !important;
@@ -1141,549 +1105,344 @@ body.rtl .fito-prompt-cat-id {
     line-height: 1 !important;
 }
 
-/* Pro Features Showcase Grid */
-.fito-pro-features-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-    gap: 16px;
-    margin-top: 6px;
+/* ==========================================================================
+   Go Pro Showcase & Comparison Styling
+   ========================================================================== */
+.fito-go-pro-wrap {
+    max-width: 1040px;
+    margin: 20px auto 40px auto;
 }
 
-.fito-pro-feature-card {
-    background: #f8fafc;
-    border: 1px solid #e2e8f0;
-    border-radius: 8px;
-    padding: 14px 16px;
-    transition: border-color 0.2s, box-shadow 0.2s;
-}
-
-.fito-pro-feature-card:hover {
-    border-color: #c7d2fe;
-    box-shadow: 0 2px 8px rgba(99, 102, 241, 0.08);
-}
-
-.fito-pro-feature-card-header {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    margin-bottom: 8px;
-    color: #1e293b;
-    font-size: 13px;
-}
-
-.fito-pro-feature-card-header .dashicons {
-    font-size: 18px;
-    width: 18px;
-    height: 18px;
-    color: #4f46e5;
-}
-
-.fito-pro-feature-card p {
-    margin: 0;
-    font-size: 12px;
-    line-height: 1.5;
-    color: #64748b;
-}
-
-/* Badge Links */
-a.fito-badge-link {
-    text-decoration: none !important;
-    display: inline-flex;
-    align-items: center;
-    gap: 3px;
-    transition: all 0.2s ease;
-    cursor: pointer;
-}
-
-a.fito-badge-link:hover {
-    background: #4f46e5 !important;
-    color: #ffffff !important;
-    border-color: #4f46e5 !important;
-    box-shadow: 0 2px 6px rgba(79, 70, 229, 0.25);
-    transform: translateY(-1px);
-}
-
-/* Go Pro Page Layout */
-.fito-pro-wrap {
-    max-width: 1100px;
-    margin: 24px auto 60px 0;
-    scroll-behavior: smooth;
-}
-
-/* Hero Section */
-.fito-pro-hero {
-    background: linear-gradient(135deg, #1e1b4b 0%, #312e81 40%, #4338ca 100%);
+.fito-go-pro-hero {
+    background: linear-gradient(135deg, #1e1b4b 0%, #312e81 50%, #4338ca 100%);
+    border-radius: 12px;
+    padding: 40px;
     color: #ffffff;
-    border-radius: var(--fito-admin-radius);
-    padding: 48px 40px;
-    margin-bottom: 32px;
-    box-shadow: 0 10px 25px -5px rgba(30, 27, 75, 0.3), 0 8px 10px -6px rgba(30, 27, 75, 0.2);
+    box-shadow: 0 10px 25px -5px rgba(49, 46, 129, 0.25);
+    margin-bottom: 36px;
     position: relative;
     overflow: hidden;
 }
 
-.fito-pro-hero::after {
+.fito-go-pro-hero:after {
     content: "";
     position: absolute;
-    top: -50%;
-    right: -10%;
-    width: 400px;
-    height: 400px;
-    background: radial-gradient(circle, rgba(168, 85, 247, 0.25) 0%, transparent 70%);
+    top: -50px;
+    right: -50px;
+    width: 250px;
+    height: 250px;
+    background: radial-gradient(circle, rgba(124, 58, 237, 0.3) 0%, rgba(255, 255, 255, 0) 70%);
+    border-radius: 50%;
     pointer-events: none;
 }
 
-.fito-pro-hero-content {
-    position: relative;
-    z-index: 2;
-    max-width: 780px;
-}
-
-.fito-pro-pill {
-    display: inline-block;
+.fito-go-pro-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
     background: rgba(255, 255, 255, 0.15);
     backdrop-filter: blur(8px);
-    color: #e0e7ff;
-    padding: 4px 12px;
-    border-radius: 999px;
+    border: 1px solid rgba(255, 255, 255, 0.25);
+    color: #fde047;
     font-size: 11px;
     font-weight: 700;
-    text-transform: uppercase;
     letter-spacing: 0.08em;
-    margin-bottom: 16px;
-    border: 1px solid rgba(255, 255, 255, 0.2);
-}
-
-.fito-pro-hero-title {
-    font-size: 30px !important;
-    font-weight: 800 !important;
-    line-height: 1.25 !important;
-    color: #ffffff !important;
-    margin: 0 0 14px 0 !important;
-    letter-spacing: -0.02em;
-}
-
-.fito-pro-hero-subtitle {
-    font-size: 15px;
-    line-height: 1.6;
-    color: #c7d2fe;
-    margin: 0 0 28px 0;
-}
-
-.fito-pro-hero-actions {
-    display: flex;
-    align-items: center;
-    gap: 14px;
-    flex-wrap: wrap;
-}
-
-.fito-pro-btn {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
-    padding: 12px 24px;
-    border-radius: 8px;
-    font-size: 14px;
-    font-weight: 700;
-    text-decoration: none !important;
-    transition: all 0.2s ease;
-    cursor: pointer;
-}
-
-.fito-pro-btn--primary {
-    background: #6366f1;
-    color: #ffffff !important;
-    box-shadow: 0 4px 14px rgba(99, 102, 241, 0.4);
-    border: 1px solid #818cf8;
-}
-
-.fito-pro-btn--primary:hover {
-    background: #4f46e5;
-    transform: translateY(-2px);
-    box-shadow: 0 6px 20px rgba(99, 102, 241, 0.5);
-}
-
-.fito-pro-btn--ghost {
-    background: rgba(255, 255, 255, 0.1);
-    color: #ffffff !important;
-    border: 1px solid rgba(255, 255, 255, 0.25);
-    backdrop-filter: blur(4px);
-}
-
-.fito-pro-btn--ghost:hover {
-    background: rgba(255, 255, 255, 0.2);
-    border-color: rgba(255, 255, 255, 0.4);
-    transform: translateY(-1px);
-}
-
-.fito-pro-btn--lg {
-    padding: 14px 32px;
-    font-size: 16px;
-}
-
-.fito-pro-status-badge {
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    padding: 10px 18px;
-    border-radius: 8px;
-    font-size: 14px;
-    font-weight: 600;
-}
-
-.fito-pro-status-badge--active {
-    background: #065f46;
-    color: #d1fae5;
-    border: 1px solid #10b981;
-}
-
-.fito-pro-status-badge .dashicons {
-    font-size: 18px;
-    width: 18px;
-    height: 18px;
-}
-
-/* Highlights Grid */
-.fito-pro-highlights-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-    gap: 20px;
-    margin-bottom: 32px;
-}
-
-.fito-pro-highlight-card {
-    background: #ffffff;
-    border: 1px solid var(--fito-admin-border);
-    border-radius: var(--fito-admin-radius);
-    padding: 24px;
-    box-shadow: var(--fito-admin-shadow);
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
-}
-
-.fito-pro-highlight-card:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 8px 16px -4px rgba(0, 0, 0, 0.08);
-}
-
-.fito-pro-highlight-icon {
-    width: 44px;
-    height: 44px;
-    border-radius: 10px;
-    background: #e0e7ff;
-    color: #4f46e5;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    padding: 4px 12px;
+    border-radius: 9999px;
     margin-bottom: 16px;
 }
 
-.fito-pro-highlight-icon .dashicons {
-    font-size: 24px;
-    width: 24px;
-    height: 24px;
-}
-
-.fito-pro-highlight-card h3 {
-    font-size: 16px;
-    font-weight: 700;
-    color: var(--fito-admin-text);
-    margin: 0 0 8px 0;
-}
-
-.fito-pro-highlight-card p {
+.fito-go-pro-badge .dashicons {
     font-size: 13px;
-    line-height: 1.6;
-    color: var(--fito-admin-text-muted);
-    margin: 0;
+    width: 13px;
+    height: 13px;
+    line-height: 13px;
 }
 
-/* Sections */
-.fito-pro-section {
-    padding: 32px !important;
-    margin-bottom: 32px !important;
-}
-
-.fito-pro-section-header {
-    margin-bottom: 24px;
-    padding-bottom: 16px;
-    border-bottom: 1px solid var(--fito-admin-border);
-}
-
-.fito-pro-section-header h2 {
-    font-size: 20px;
+.fito-go-pro-hero h1 {
+    font-size: 28px;
     font-weight: 800;
-    color: var(--fito-admin-text);
+    color: #ffffff;
+    margin: 0 0 12px 0;
+    line-height: 1.25;
+}
+
+.fito-go-pro-lead {
+    font-size: 15px;
+    color: #e0e7ff;
+    line-height: 1.6;
+    max-width: 680px;
+    margin: 0 0 24px 0;
+}
+
+.fito-go-pro-hero-actions {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 16px;
+}
+
+.fito-btn-pro-cta {
+    background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%) !important;
+    border-color: #d97706 !important;
+    color: #111827 !important;
+    font-weight: 700 !important;
+    font-size: 15px !important;
+    padding: 10px 24px !important;
+    height: auto !important;
+    min-height: 44px !important;
+    line-height: 1.3 !important;
+    border-radius: 8px !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    vertical-align: middle !important;
+    gap: 8px !important;
+    box-shadow: 0 4px 14px rgba(245, 158, 11, 0.35) !important;
+    transition: transform 0.15s ease, box-shadow 0.15s ease !important;
+    text-shadow: none !important;
+}
+
+.wp-core-ui .button.fito-btn-pro-cta .dashicons,
+.fito-btn-pro-cta .dashicons {
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    width: 18px !important;
+    height: 18px !important;
+    font-size: 18px !important;
+    line-height: 1 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    vertical-align: middle !important;
+    position: static !important;
+    top: auto !important;
+}
+
+.wp-core-ui .button.fito-btn-pro-cta .dashicons:before,
+.fito-btn-pro-cta .dashicons:before {
+    font-size: 18px !important;
+    line-height: 1 !important;
+    width: 18px !important;
+    height: 18px !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    margin: 0 !important;
+    vertical-align: middle !important;
+}
+
+.fito-btn-pro-cta > span:not(.dashicons) {
+    display: inline-block !important;
+    line-height: 1.3 !important;
+    vertical-align: middle !important;
+}
+
+.fito-btn-pro-cta:hover,
+.fito-btn-pro-cta:focus {
+    background: linear-gradient(135deg, #fcd34d 0%, #fbbf24 100%) !important;
+    transform: translateY(-1px) !important;
+    box-shadow: 0 6px 18px rgba(245, 158, 11, 0.45) !important;
+    color: #111827 !important;
+}
+
+.fito-hero-trust-tag {
+    font-size: 12.5px;
+    color: #c7d2fe;
+}
+
+.fito-go-pro-section-title {
+    text-align: center;
+    margin-bottom: 24px;
+}
+
+.fito-go-pro-section-title h2 {
+    font-size: 22px;
+    font-weight: 700;
+    color: #111827;
     margin: 0 0 6px 0;
 }
 
-.fito-pro-section-header p {
+.fito-go-pro-section-title p {
+    font-size: 14px;
+    color: #6b7280;
+    margin: 0;
+}
+
+/* Feature Grid */
+.fito-go-pro-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 20px;
+    margin-bottom: 36px;
+}
+
+.fito-go-pro-card {
+    background: #ffffff;
+    border: 1px solid #e5e7eb;
+    border-radius: 10px;
+    padding: 24px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+    transition: transform 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.fito-go-pro-card:hover {
+    transform: translateY(-2px);
+    border-color: #c7d2fe;
+    box-shadow: 0 8px 20px -4px rgba(99, 102, 241, 0.12);
+}
+
+.fito-card-icon {
+    width: 44px;
+    height: 44px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 16px;
+}
+
+.fito-card-icon .dashicons {
+    font-size: 22px;
+    width: 22px;
+    height: 22px;
+}
+
+.fito-icon-purple { background: #f5f3ff; color: #7c3aed; }
+.fito-icon-blue   { background: #eff6ff; color: #2563eb; }
+.fito-icon-indigo { background: #eef2ff; color: #4f46e5; }
+.fito-icon-red    { background: #fef2f2; color: #dc2626; }
+.fito-icon-green  { background: #ecfdf5; color: #059669; }
+.fito-icon-amber  { background: #fffbeb; color: #d97706; }
+
+.fito-go-pro-card h3 {
+    font-size: 16px;
+    font-weight: 700;
+    color: #111827;
+    margin: 0 0 8px 0;
+}
+
+.fito-go-pro-card p {
     font-size: 13px;
-    color: var(--fito-admin-text-muted);
+    line-height: 1.55;
+    color: #4b5563;
     margin: 0;
 }
 
 /* Comparison Table */
-.fito-pro-comparison-table {
-    width: 100%;
-    border-collapse: separate;
-    border-spacing: 0;
-    font-size: 13px;
-    border: 1px solid var(--fito-admin-border);
-    border-radius: 8px;
+.fito-comparison-card {
+    background: #ffffff;
+    border: 1px solid #e5e7eb;
+    border-radius: 12px;
     overflow: hidden;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+    margin-bottom: 36px;
 }
 
-.fito-pro-comparison-table th,
-.fito-pro-comparison-table td {
-    padding: 14px 18px;
-    text-align: start;
-    border-bottom: 1px solid var(--fito-admin-border);
-    vertical-align: middle;
+.fito-comparison-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
 }
 
-.fito-pro-comparison-table th {
-    background: #f8fafc;
+.fito-comparison-table th {
+    padding: 16px 20px;
     font-size: 13px;
     font-weight: 700;
-    color: #334155;
-    text-transform: uppercase;
-    letter-spacing: 0.04em;
+    text-align: left;
+    border-bottom: 2px solid #e5e7eb;
 }
 
-.fito-pro-comparison-table tbody tr:last-child td {
-    border-bottom: none;
+.fito-th-feature { width: 50%; color: #374151; }
+.fito-th-free { width: 25%; color: #6b7280; text-align: center !important; }
+.fito-th-pro {
+    width: 25%;
+    background: #faf5ff;
+    color: #6b21a8;
+    text-align: center !important;
+    border-left: 1px solid #f3e8ff;
 }
 
-.fito-pro-comparison-table tbody tr:nth-child(even) {
-    background: #fafbfd;
-}
-
-.fito-pro-comparison-table tbody tr:hover {
-    background: #f1f5f9;
-}
-
-.fito-col-feature {
-    width: 45%;
-}
-
-.fito-col-free {
-    width: 27%;
-}
-
-.fito-col-pro {
-    width: 28%;
-    background: #f5f3ff !important;
-}
-
-.fito-pro-comparison-table tbody td:nth-child(3) {
-    background: rgba(245, 243, 255, 0.6);
-}
-
-.fito-table-desc {
-    display: block;
-    font-size: 12px;
-    font-weight: 400;
-    color: var(--fito-admin-text-muted);
-    margin-top: 3px;
-}
-
-.fito-check {
+.fito-table-pro-heading {
     display: inline-flex;
     align-items: center;
-    justify-content: center;
-    width: 20px;
-    height: 20px;
-    border-radius: 50%;
-    font-size: 12px;
-    margin-inline-end: 6px;
-    vertical-align: middle;
-}
-
-.fito-check--yes {
-    background: #dcfce7;
-    color: #15803d;
-    font-weight: bold;
-}
-
-.fito-check--no {
-    background: #fee2e2;
-    color: #b91c1c;
-    font-weight: bold;
-}
-
-.fito-check--partial {
-    background: #fef3c7;
-    color: #d97706;
-}
-
-.fito-table-section-heading th {
-    background: #f1f5f9 !important;
-    color: #475569 !important;
-    font-size: 11px !important;
-    font-weight: 700 !important;
-    text-transform: uppercase !important;
-    letter-spacing: 0.06em !important;
-    padding: 10px 16px !important;
-    border-top: 1px solid var(--fito-admin-border) !important;
-    border-bottom: 1px solid var(--fito-admin-border) !important;
-    text-align: start !important;
-}
-
-.fito-pro-comparison-table tfoot td {
-    padding: 18px;
-    background: #f8fafc;
-    border-top: 2px solid var(--fito-admin-border);
-}
-
-.fito-current-tier-text {
-    font-weight: 600;
-    color: var(--fito-admin-text-muted);
-    font-size: 13px;
-}
-
-.fito-table-buy-btn {
-    font-size: 13px !important;
-    padding: 6px 18px !important;
-    height: auto !important;
-    line-height: 24px !important;
-    background: #6366f1 !important;
-    border-color: #4f46e5 !important;
-}
-
-.fito-table-buy-btn:hover {
-    background: #4f46e5 !important;
-}
-
-.fito-pro-active-badge {
-    display: inline-block;
-    background: #dcfce7;
-    color: #15803d;
-    font-weight: 700;
-    padding: 6px 14px;
-    border-radius: 6px;
-    font-size: 12px;
-}
-
-/* Detailed Features List */
-.fito-pro-details-list {
-    display: flex;
-    flex-direction: column;
-    gap: 20px;
-}
-
-.fito-pro-detail-card {
-    background: #ffffff;
-    border: 1px solid var(--fito-admin-border);
-    border-radius: var(--fito-admin-radius);
-    padding: 24px;
-    transition: all 0.25s ease;
-    scroll-margin-top: 50px;
-}
-
-.fito-pro-detail-card:target {
-    border-color: #6366f1;
-    box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.25), 0 8px 20px rgba(99, 102, 241, 0.12);
-    animation: fitoHighlightPulse 2s ease-out;
-}
-
-@keyframes fitoHighlightPulse {
-    0% {
-        background-color: #eef2ff;
-    }
-    100% {
-        background-color: #ffffff;
-    }
-}
-
-.fito-pro-detail-header {
-    display: flex;
-    align-items: center;
-    gap: 14px;
-    margin-bottom: 16px;
-    padding-bottom: 12px;
-    border-bottom: 1px solid #f1f5f9;
-}
-
-.fito-pro-detail-header .dashicons {
-    font-size: 26px;
-    width: 26px;
-    height: 26px;
-    color: #4f46e5;
-    background: #eef2ff;
-    padding: 8px;
-    border-radius: 8px;
-    box-sizing: content-box;
-}
-
-.fito-pro-detail-header h3 {
-    font-size: 17px;
-    font-weight: 700;
-    color: var(--fito-admin-text);
-    margin: 0 0 4px 0;
-}
-
-.fito-pro-detail-body p {
-    font-size: 13px;
-    line-height: 1.65;
-    color: #334155;
-    margin: 0 0 10px 0;
-}
-
-.fito-pro-detail-body p:last-child {
-    margin-bottom: 0;
-}
-
-.fito-pro-detail-body strong {
-    color: var(--fito-admin-text);
-}
-
-/* Bottom CTA Banner */
-.fito-pro-bottom-cta {
-    background: #ffffff;
-    border: 2px dashed #c7d2fe;
-    border-radius: var(--fito-admin-radius);
-    padding: 40px;
-    text-align: center;
-    box-shadow: var(--fito-admin-shadow);
-}
-
-.fito-pro-bottom-cta h2 {
-    font-size: 22px;
+    gap: 4px;
     font-weight: 800;
-    color: var(--fito-admin-text);
-    margin: 0 0 8px 0;
+    color: #7c3aed;
 }
 
-.fito-pro-bottom-cta p {
-    font-size: 14px;
-    color: var(--fito-admin-text-muted);
-    max-width: 580px;
-    margin: 0 auto 24px auto;
-}
-
-.fito-pro-bottom-cta-actions {
-    display: flex;
-    justify-content: center;
-    margin-bottom: 16px;
-}
-
-.fito-pro-guarantee-note {
-    font-size: 12px !important;
-    color: #64748b !important;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 6px;
-    margin: 0 !important;
-}
-
-.fito-pro-guarantee-note .dashicons {
+.fito-table-pro-heading .dashicons {
+    color: #f59e0b;
     font-size: 16px;
     width: 16px;
     height: 16px;
-    color: #10b981;
 }
 
+.fito-comparison-table td {
+    padding: 14px 20px;
+    border-bottom: 1px solid #f3f4f6;
+    vertical-align: middle;
+}
 
+.fito-comparison-table td:nth-child(2) {
+    text-align: center;
+    color: #4b5563;
+}
+
+.fito-td-pro {
+    background: #faf5ff;
+    text-align: center !important;
+    border-left: 1px solid #f3e8ff;
+    color: #581c87;
+}
+
+.fito-row-sub {
+    display: block;
+    font-size: 11.5px;
+    color: #6b7280;
+    font-weight: 400;
+    margin-top: 2px;
+}
+
+.fito-check {
+    color: #10b981;
+    font-weight: 800;
+    font-size: 15px;
+}
+
+.fito-cross {
+    color: #9ca3af;
+    font-size: 14px;
+}
+
+.fito-highlight-row {
+    background-color: #fdfcff;
+}
+
+/* Bottom CTA Card */
+.fito-go-pro-cta-card {
+    background: #111827;
+    border-radius: 12px;
+    padding: 36px 40px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 20px;
+    color: #ffffff;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+}
+
+.fito-cta-content h2 {
+    color: #ffffff;
+    font-size: 22px;
+    font-weight: 800;
+    margin: 0 0 6px 0;
+}
+
+.fito-cta-content p {
+    color: #9ca3af;
+    font-size: 14px;
+    margin: 0;
+}
 

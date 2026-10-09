@@ -9,19 +9,28 @@ class Fito_Tryon_OpenRouter {
     public const API_BASE = 'https://openrouter.ai/api/v1';
     public const CACHE_KEY_MODELS = 'fito_tryon_live_models_cache';
 
+    public function __construct() {
+        add_filter('fito_tryon_build_category_prompt', [$this, 'filter_build_category_prompt'], 10, 2);
+    }
+
+    /**
+     * Filter callback to synthesize category prompt instructions.
+     *
+     * @param string $default_prompt
+     * @param array<string, mixed> $params
+     * @return string
+     */
+    public function filter_build_category_prompt(string $default_prompt, array $params): string {
+        $prompt = $this->build_category_prompt($params);
+        return !empty($prompt) ? $prompt : $default_prompt;
+    }
+
     public function get_api_key(): string {
         return trim((string) get_option('fito_tryon_openrouter_api_key', ''));
     }
 
     public function get_primary_model(): string {
         return get_option('fito_tryon_primary_model', 'google/gemini-2.5-flash-image');
-    }
-
-    public function get_fallback_model(): string {
-        if (!Fito_Tryon::is_pro_active()) {
-            return '';
-        }
-        return get_option('fito_tryon_fallback_model', 'black-forest-labs/flux.2-klein-4b');
     }
 
     public function get_timeout(): int {
@@ -307,16 +316,13 @@ class Fito_Tryon_OpenRouter {
         }
 
         $primary_model = $this->get_primary_model();
-        $fallback_model = $this->get_fallback_model();
 
         $start_time = microtime(true);
         $result = $this->call_openrouter($primary_model, $params, $api_key);
 
-        // If primary model failed and fallback is defined and different, attempt fallback
-        // Skip fallback if primary model failure was due to content moderation/safety policy
-        $is_moderation_fail = !empty($result['is_moderated']) || (isset($result['message']) && str_contains(strtolower($result['message']), 'moderation'));
-        if (!$result['success'] && !$is_moderation_fail && !empty($fallback_model) && $fallback_model !== $primary_model) {
-            $result = $this->call_openrouter($fallback_model, $params, $api_key, true);
+        // Allow extensions (e.g. Pro Addon) to handle failover model routing if primary attempt fails
+        if (!$result['success']) {
+            $result = (array) apply_filters('fito_tryon_handle_generation_failover', $result, $params, 'openrouter', $api_key, $this);
         }
 
         $duration = round(microtime(true) - $start_time, 2);
@@ -325,7 +331,7 @@ class Fito_Tryon_OpenRouter {
         return $result;
     }
 
-    private function call_openrouter(string $model, array $params, string $api_key, bool $is_fallback = false): array {
+    public function call_openrouter(string $model, array $params, string $api_key, bool $is_fallback = false): array {
         $prompt = $this->build_category_prompt($params);
         $user_image_b64 = $this->image_to_base64($params['user_image_path'] ?? '');
         $product_image_url = $params['product_image_url'] ?? '';
@@ -742,11 +748,6 @@ class Fito_Tryon_OpenRouter {
         $configured_prompts = get_option('fito_tryon_prompts_config');
         if (!is_array($configured_prompts) || empty($configured_prompts)) {
             $configured_prompts = self::get_default_prompts();
-        } elseif (!Fito_Tryon::is_pro_active()) {
-            $default_ids = array_column(self::get_default_prompts(), 'id');
-            $configured_prompts = array_values(array_filter($configured_prompts, function ($p) use ($default_ids) {
-                return !empty($p['is_system']) || in_array($p['id'] ?? '', $default_ids, true);
-            }));
         }
 
         $selected_prompt_template = '';
@@ -882,87 +883,11 @@ class Fito_Tryon_OpenRouter {
 
 
     public function resolve_image_base64(string $path_or_url, int $attachment_id = 0): string {
-        // 1. Try attachment ID
-        if ($attachment_id > 0) {
-            $file = get_attached_file($attachment_id);
-            if ($file && file_exists($file)) {
-                return $this->image_to_base64($file);
-            }
-        }
-
-        // 2. Try direct local file path
-        if (!empty($path_or_url) && file_exists($path_or_url)) {
-            return $this->image_to_base64($path_or_url);
-        }
-
-        // 3. Try mapping from WordPress uploads URL to local filesystem path
-        if (!empty($path_or_url) && str_starts_with($path_or_url, 'http')) {
-            $upload_dir = wp_upload_dir();
-            if (!empty($upload_dir['baseurl']) && str_starts_with($path_or_url, $upload_dir['baseurl'])) {
-                $mapped = str_replace($upload_dir['baseurl'], $upload_dir['basedir'], $path_or_url);
-                if (file_exists($mapped)) {
-                    return $this->image_to_base64($mapped);
-                }
-            }
-
-            // 4. Validate URL against SSRF before remote fetching
-            $validated_url = wp_http_validate_url($path_or_url);
-            if ($validated_url) {
-                $host = wp_parse_url($validated_url, PHP_URL_HOST);
-                $is_private_ip = false;
-                if ($host && filter_var($host, FILTER_VALIDATE_IP)) {
-                    $is_private_ip = !filter_var($host, FILTER_VALIDATE_IP, FILTER_FLAG_NO_PRIV_RANGE | FILTER_FLAG_NO_RES_RANGE);
-                }
-                if ($host === 'localhost' && !in_array(wp_get_environment_type(), ['local', 'development'], true)) {
-                    $is_private_ip = true;
-                }
-
-                if (!$is_private_ip) {
-                    $sslverify = (bool) apply_filters('fito_tryon_sslverify', !in_array(wp_get_environment_type(), ['local', 'development'], true));
-                    $resp = wp_remote_get($validated_url, ['timeout' => 15, 'sslverify' => $sslverify]);
-                    if (!is_wp_error($resp) && wp_remote_retrieve_response_code($resp) === 200) {
-                        $bytes = wp_remote_retrieve_body($resp);
-                        $content_type = wp_remote_retrieve_header($resp, 'content-type') ?: 'image/jpeg';
-                        if (str_contains($content_type, ';')) {
-                            $content_type = trim(explode(';', $content_type)[0]);
-                        }
-                        if (str_starts_with($content_type, 'image/')) {
-                            return 'data:' . $content_type . ';base64,' . base64_encode($bytes);
-                        }
-                    }
-                }
-            }
-        }
-
-        // 5. Already a data URL
-        if (str_starts_with($path_or_url, 'data:image')) {
-            return $path_or_url;
-        }
-
-        return '';
+        return Fito_Tryon_Storage::resolve_image_base64($path_or_url, $attachment_id);
     }
 
     public function image_to_base64(string $path): string {
-        if (!file_exists($path)) {
-            return '';
-        }
-        $mime = 'image/jpeg';
-        if (function_exists('mime_content_type')) {
-            $detected = @mime_content_type($path);
-            if ($detected) {
-                $mime = $detected;
-            }
-        } elseif (function_exists('wp_check_filetype')) {
-            $ft = wp_check_filetype($path);
-            if (!empty($ft['type'])) {
-                $mime = $ft['type'];
-            }
-        }
-        $data = file_get_contents($path);
-        if ($data === false) {
-            return '';
-        }
-        return 'data:' . $mime . ';base64,' . base64_encode($data);
+        return Fito_Tryon_Storage::image_to_base64($path);
     }
 
     private function estimate_cost(string $model, int $prompt_tok, int $comp_tok): float {

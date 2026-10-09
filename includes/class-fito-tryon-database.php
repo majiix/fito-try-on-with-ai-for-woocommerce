@@ -151,42 +151,12 @@ class Fito_Tryon_Database {
         return $result !== false;
     }
 
-    public function save_job_to_account(string $token, int $user_id): bool {
-        global $wpdb;
-        $table = $wpdb->prefix . 'fito_tryon_jobs';
-        // Prevent IDOR by ensuring jobs can only be claimed if currently unassigned (user_id = 0) or already owned by this user
-        $result = $wpdb->query(
-            $wpdb->prepare(
-                "UPDATE {$table} SET user_id = %d, is_saved_to_account = 1, updated_at = %s 
-                 WHERE job_token = %s AND (user_id = 0 OR user_id = %d)",
-                $user_id,
-                current_time('mysql'),
-                $token,
-                $user_id
-            )
-        );
-        return $result !== false && $result > 0;
-    }
-
-    public function get_user_jobs(int $user_id, int $limit = 20): array {
-        global $wpdb;
-        $table = $wpdb->prefix . 'fito_tryon_jobs';
-        return $wpdb->get_results(
-            $wpdb->prepare(
-                "SELECT * FROM {$table} WHERE user_id = %d AND status = 'completed' AND result_image_url != '' ORDER BY id DESC LIMIT %d",
-                $user_id,
-                $limit
-            )
-        );
-    }
-
     public function add_log(array $data): int {
         if (get_option('fito_tryon_log_retention', '30') === 'none') {
             return 0;
         }
 
         global $wpdb;
-        $save_images = Fito_Tryon::is_pro_active() && (get_option('fito_tryon_log_images', 'no') === 'yes');
 
         $insert_data = [
             'job_id'            => isset($data['job_id']) ? absint($data['job_id']) : 0,
@@ -200,8 +170,8 @@ class Fito_Tryon_Database {
             'prompt_tokens'     => isset($data['prompt_tokens']) ? absint($data['prompt_tokens']) : 0,
             'completion_tokens' => isset($data['completion_tokens']) ? absint($data['completion_tokens']) : 0,
             'cost_estimate'     => isset($data['cost_estimate']) ? floatval($data['cost_estimate']) : 0.0000,
-            'user_image_url'    => ($save_images && !empty($data['user_image_url'])) ? esc_url_raw($data['user_image_url']) : '',
-            'result_image_url'  => ($save_images && !empty($data['result_image_url'])) ? esc_url_raw($data['result_image_url']) : '',
+            'user_image_url'    => '',
+            'result_image_url'  => '',
             'error_message'     => isset($data['error_message']) ? sanitize_textarea_field($data['error_message']) : null,
             'prompt_text'       => isset($data['prompt_text']) ? (is_string($data['prompt_text']) ? trim($data['prompt_text']) : sanitize_textarea_field((string) $data['prompt_text'])) : null,
             'response_text'     => !empty($data['response_text'])
@@ -209,6 +179,15 @@ class Fito_Tryon_Database {
                 : (!empty($data['error_message']) ? wp_json_encode(['error' => $data['error_message']], JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES) : null),
             'created_at'        => current_time('mysql'),
         ];
+
+        /**
+         * Filter audit log row before insertion into database.
+         *
+         * @param array<string, mixed> $insert_data Prepared log row.
+         * @param array<string, mixed> $data Raw log data.
+         */
+        $insert_data = (array) apply_filters('fito_tryon_log_insert_data', $insert_data, $data);
+
         $wpdb->insert($wpdb->prefix . 'fito_tryon_logs', $insert_data);
         return (int) $wpdb->insert_id;
     }
@@ -502,7 +481,9 @@ class Fito_Tryon_Database {
     public function delete_unsaved_jobs(): int {
         global $wpdb;
         $table = $wpdb->prefix . 'fito_tryon_jobs';
-        $deleted = $wpdb->query("DELETE FROM {$table} WHERE is_saved_to_account = 0");
+        $where = (string) apply_filters('fito_tryon_purge_jobs_where', '1=1');
+        // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Filtered where condition for job cleanup.
+        $deleted = $wpdb->query("DELETE FROM {$table} WHERE {$where}");
         return $deleted !== false ? (int) $deleted : 0;
     }
 

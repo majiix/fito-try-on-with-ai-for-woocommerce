@@ -30,8 +30,6 @@
             this.getOrCreateDeviceId();
             this.bindEvents();
             this.watchWooCommerceVariations();
-            this.initGalleryButtons();
-            this.initCustomImageButtons();
             this.initSliderEvents();
             this.preventAccidentalDrop();
         },
@@ -261,12 +259,6 @@
                 e.preventDefault();
                 self.shareResult();
             });
-
-
-            $(document).on('click', '#fito-btn-save-account', function (e) {
-                e.preventDefault();
-                self.saveToAccount();
-            });
         },
 
         preventAccidentalDrop: function () {
@@ -332,149 +324,6 @@
                 self.currentImageId = 0;
                 $('#fito-variation-tryon-wrapper').slideUp(150);
             });
-        },
-
-        initGalleryButtons: function () {
-            if (!fitoData || fitoData.isProductAllowed === false || fitoData.galleryButtons !== 'yes') {
-                return;
-            }
-            const self = this;
-            const $gallery = $('.woocommerce-product-gallery');
-            if (!$gallery.length) {
-                return;
-            }
-
-            const prodId = self.currentProductId || parseInt($('.fito-tryon-btn').first().data('product-id'), 10) || 0;
-            const prodTitle = self.currentProductTitle || $('.fito-tryon-btn').first().data('product-title') || '';
-            const btnLabel = (fitoData.i18n && fitoData.i18n.tryOnGallery) || 'Try On This Look';
-
-            $gallery.find('.woocommerce-product-gallery__image').each(function () {
-                const $slide = $(this);
-                if ($slide.find('.fito-tryon-btn--gallery').length) {
-                    return;
-                }
-                const $img = $slide.find('img');
-                const imgSrc = $img.attr('data-large_image') || $img.attr('src') || '';
-                if (!imgSrc) {
-                    return;
-                }
-
-                $slide.css('position', 'relative');
-                const $btn = $('<button type="button" class="fito-tryon-btn fito-tryon-btn--gallery">' +
-                    '<svg class="fito-icon" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">' +
-                    '<path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z"/><path d="M3 6h18"/><path d="M16 10a4 4 0 0 1-8 0"/>' +
-                    '</svg><span>' + btnLabel + '</span></button>');
-
-                $btn.attr('data-product-id', prodId)
-                    .attr('data-product-title', prodTitle)
-                    .attr('data-product-image', imgSrc);
-                $slide.append($btn);
-            });
-        },
-
-        initCustomImageButtons: function () {
-            if (!fitoData || fitoData.isProductAllowed === false) {
-                return;
-            }
-            const isSingleProduct = $('body').hasClass('single-product') || $('.single-product, form.cart, .woocommerce-product-gallery').length > 0;
-            if (!isSingleProduct) {
-                return;
-            }
-
-            const rawSelectors = fitoData.customImageSelectors;
-            if (!rawSelectors || typeof rawSelectors !== 'string' || !rawSelectors.trim()) {
-                return;
-            }
-
-            const self = this;
-            const selectors = rawSelectors.split(/[\r\n,]+/)
-                .map(function (s) { return s.trim(); })
-                .filter(function (s) { return s.length > 0; });
-
-            if (!selectors.length) {
-                return;
-            }
-
-            const combinedSelector = selectors.join(', ');
-            const btnLabel = (fitoData.i18n && fitoData.i18n.tryOnImage) || 'Try On This Look';
-
-            const attachBadges = function () {
-                const prodId = self.currentProductId || parseInt($('.fito-tryon-btn--single, .fito-tryon-btn').first().data('product-id'), 10) || parseInt($('[name="add-to-cart"]').val(), 10) || 0;
-                const prodTitle = self.currentProductTitle || $('.fito-tryon-btn--single, .fito-tryon-btn').first().data('product-title') || $('h1.product_title, .product_title').first().text().trim() || '';
-
-                let $elements;
-                try {
-                    $elements = $(combinedSelector);
-                } catch (err) {
-                    return;
-                }
-
-                $elements.each(function () {
-                    const $el = $(this);
-                    if ($el.hasClass('fito-has-tryon-badge') || $el.closest('.fito-modal, .fito-modal-dialog, #fito-tryon-modal').length) {
-                        return;
-                    }
-
-                    let $img = $el.is('img') ? $el : $el.find('img').first();
-                    if (!$img.length) {
-                        return;
-                    }
-
-                    const imgSrc = $img.attr('data-large_image') || $img.attr('data-src') || $img.attr('src') || '';
-                    if (!imgSrc || imgSrc.indexOf('data:image/svg') === 0) {
-                        return;
-                    }
-
-                    $el.addClass('fito-has-tryon-badge');
-
-                    let $container = $el;
-                    if ($el.is('img')) {
-                        let $parent = $el.parent();
-                        if ($parent.hasClass('fito-custom-image-wrapper')) {
-                            $container = $parent;
-                        } else if ($parent.children().length === 1 && !$parent.is('body, html')) {
-                            $container = $parent;
-                            $container.addClass('fito-custom-image-wrapper');
-                        } else {
-                            $el.wrap('<div class="fito-custom-image-wrapper"></div>');
-                            $container = $el.parent();
-                        }
-                    } else {
-                        $container.addClass('fito-custom-image-wrapper');
-                    }
-
-                    if ($container.find('.fito-tryon-btn--overlay').length) {
-                        return;
-                    }
-
-                    const $btn = $('<button type="button" class="fito-tryon-btn fito-tryon-btn--overlay" aria-label="' + btnLabel + '">' +
-                        '<span class="fito-btn-icon-spark">' +
-                        '<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">' +
-                        '<path d="m12 3-1.9 5.8a2 2 0 0 1-1.3 1.3L3 12l5.8 1.9a2 2 0 0 1 1.3 1.3L12 21l1.9-5.8a2 2 0 0 1 1.3-1.3L21 12l-5.8-1.9a2 2 0 0 1-1.3-1.3Z"/>' +
-                        '</svg>' +
-                        '</span>' +
-                        '<span class="fito-overlay-text">' + btnLabel + '</span>' +
-                        '</button>');
-
-                    $btn.attr('data-product-id', prodId)
-                        .attr('data-product-title', prodTitle)
-                        .attr('data-product-image', imgSrc);
-
-                    $container.append($btn);
-                });
-            };
-
-            attachBadges();
-
-            if (window.MutationObserver) {
-                const observer = new MutationObserver(function () {
-                    attachBadges();
-                });
-                const targetNode = document.querySelector('.single-product, .site-main, main, #main, .product, body');
-                if (targetNode) {
-                    observer.observe(targetNode, { childList: true, subtree: true });
-                }
-            }
         },
 
         openModal: function () {
@@ -552,11 +401,6 @@
             $('#fito-crop-image').attr('src', '');
             $('#fito-crop-preview-wrapper').css('aspect-ratio', '');
             $('#fito-slider-stage, #fito-slider-container').css('aspect-ratio', '');
-
-            const saveLabel = (fitoData.i18n && fitoData.i18n.saveAccount) || 'Save to My Account';
-            $('#fito-save-text').text(saveLabel);
-            $('#fito-btn-save-account').prop('disabled', false);
-
             this.validateSubmitButton();
 
             if (window.fitoTryonData && window.fitoTryonData.requireLogin && !window.fitoTryonData.isUserLoggedIn) {
@@ -1028,40 +872,6 @@
             }
         },
 
-        saveToAccount: function () {
-            const self = this;
-            if (!this.currentJobToken) return;
-
-            const $btn = $('#fito-btn-save-account');
-            $btn.prop('disabled', true);
-
-            $.ajax({
-                url: fitoData.restUrl + 'save-account',
-                type: 'POST',
-                data: {
-                    token: self.currentJobToken
-                },
-                headers: {
-                    'X-WP-Nonce': fitoData.nonce
-                },
-                success: function (res) {
-                    if (res && res.success) {
-                        const savedLabel = (fitoData.i18n && fitoData.i18n.saved) || 'Saved to account';
-                        $('#fito-save-text').text(savedLabel);
-                        $btn.prop('disabled', true);
-                    } else {
-                        $btn.prop('disabled', false);
-                        alert(res && res.message ? res.message : (fitoData.i18n && fitoData.i18n.genericError));
-                    }
-                },
-                error: function (xhr) {
-                    $btn.prop('disabled', false);
-                    const errMsg = (xhr.responseJSON && xhr.responseJSON.message) || (fitoData.i18n && fitoData.i18n.genericError);
-                    alert(errMsg);
-                }
-            });
-        },
-
         toggleFullscreen: function () {
             const stage = document.getElementById('fito-slider-stage');
             if (!stage) return;
@@ -1114,5 +924,7 @@
     $(document).ready(function () {
         FitoApp.init();
     });
+
+    window.FitoTryon = FitoApp;
 
 })(jQuery);

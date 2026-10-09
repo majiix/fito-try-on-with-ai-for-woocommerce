@@ -51,21 +51,6 @@ class Fito_Tryon_Rest {
                 ],
             ]);
 
-            register_rest_route($ns, '/save-account', [
-                'methods'             => 'POST',
-                'callback'            => [$this, 'handle_save_account'],
-                'permission_callback' => function (WP_REST_Request $request) {
-                    return is_user_logged_in() && $this->check_frontend_permission($request);
-                },
-                'args'                => [
-                    'token' => [
-                        'required'          => true,
-                        'type'              => 'string',
-                        'sanitize_callback' => 'sanitize_text_field',
-                    ],
-                ],
-            ]);
-
             register_rest_route($ns, '/test-connection', [
                 'methods'             => 'POST',
                 'callback'            => [$this, 'handle_test_connection'],
@@ -81,12 +66,6 @@ class Fito_Tryon_Rest {
             register_rest_route($ns, '/logs', [
                 'methods'             => 'DELETE',
                 'callback'            => [$this, 'handle_delete_logs'],
-                'permission_callback' => [$this, 'check_admin_permission'],
-            ]);
-
-            register_rest_route($ns, '/preview-watermark', [
-                'methods'             => 'POST',
-                'callback'            => [$this, 'handle_preview_watermark'],
                 'permission_callback' => [$this, 'check_admin_permission'],
             ]);
 
@@ -252,8 +231,8 @@ class Fito_Tryon_Rest {
             'model_used'        => $model,
         ]);
 
-        // 6. Check Cache
-        $cached_result = $this->plugin->cache->get($user_img_data['path'], $product_id, $variation_id, $model);
+        // 6. Check Cache via Filter (handled by caching addons)
+        $cached_result = apply_filters('fito_tryon_get_cached_result', null, $user_img_data['path'], $product_id, $variation_id, $model);
         if (!empty($cached_result)) {
             $this->plugin->db->update_job_by_token($token, [
                 'status'           => 'completed',
@@ -345,7 +324,7 @@ class Fito_Tryon_Rest {
             $final_url = $saved_result['url'];
             $final_path = $saved_result['path'] ?? '';
 
-            $this->plugin->cache->set($user_img_data['path'], $product_id, $variation_id, $ai_response['model'], $final_url);
+            do_action('fito_tryon_set_cached_result', $user_img_data['path'], $product_id, $variation_id, $ai_response['model'], $final_url);
 
             $this->plugin->db->update_job_by_token($token, [
                 'status'            => 'completed',
@@ -540,58 +519,39 @@ class Fito_Tryon_Rest {
         return new WP_REST_Response(['success' => true], 200);
     }
 
-    public function handle_save_account(WP_REST_Request $request): WP_REST_Response {
-        if (!Fito_Tryon::is_pro_active() || get_option('fito_tryon_save_to_account', 'yes') !== 'yes') {
-            return new WP_REST_Response([
-                'success' => false,
-                'message' => __('Saving try-on results to customer accounts requires the Pro Addon.', 'fito-try-on-with-ai-for-woocommerce'),
-            ], 403);
-        }
-
-        $token = sanitize_text_field($request->get_param('token'));
-        $user_id = get_current_user_id();
-
-        if (empty($token) || !$user_id) {
-            return new WP_REST_Response(['success' => false, 'message' => __('Invalid parameters.', 'fito-try-on-with-ai-for-woocommerce')], 400);
-        }
-
-        $saved = $this->plugin->db->save_job_to_account($token, $user_id);
-        return new WP_REST_Response([
-            'success' => $saved,
-            'message' => $saved ? __('Saved to your account!', 'fito-try-on-with-ai-for-woocommerce') : __('Failed to save try-on.', 'fito-try-on-with-ai-for-woocommerce'),
-        ], $saved ? 200 : 500);
-    }
-
     public function handle_test_connection(WP_REST_Request $request): WP_REST_Response {
         $provider = sanitize_key((string) ($request->get_param('provider') ?: 'openrouter'));
         $api_key = $request->get_param('api_key');
 
-        if (!Fito_Tryon::is_pro_active() && in_array($provider, ['gemini', 'openai'], true)) {
+        $allowed = $this->plugin->get_allowed_providers();
+        if (!in_array($provider, $allowed, true)) {
             return new WP_REST_Response([
                 'success' => false,
-                'message' => __('Google Gemini and OpenAI direct integrations require Fito Try-On Pro.', 'fito-try-on-with-ai-for-woocommerce'),
-            ], 403);
+                'message' => __('Invalid or unsupported AI provider specified.', 'fito-try-on-with-ai-for-woocommerce'),
+            ], 400);
         }
 
-        if ($provider === 'gemini') {
-            $result = $this->plugin->gemini->test_connection($api_key);
-        } elseif ($provider === 'openai') {
-            $result = $this->plugin->openai->test_connection($api_key);
-        } else {
+        if ($provider === 'openrouter') {
             $result = $this->plugin->openrouter->test_connection($api_key);
+        } else {
+            $result = apply_filters('fito_tryon_test_connection', [
+                'success' => false,
+                'message' => __('Provider connection testing is not available.', 'fito-try-on-with-ai-for-woocommerce'),
+            ], $provider, $api_key);
         }
 
-        return new WP_REST_Response($result, $result['success'] ? 200 : 400);
+        return new WP_REST_Response($result, !empty($result['success']) ? 200 : 400);
     }
 
     public function handle_get_models(WP_REST_Request $request): WP_REST_Response {
         $provider = sanitize_key((string) ($request->get_param('provider') ?: 'openrouter'));
 
-        if (!Fito_Tryon::is_pro_active() && in_array($provider, ['gemini', 'openai'], true)) {
+        $allowed = $this->plugin->get_allowed_providers();
+        if (!in_array($provider, $allowed, true)) {
             return new WP_REST_Response([
                 'success' => false,
-                'message' => __('Google Gemini and OpenAI direct integrations require Fito Try-On Pro.', 'fito-try-on-with-ai-for-woocommerce'),
-            ], 403);
+                'message' => __('Invalid or unsupported AI provider specified.', 'fito-try-on-with-ai-for-woocommerce'),
+            ], 400);
         }
 
         $force = $request->get_param('refresh') === '1' || $request->get_param('force') === '1';
@@ -600,15 +560,12 @@ class Fito_Tryon_Rest {
             $api_key = sanitize_text_field(trim((string) $api_key));
         }
 
-        if ($provider === 'gemini') {
-            $was_cached = !$force && empty($api_key) && !empty($this->plugin->gemini->get_cached_models());
-            $models = $this->plugin->gemini->fetch_live_models($api_key, $force);
-        } elseif ($provider === 'openai') {
-            $was_cached = !$force && empty($api_key) && !empty($this->plugin->openai->get_cached_models());
-            $models = $this->plugin->openai->fetch_live_models($api_key, $force);
-        } else {
+        if ($provider === 'openrouter') {
             $was_cached = !$force && !empty($this->plugin->openrouter->get_cached_models());
             $models = $this->plugin->openrouter->fetch_live_models($force);
+        } else {
+            $was_cached = false;
+            $models = (array) apply_filters('fito_tryon_fetch_models', [], $provider, $api_key, $force);
         }
 
         return new WP_REST_Response([
@@ -633,34 +590,5 @@ class Fito_Tryon_Rest {
             'success' => $success,
             'message' => $success ? __('Logs updated successfully.', 'fito-try-on-with-ai-for-woocommerce') : __('Failed to update logs.', 'fito-try-on-with-ai-for-woocommerce'),
         ], $success ? 200 : 500);
-    }
-
-    public function handle_preview_watermark(WP_REST_Request $request): WP_REST_Response {
-        if (!Fito_Tryon::is_pro_active()) {
-            return new WP_REST_Response([
-                'success' => false,
-                'message' => __('Watermark customization is a Pro feature.', 'fito-try-on-with-ai-for-woocommerce'),
-            ], 403);
-        }
-
-        $enabled        = $request->get_param('enabled') !== 'false' && $request->get_param('enabled') !== false && !empty($request->get_param('enabled'));
-        $watermark_id   = absint($request->get_param('watermark_image_id'));
-        $watermark_text = sanitize_text_field(wp_unslash((string) $request->get_param('watermark_text')));
-        $position       = sanitize_key((string) $request->get_param('watermark_pos'));
-        $opacity        = max(10, min(100, absint($request->get_param('watermark_opacity'))));
-
-        $res = $this->plugin->storage->generate_watermark_preview([
-            'enabled'            => $enabled,
-            'watermark_image_id' => $watermark_id,
-            'watermark_text'     => $watermark_text,
-            'watermark_pos'      => $position ?: 'bottom_right',
-            'watermark_opacity'  => $opacity ?: 80,
-        ]);
-
-        return new WP_REST_Response([
-            'success' => true,
-            'applied' => $res['applied'] ?? false,
-            'url'     => $res['url'] . '?t=' . time(),
-        ], 200);
     }
 }

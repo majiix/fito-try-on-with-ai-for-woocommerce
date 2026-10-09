@@ -204,370 +204,14 @@ class Fito_Tryon_Storage {
             }
         }
 
-        // Apply watermark if configured
-        $this->apply_watermark_if_enabled($dest_path);
+        // Fire action hook allowing extensions (e.g. Pro watermark overlay) to process saved image.
+        do_action('fito_tryon_after_result_image_saved', $dest_path);
 
         return [
             'success' => true,
             'path'    => $dest_path,
             'url'     => $dest_url,
         ];
-    }
-
-    public function apply_watermark_if_enabled(string $image_path, ?array $custom_options = null): bool {
-        if (!file_exists($image_path) || !extension_loaded('gd')) {
-            return false;
-        }
-
-        $is_pro = Fito_Tryon::is_pro_active();
-
-        if ($custom_options === null) {
-            $enabled = (get_option('fito_tryon_watermark_enabled', 'no') === 'yes');
-            if (!$enabled) {
-                return false;
-            }
-
-            if (!$is_pro) {
-                // Free tier opt-in: Default branding watermark
-                $watermark_id   = 0;
-                $watermark_text = 'Made with Fito Try-On with AI for WooCommerce';
-                $position       = 'bottom_center';
-                $opacity        = 80;
-            } else {
-                // Pro tier: Optional custom watermark
-                $watermark_id   = (int) get_option('fito_tryon_watermark_image_id', 0);
-                $watermark_text = trim((string) get_option('fito_tryon_watermark_text', ''));
-                $position       = (string) get_option('fito_tryon_watermark_pos', 'bottom_right');
-                $opacity        = max(10, min(100, (int) get_option('fito_tryon_watermark_opacity', 80)));
-
-                if (!$watermark_id && empty($watermark_text)) {
-                    return false;
-                }
-            }
-        } else {
-            // Explicit options provided (e.g. preview overlay generation or unit testing)
-            $enabled = !empty($custom_options['enabled']);
-            if (!$enabled) {
-                return false;
-            }
-
-            $watermark_id   = (int) ($custom_options['watermark_image_id'] ?? 0);
-            $watermark_text = trim((string) ($custom_options['watermark_text'] ?? ''));
-            $position       = (string) ($custom_options['watermark_pos'] ?? 'bottom_right');
-            $opacity        = max(10, min(100, (int) ($custom_options['watermark_opacity'] ?? 80)));
-
-            if (!$watermark_id && empty($watermark_text)) {
-                return false;
-            }
-        }
-
-        $raw_content = (string) file_get_contents($image_path);
-        if (empty($raw_content)) {
-            return false;
-        }
-
-        $main_img = @imagecreatefromstring($raw_content);
-        if (!$main_img) {
-            return false;
-        }
-
-        $main_w = imagesx($main_img);
-        $main_h = imagesy($main_img);
-        $modified = false;
-
-        $wm_img   = null;
-        $target_w = 0;
-        $target_h = 0;
-        $orig_w   = 0;
-        $orig_h   = 0;
-
-        if ($watermark_id > 0) {
-            $wm_raw = '';
-            $wm_path = get_attached_file($watermark_id);
-            if ($wm_path && file_exists($wm_path)) {
-                $wm_raw = (string) @file_get_contents($wm_path);
-            }
-            if (empty($wm_raw)) {
-                $wm_url = wp_get_attachment_url($watermark_id);
-                if ($wm_url) {
-                    $sslverify = (bool) apply_filters('fito_tryon_sslverify', !in_array(wp_get_environment_type(), ['local', 'development'], true));
-                    $resp = wp_remote_get($wm_url, ['timeout' => 10, 'sslverify' => $sslverify]);
-                    if (!is_wp_error($resp) && wp_remote_retrieve_response_code($resp) === 200) {
-                        $wm_raw = (string) wp_remote_retrieve_body($resp);
-                    }
-                }
-            }
-            if (!empty($wm_raw)) {
-                $wm_loaded = @imagecreatefromstring($wm_raw);
-                if ($wm_loaded) {
-                    $wm_img   = $wm_loaded;
-                    $orig_w   = imagesx($wm_img);
-                    $orig_h   = imagesy($wm_img);
-                    $target_w = min((int) ($main_w * 0.22), max(60, $orig_w));
-                    $target_h = (int) ($orig_h * ($target_w / max(1, $orig_w)));
-                }
-            }
-        }
-
-        $has_image = ($wm_img !== null);
-        $has_text  = ($watermark_text !== '');
-
-        if ($has_image && $has_text) {
-            if (str_starts_with($position, 'top')) {
-                [$dest_x, $dest_y] = $this->calculate_position($main_w, $main_h, $target_w, $target_h, $position, 20);
-                $this->merge_image_watermark($main_img, $wm_img, $dest_x, $dest_y, $target_w, $target_h, $orig_w, $orig_h, $opacity);
-                $this->apply_text_watermark($main_img, $main_w, $main_h, $watermark_text, $position, $opacity, $target_h + 8);
-            } else {
-                $this->apply_text_watermark($main_img, $main_w, $main_h, $watermark_text, $position, $opacity, 0);
-                $badge_est_h = 36;
-                [$dest_x, $dest_y] = $this->calculate_position($main_w, $main_h, $target_w, $target_h, $position, 20);
-                $dest_y = max(0, $dest_y - $badge_est_h - 8);
-                $this->merge_image_watermark($main_img, $wm_img, $dest_x, $dest_y, $target_w, $target_h, $orig_w, $orig_h, $opacity);
-            }
-            $modified = true;
-        } elseif ($has_image) {
-            [$dest_x, $dest_y] = $this->calculate_position($main_w, $main_h, $target_w, $target_h, $position, 20);
-            $this->merge_image_watermark($main_img, $wm_img, $dest_x, $dest_y, $target_w, $target_h, $orig_w, $orig_h, $opacity);
-            $modified = true;
-        } elseif ($has_text) {
-            $this->apply_text_watermark($main_img, $main_w, $main_h, $watermark_text, $position, $opacity, 0);
-            $modified = true;
-        }
-
-        if ($wm_img) {
-            imagedestroy($wm_img);
-        }
-
-        if ($modified) {
-            imagejpeg($main_img, $image_path, 90);
-        }
-
-        imagedestroy($main_img);
-        return $modified;
-    }
-
-    public function generate_watermark_preview(array $options = []): array {
-        if (!Fito_Tryon::is_pro_active()) {
-            return [
-                'success' => false,
-                'message' => __('Watermark customization is a Pro feature.', 'fito-try-on-with-ai-for-woocommerce'),
-                'path'    => '',
-                'url'     => '',
-                'applied' => false,
-            ];
-        }
-
-        self::setup_storage_directory();
-
-        $results_dir = trailingslashit(self::get_base_dir()) . 'results';
-        $sample_file = '';
-        $existing_results = glob($results_dir . '/tryon_*.jpg');
-        if (!empty($existing_results)) {
-            $sample_file = end($existing_results);
-        }
-
-        $preview_filename = 'watermark_preview_' . wp_generate_password(12, false) . '.jpg';
-        $preview_path = $results_dir . '/' . $preview_filename;
-        $preview_url  = trailingslashit(self::get_base_url()) . 'results/' . $preview_filename;
-
-        if (!empty($sample_file) && file_exists($sample_file)) {
-            copy($sample_file, $preview_path);
-        } else {
-            $canvas = imagecreatetruecolor(600, 800);
-            for ($i = 0; $i < 800; $i++) {
-                $r = (int) (30 + (15 - 30) * ($i / 800));
-                $g = (int) (41 + (23 - 41) * ($i / 800));
-                $b = (int) (59 + (42 - 59) * ($i / 800));
-                $line_color = imagecolorallocate($canvas, $r, $g, $b);
-                imageline($canvas, 0, $i, 600, $i, $line_color);
-            }
-            $label_col = imagecolorallocate($canvas, 148, 163, 184);
-            imagestring($canvas, 5, 210, 390, 'Sample Try-On Canvas', $label_col);
-            imagejpeg($canvas, $preview_path, 90);
-            imagedestroy($canvas);
-        }
-
-        $applied = $this->apply_watermark_if_enabled($preview_path, $options);
-
-        return [
-            'success' => true,
-            'applied' => $applied,
-            'path'    => $preview_path,
-            'url'     => $preview_url,
-        ];
-    }
-
-    protected function merge_image_watermark($main_img, $wm_img, int $dest_x, int $dest_y, int $target_w, int $target_h, int $orig_w, int $orig_h, int $opacity = 80): void {
-        if ($target_w <= 0 || $target_h <= 0 || $orig_w <= 0 || $orig_h <= 0) {
-            return;
-        }
-
-        $scaled = imagecreatetruecolor($target_w, $target_h);
-        imagealphablending($scaled, false);
-        imagesavealpha($scaled, true);
-        $transparent = imagecolorallocatealpha($scaled, 0, 0, 0, 127);
-        imagefilledrectangle($scaled, 0, 0, $target_w, $target_h, $transparent);
-        imagealphablending($scaled, true);
-        imagecopyresampled($scaled, $wm_img, 0, 0, 0, 0, $target_w, $target_h, $orig_w, $orig_h);
-
-        $opacity = max(10, min(100, $opacity));
-        $opacity_factor = $opacity / 100.0;
-
-        if ($opacity >= 100) {
-            imagealphablending($main_img, true);
-            imagecopy($main_img, $scaled, $dest_x, $dest_y, 0, 0, $target_w, $target_h);
-        } else {
-            imagealphablending($scaled, false);
-            for ($x = 0; $x < $target_w; $x++) {
-                for ($y = 0; $y < $target_h; $y++) {
-                    $rgba = imagecolorat($scaled, $x, $y);
-                    $orig_alpha = ($rgba >> 24) & 0x7F;
-                    if ($orig_alpha >= 127) {
-                        continue;
-                    }
-                    $r = ($rgba >> 16) & 0xFF;
-                    $g = ($rgba >> 8) & 0xFF;
-                    $b = $rgba & 0xFF;
-                    $new_alpha = 127 - (int) round((127 - $orig_alpha) * $opacity_factor);
-                    $new_alpha = max(0, min(127, $new_alpha));
-                    $color = imagecolorallocatealpha($scaled, $r, $g, $b, $new_alpha);
-                    imagesetpixel($scaled, $x, $y, $color);
-                }
-            }
-            imagealphablending($main_img, true);
-            imagecopy($main_img, $scaled, $dest_x, $dest_y, 0, 0, $target_w, $target_h);
-        }
-
-        imagedestroy($scaled);
-    }
-
-    protected function calculate_position(int $container_w, int $container_h, int $elem_w, int $elem_h, string $position, int $margin = 20): array {
-        switch ($position) {
-            case 'top_left':
-                $x = $margin;
-                $y = $margin;
-                break;
-            case 'top_center':
-                $x = (int) max(0, ($container_w - $elem_w) / 2);
-                $y = $margin;
-                break;
-            case 'top_right':
-                $x = $container_w - $elem_w - $margin;
-                $y = $margin;
-                break;
-            case 'center':
-                $x = (int) max(0, ($container_w - $elem_w) / 2);
-                $y = (int) max(0, ($container_h - $elem_h) / 2);
-                break;
-            case 'bottom_left':
-                $x = $margin;
-                $y = $container_h - $elem_h - $margin;
-                break;
-            case 'bottom_center':
-                $x = (int) max(0, ($container_w - $elem_w) / 2);
-                $y = $container_h - $elem_h - $margin;
-                break;
-            case 'bottom_right':
-            default:
-                $x = $container_w - $elem_w - $margin;
-                $y = $container_h - $elem_h - $margin;
-                break;
-        }
-        return [max(0, $x), max(0, $y)];
-    }
-
-    protected function get_ttf_font_path(): ?string {
-        $candidates = [
-            'C:/Windows/Fonts/arial.ttf',
-            'C:/Windows/Fonts/segoeui.ttf',
-            'C:/Windows/Fonts/tahoma.ttf',
-            '/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf',
-            '/usr/share/fonts/truetype/liberation/LiberationSans-Regular.ttf',
-            '/usr/share/fonts/truetype/freefont/FreeSans.ttf',
-            '/System/Library/Fonts/Helvetica.ttc',
-            '/System/Library/Fonts/Supplemental/Arial.ttf',
-        ];
-
-        foreach ($candidates as $font) {
-            if (file_exists($font)) {
-                return $font;
-            }
-        }
-
-        return null;
-    }
-
-    protected function apply_text_watermark($main_img, int $main_w, int $main_h, string $text, string $position, int $opacity = 80, int $offset_y = 0): void {
-        $font_file = $this->get_ttf_font_path();
-        imagealphablending($main_img, true);
-
-        $f = max(0.1, min(1.0, $opacity / 100));
-        $bg_alpha = (int) round(127 - (127 - 45) * $f);
-        $border_alpha = (int) round(127 - (127 - 100) * $f);
-        $text_alpha = (int) round(127 * (1.0 - $f));
-
-        if (function_exists('imagettfbbox') && function_exists('imagettftext') && $font_file) {
-            $font_size = max(9, min(16, (int) round($main_w * 0.016)));
-            $bbox = @imagettfbbox($font_size, 0, $font_file, $text);
-            if ($bbox) {
-                $text_w = abs($bbox[4] - $bbox[0]);
-                $text_h = abs($bbox[5] - $bbox[1]);
-                if (($text_w + 32) > ($main_w * 0.92)) {
-                    $font_size = max(8, (int) floor($font_size * (($main_w * 0.90) / max(1, $text_w + 32))));
-                    $bbox = @imagettfbbox($font_size, 0, $font_file, $text);
-                    if ($bbox) {
-                        $text_w = abs($bbox[4] - $bbox[0]);
-                        $text_h = abs($bbox[5] - $bbox[1]);
-                    }
-                }
-            } else {
-                $text_w = strlen($text) * 8;
-                $text_h = 14;
-            }
-
-            $pad_x = 14;
-            $pad_y = 8;
-            $badge_w = $text_w + ($pad_x * 2);
-            $badge_h = $text_h + ($pad_y * 2);
-
-            [$rx, $ry] = $this->calculate_position($main_w, $main_h, $badge_w, $badge_h, $position, 20);
-            if ($offset_y !== 0) {
-                $ry = max(0, min($main_h - $badge_h, $ry + $offset_y));
-            }
-
-            $bg_color     = imagecolorallocatealpha($main_img, 15, 23, 42, $bg_alpha);
-            $border_color = imagecolorallocatealpha($main_img, 255, 255, 255, $border_alpha);
-            $text_color   = imagecolorallocatealpha($main_img, 255, 255, 255, $text_alpha);
-
-            imagefilledrectangle($main_img, $rx, $ry, $rx + $badge_w, $ry + $badge_h, $bg_color);
-            imagerectangle($main_img, $rx, $ry, $rx + $badge_w, $ry + $badge_h, $border_color);
-            imagettftext($main_img, $font_size, 0, $rx + $pad_x, $ry + $pad_y + $text_h, $text_color, $font_file, $text);
-            return;
-        }
-
-        $font   = 5;
-        $font_w = imagefontwidth($font);
-        $font_h = imagefontheight($font);
-        $text_w = strlen($text) * $font_w;
-        $text_h = $font_h;
-
-        $pad_x = 10;
-        $pad_y = 6;
-        $badge_w = $text_w + ($pad_x * 2);
-        $badge_h = $text_h + ($pad_y * 2);
-
-        [$rx, $ry] = $this->calculate_position($main_w, $main_h, $badge_w, $badge_h, $position, 20);
-        if ($offset_y !== 0) {
-            $ry = max(0, min($main_h - $badge_h, $ry + $offset_y));
-        }
-
-        $bg_color     = imagecolorallocatealpha($main_img, 15, 23, 42, $bg_alpha);
-        $border_color = imagecolorallocatealpha($main_img, 255, 255, 255, $border_alpha);
-        $text_color   = imagecolorallocatealpha($main_img, 255, 255, 255, $text_alpha);
-
-        imagefilledrectangle($main_img, $rx, $ry, $rx + $badge_w, $ry + $badge_h, $bg_color);
-        imagerectangle($main_img, $rx, $ry, $rx + $badge_w, $ry + $badge_h, $border_color);
-        imagestring($main_img, $font, $rx + $pad_x, $ry + $pad_y, $text, $text_color);
     }
 
     public function delete_file(?string $path): bool {
@@ -609,5 +253,102 @@ class Fito_Tryon_Storage {
             }
         }
         return $count;
+    }
+
+    /**
+     * Convert local file to base64 data URI string.
+     *
+     * @param string $path
+     * @return string
+     */
+    public static function image_to_base64(string $path): string {
+        if (!file_exists($path)) {
+            return '';
+        }
+        $mime = 'image/jpeg';
+        if (function_exists('mime_content_type')) {
+            $detected = @mime_content_type($path);
+            if ($detected) {
+                $mime = $detected;
+            }
+        } elseif (function_exists('wp_check_filetype')) {
+            $ft = wp_check_filetype($path);
+            if (!empty($ft['type'])) {
+                $mime = $ft['type'];
+            }
+        }
+        $data = file_get_contents($path);
+        if ($data === false) {
+            return '';
+        }
+        return 'data:' . $mime . ';base64,' . base64_encode($data);
+    }
+
+    /**
+     * Resolve image path, URL, or attachment ID into a base64 data URI string.
+     *
+     * @param string $path_or_url
+     * @param int $attachment_id
+     * @return string
+     */
+    public static function resolve_image_base64(string $path_or_url, int $attachment_id = 0): string {
+        // 1. Try attachment ID
+        if ($attachment_id > 0) {
+            $file = get_attached_file($attachment_id);
+            if ($file && file_exists($file)) {
+                return self::image_to_base64($file);
+            }
+        }
+
+        // 2. Try direct local file path
+        if (!empty($path_or_url) && file_exists($path_or_url)) {
+            return self::image_to_base64($path_or_url);
+        }
+
+        // 3. Try mapping from WordPress uploads URL to local filesystem path
+        if (!empty($path_or_url) && str_starts_with($path_or_url, 'http')) {
+            $upload_dir = wp_upload_dir();
+            if (!empty($upload_dir['baseurl']) && str_starts_with($path_or_url, $upload_dir['baseurl'])) {
+                $mapped = str_replace($upload_dir['baseurl'], $upload_dir['basedir'], $path_or_url);
+                if (file_exists($mapped)) {
+                    return self::image_to_base64($mapped);
+                }
+            }
+
+            // 4. Validate URL against SSRF before remote fetching
+            $validated_url = wp_http_validate_url($path_or_url);
+            if ($validated_url) {
+                $host = wp_parse_url($validated_url, PHP_URL_HOST);
+                $is_private_ip = false;
+                if ($host && filter_var($host, FILTER_VALIDATE_IP)) {
+                    $is_private_ip = !filter_var($host, FILTER_VALIDATE_IP, FILTER_FLAG_NO_PRIV_RANGE | FILTER_FLAG_NO_RES_RANGE);
+                }
+                if ($host === 'localhost' && !in_array(wp_get_environment_type(), ['local', 'development'], true)) {
+                    $is_private_ip = true;
+                }
+
+                if (!$is_private_ip) {
+                    $sslverify = (bool) apply_filters('fito_tryon_sslverify', !in_array(wp_get_environment_type(), ['local', 'development'], true));
+                    $resp = wp_remote_get($validated_url, ['timeout' => 15, 'sslverify' => $sslverify]);
+                    if (!is_wp_error($resp) && wp_remote_retrieve_response_code($resp) === 200) {
+                        $bytes = wp_remote_retrieve_body($resp);
+                        $content_type = wp_remote_retrieve_header($resp, 'content-type') ?: 'image/jpeg';
+                        if (str_contains($content_type, ';')) {
+                            $content_type = trim(explode(';', $content_type)[0]);
+                        }
+                        if (str_starts_with($content_type, 'image/')) {
+                            return 'data:' . $content_type . ';base64,' . base64_encode($bytes);
+                        }
+                    }
+                }
+            }
+        }
+
+        // 5. Already a data URL
+        if (str_starts_with($path_or_url, 'data:image')) {
+            return $path_or_url;
+        }
+
+        return '';
     }
 }

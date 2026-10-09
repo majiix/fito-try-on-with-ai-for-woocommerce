@@ -10,7 +10,6 @@
             this.initChart();
             this.bindProviderToggle();
             this.bindConnectionTest();
-            this.bindWatermarkMedia();
             this.bindAccessControl();
             this.bindLogInspection();
             this.bindLogHoverPreview();
@@ -115,107 +114,6 @@
                         $btn.prop('disabled', false).text('Test Connection');
                         const msg = xhr.responseJSON && xhr.responseJSON.message ? xhr.responseJSON.message : 'Connection failed.';
                         $result.addClass('is-error').html('<strong>✕ ' + msg + '</strong>').fadeIn();
-                    }
-                });
-            });
-        },
-
-        bindWatermarkMedia: function () {
-            let mediaFrame;
-
-            $('#fito-btn-upload-watermark').on('click', function (e) {
-                e.preventDefault();
-
-                if (mediaFrame) {
-                    mediaFrame.open();
-                    return;
-                }
-
-                mediaFrame = wp.media({
-                    title: 'Select Watermark PNG / Logo',
-                    button: { text: 'Use Watermark' },
-                    multiple: false,
-                    library: { type: 'image' }
-                });
-
-                mediaFrame.on('select', function () {
-                    const attachment = mediaFrame.state().get('selection').first().toJSON();
-                    $('#fito_watermark_id').val(attachment.id);
-                    $('#fito-watermark-preview img').attr('src', attachment.url);
-                    $('#fito-watermark-preview, #fito-btn-remove-watermark').show();
-                });
-
-                mediaFrame.open();
-            });
-
-            $('#fito-btn-remove-watermark').on('click', function () {
-                $('#fito_watermark_id').val('');
-                $('#fito-watermark-preview, #fito-btn-remove-watermark').hide();
-            });
-
-            $('#fito-btn-use-site-url').on('click', function (e) {
-                e.preventDefault();
-                const host = $(this).data('host');
-                if (host) {
-                    $('#fito_watermark_text').val(host);
-                }
-            });
-
-            $('#fito_watermark_opacity_range').on('input change', function () {
-                $('#fito_watermark_opacity').val($(this).val());
-            });
-
-            $('#fito_watermark_opacity').on('input change', function () {
-                let val = parseInt($(this).val(), 10);
-                if (isNaN(val)) val = 80;
-                val = Math.max(10, Math.min(100, val));
-                $('#fito_watermark_opacity_range').val(val);
-            });
-
-            $('#fito-btn-preview-watermark').on('click', function (e) {
-                e.preventDefault();
-                const $btn = $(this);
-                const $spinner = $('#fito-wm-preview-spinner');
-                const $container = $('#fito-wm-preview-container');
-                const $img = $('#fito-wm-preview-img');
-
-                $btn.prop('disabled', true);
-                $spinner.addClass('is-active');
-
-                const payload = {
-                    enabled: $('input[name="fito_tryon_watermark_enabled"]').is(':checked') ? 'yes' : 'no',
-                    watermark_image_id: $('#fito_watermark_id').val() || 0,
-                    watermark_text: $('#fito_watermark_text').val() || '',
-                    watermark_pos: $('#fito_watermark_pos').val() || 'bottom_right',
-                    watermark_opacity: $('#fito_watermark_opacity').val() || 80
-                };
-
-                $.ajax({
-                    url: fitoAdminData.restUrl + 'preview-watermark',
-                    type: 'POST',
-                    contentType: 'application/json',
-                    data: JSON.stringify(payload),
-                    headers: {
-                        'X-WP-Nonce': fitoAdminData.nonce
-                    },
-                    success: function (res) {
-                        $btn.prop('disabled', false);
-                        $spinner.removeClass('is-active');
-                        if (res && res.success && res.url) {
-                            $img.attr('src', res.url);
-                            $container.slideDown(200);
-                        } else {
-                            alert(res ? res.message : 'Failed to generate preview.');
-                        }
-                    },
-                    error: function (xhr) {
-                        $btn.prop('disabled', false);
-                        $spinner.removeClass('is-active');
-                        let msg = 'Failed to generate watermark preview.';
-                        if (xhr.responseJSON && xhr.responseJSON.message) {
-                            msg = xhr.responseJSON.message;
-                        }
-                        alert(msg);
                     }
                 });
             });
@@ -534,9 +432,8 @@
             const $panel = $('#fito-panel-' + activeProvider).length ? $('#fito-panel-' + activeProvider) : $('#fito-models-wrapper').closest('.fito-card-body');
             const $wrapper = $panel.find('.fito-provider-table').length ? $panel.find('.fito-provider-table') : $('#fito-models-wrapper');
             const $primarySelect = $panel.find('select[id$="_primary_model"]');
-            const $fallbackSelect = $panel.find('select[id$="_fallback_model"]');
-            const $skeletons = $panel.find('.fito-skeleton-box, #fito-primary-skeleton, #fito-fallback-skeleton');
-            const $selectWraps = $panel.find('.fito-primary-select-wrap, .fito-fallback-select-wrap, #fito-primary-select-wrap, #fito-fallback-select-wrap');
+            const $skeletons = $panel.find('.fito-primary-skeleton, #fito-primary-skeleton');
+            const $selectWraps = $panel.find('.fito-primary-select-wrap, #fito-primary-select-wrap');
 
             // Show skeleton loaders, hide selects
             $skeletons.show();
@@ -549,7 +446,6 @@
             $status.hide();
 
             const savedPrimary = $wrapper.data('saved-primary') || $primarySelect.val() || '';
-            const savedFallback = $wrapper.data('saved-fallback') || $fallbackSelect.val() || '';
 
             const $keyInput = $panel.find('input[type="password"]');
             const currentKey = $keyInput.length && $keyInput.val() ? $keyInput.val().trim() : '';
@@ -593,9 +489,8 @@
                             $primarySelect.val(imageGenModels[0].id);
                         }
 
-                        // Populate fallback model
-                        const fallbackFullHtml = '<option value="">None (Do not retry)</option>' + genOptions;
-                        $fallbackSelect.html(fallbackFullHtml).val(savedFallback);
+                        // Trigger event for extensions (e.g. Pro Addon to populate fallback model)
+                        $(document).trigger('fito_models_loaded', [imageGenModels, activeProvider, $panel, genOptions]);
 
                         // Smoothly transition from skeleton to selects
                         $skeletons.fadeOut(150, function () {
@@ -603,7 +498,7 @@
                         });
 
                         if (forceRefresh) {
-                            const providerTitle = activeProvider === 'gemini' ? 'Google Gemini' : (activeProvider === 'openai' ? 'OpenAI' : 'OpenRouter');
+                            const providerTitle = $('#fito_ai_provider option:selected').text() || 'OpenRouter';
                             $status.text('✓ Cache cleared! ' + imageGenModels.length + ' models refreshed for ' + providerTitle + ' (cached for 24h).').fadeIn();
                             setTimeout(function () {
                                 $status.fadeOut(300);
@@ -612,6 +507,7 @@
                     } else {
                         $skeletons.hide();
                         $selectWraps.show();
+                        $(document).trigger('fito_models_load_failed', [activeProvider, $panel]);
                     }
                 },
                 error: function () {
@@ -620,6 +516,7 @@
                     }
                     $skeletons.hide();
                     $selectWraps.show();
+                    $(document).trigger('fito_models_load_failed', [activeProvider, $panel]);
                 }
             });
         },
@@ -758,69 +655,12 @@
                 }
             });
 
-            // 4. Duplicate prompt row
-            $repeater.on('click', '.fito-prompt-duplicate', function (e) {
-                e.preventDefault();
-                if (typeof fitoAdminData !== 'undefined' && !fitoAdminData.isPro) {
-                    window.location.href = 'admin.php?page=fito-tryon-pro#pro-feature-custom-prompts';
-                    return;
-                }
-
-                const $origRow = $(this).closest('.fito-prompt-row');
-                const origTitle = $origRow.find('.fito-prompt-title-input').val() || '';
-                const origPrompt = $origRow.find('.fito-prompt-textarea').val() || '';
-
-                const templateEl = document.getElementById('fitoPromptRowTemplate');
-                if (!templateEl) return;
-
-                const templateHtml = templateEl.innerHTML;
-                const newIndex = $repeater.find('.fito-prompt-row').length + '_' + Date.now();
-                const rendered = templateHtml
-                    .replace(/__INDEX__/g, newIndex)
-                    .replace(/__TIMESTAMP__/g, Date.now());
-
-                const $newRow = $(rendered);
-                $newRow.find('.fito-prompt-title-input').val(origTitle ? origTitle + ' (Copy)' : 'Custom Prompt (Copy)');
-                $newRow.find('.fito-prompt-textarea').val(origPrompt);
-
-                // Duplicated prompt rows start with no categories checked to keep categories unique
-                $newRow.find('.fito-prompt-cat-checklist input[type="checkbox"]').prop('checked', false);
-
-                $newRow.insertAfter($origRow);
-                $newRow.hide().fadeIn(250);
-                $newRow.removeClass('is-collapsed');
-                $newRow.find('.fito-prompt-title-input').focus();
-
+            // Listen for external category sync trigger (e.g. from Pro Addon)
+            $(document).on('fito_sync_exclusive_categories', function () {
                 syncExclusiveCategories();
             });
 
-            // 5. Add New Prompt row (both top and bottom buttons)
-            $(document).on('click', '.fito-btn-add-prompt-action', function (e) {
-                e.preventDefault();
-                if (typeof fitoAdminData !== 'undefined' && !fitoAdminData.isPro) {
-                    window.location.href = 'admin.php?page=fito-tryon-pro#pro-feature-custom-prompts';
-                    return;
-                }
-
-                const templateEl = document.getElementById('fitoPromptRowTemplate');
-                if (!templateEl) return;
-
-                const templateHtml = templateEl.innerHTML;
-                const newIndex = $repeater.find('.fito-prompt-row').length + '_' + Date.now();
-                const rendered = templateHtml
-                    .replace(/__INDEX__/g, newIndex)
-                    .replace(/__TIMESTAMP__/g, Date.now());
-
-                const $newRow = $(rendered);
-                $repeater.append($newRow);
-                $newRow.hide().fadeIn(250);
-                $newRow.removeClass('is-collapsed');
-                $newRow.find('.fito-prompt-title-input').focus();
-
-                syncExclusiveCategories();
-            });
-
-            // 6. Category filter/search per card
+            // 4. Category filter/search per card
             $repeater.on('input', '.fito-prompt-cat-search', function () {
                 const query = $(this).val().toLowerCase().trim();
                 const $catsContainer = $(this).closest('.fito-prompt-field-cats');

@@ -12,7 +12,7 @@
   "attributes": {
     "buttonText": {
       "type": "string",
-      "default": "Try It On with AI"
+      "default": ""
     },
     "alignment": {
       "type": "string",
