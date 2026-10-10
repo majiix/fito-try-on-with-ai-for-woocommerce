@@ -5,7 +5,6 @@
  * Description:       Enable customers to virtually try on clothing, shoes, glasses, jewelry, and accessories with AI using OpenRouter.
  * Version:           1.4.0
  * Author:            micromax
- * Author URI:        https://wordpress.org/plugins/fito-try-on-with-ai-for-woocommerce/
  * License:           GPL-2.0-or-later
  * License URI:       https://www.gnu.org/licenses/gpl-2.0.html
  * Text Domain:       fito-try-on-with-ai-for-woocommerce
@@ -14,7 +13,6 @@
  * Requires PHP:      8.0
  * Requires Plugins:  woocommerce
  * WC requires at least: 7.0
- * WC tested up to:   9.6
  */
 
 defined('ABSPATH') || exit;

@@ -2,7 +2,7 @@
 Contributors: micromax2
 Tags: try on, virtual fitting, woocommerce, fashion, ai
 Requires at least: 6.0
-Tested up to: 6.8
+Tested up to: 7.1
 Requires PHP: 8.0
 Requires Plugins: woocommerce
 Stable tag: 1.4.0
