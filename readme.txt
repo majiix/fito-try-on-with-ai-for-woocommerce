@@ -74,6 +74,13 @@ This plugin connects to external artificial intelligence APIs to generate realis
 * **Terms of Service**: https://openrouter.ai/terms
 * **Privacy Policy**: https://openrouter.ai/privacy
 
+= 2. External Image and Media Retrieval =
+* **What it is and what it does**: When an AI model returns a generated try-on image as a remote HTTP/HTTPS URL, or when a WooCommerce product image is hosted on an external Content Delivery Network (CDN), the web server initiates an outbound GET request to download and convert the image into local storage or base64 data for virtual fitting processing.
+* **When data is transmitted**: Data is retrieved during the active virtual try-on generation process or when storing the completed image to the local uploads directory.
+* **What data is transmitted**: Standard HTTP GET request headers are sent to retrieve the image bytes. No customer credentials, passwords, or personal account data are transmitted.
+* **Terms of Service**: Dependent on the store owner's selected AI provider and external media hosting CDN.
+* **Privacy Policy**: Dependent on the store owner's selected AI provider and external media hosting CDN.
+
 == Third-Party Assets ==
 
 This plugin bundles the following open-source third-party library:

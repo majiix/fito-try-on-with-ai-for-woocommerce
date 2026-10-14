@@ -523,10 +523,6 @@ class Fito_Tryon_Database {
         return $deleted !== false ? (int) $deleted : 0;
     }
 
-    public function delete_unsaved_jobs(): int {
-        return $this->purge_temporary_jobs();
-    }
-
     public function has_recent_failed_log(string $ip_address, int $product_id, int $seconds = 60): bool {
         global $wpdb;
         $table = $wpdb->prefix . 'fito_tryon_logs';

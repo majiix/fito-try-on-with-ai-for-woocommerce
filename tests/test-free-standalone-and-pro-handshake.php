@@ -845,4 +845,27 @@ if (is_dir($pro_dir)) {
     echo "PASS: Pro addon stylesheets successfully house all relocated styling rules.\n";
 }
 
-echo "=== ALL 36 TESTS PASSED SUCCESSFULLY ===\n";
+// Test 37: Free database class contains zero dormant Pro methods
+require_once dirname(__DIR__) . '/includes/class-fito-tryon-database.php';
+$db_reflection = new ReflectionClass('Fito_Tryon_Database');
+assert(!$db_reflection->hasMethod('delete_unsaved_jobs'), 'Fito_Tryon_Database must not contain delete_unsaved_jobs');
+echo "PASS: Free database class contains zero dormant delete_unsaved_jobs method.\n";
+
+// Test 38: Free storage class contains zero dormant delete_file_by_url helper
+require_once dirname(__DIR__) . '/includes/class-fito-tryon-storage.php';
+$storage_reflection = new ReflectionClass('Fito_Tryon_Storage');
+assert(!$storage_reflection->hasMethod('delete_file_by_url'), 'Fito_Tryon_Storage must not contain delete_file_by_url');
+echo "PASS: Free storage class contains zero dormant delete_file_by_url method.\n";
+
+// Test 39: Pro storage class houses delete_file_by_url and block.json version matches 1.4.0
+if (is_dir($pro_dir)) {
+    require_once $pro_dir . '/includes/class-fito-tryon-pro-storage.php';
+    $pro_storage_reflection = new ReflectionClass('Fito_Tryon_Pro_Storage');
+    assert($pro_storage_reflection->hasMethod('delete_file_by_url'), 'Fito_Tryon_Pro_Storage must implement delete_file_by_url');
+    assert($pro_storage_reflection->getMethod('delete_file_by_url')->isStatic(), 'Fito_Tryon_Pro_Storage::delete_file_by_url must be static');
+}
+$block_json = json_decode(file_get_contents(dirname(__DIR__) . '/includes/blocks/tryon-button/block.json'), true);
+assert(!empty($block_json['version']) && $block_json['version'] === '1.4.0', 'block.json version must match 1.4.0');
+echo "PASS: Pro storage houses delete_file_by_url and block.json synchronized to 1.4.0.\n";
+
+echo "=== ALL 39 TESTS PASSED SUCCESSFULLY ===\n";

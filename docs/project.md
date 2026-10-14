@@ -254,7 +254,7 @@ elfit-ai-virtual-try-on-for-woocommerce/
   - Replaced PHP directory iteration recursion (`rmdir`/`unlink`) in `uninstall.php` with standard `WP_Filesystem()->delete()`.
 - **Database & Query Hygiene**:
   - Replaced cross-file direct `$wpdb` queries in `Fito_Tryon_REST` and `Fito_Tryon_Privacy` with encapsulated database methods (`has_recent_failed_log()`, `purge_temporary_jobs()`).
-  - Eliminated raw SQL string interpolation in `Fito_Tryon_Database::get_expired_jobs()` and `delete_unsaved_jobs()`: replaced with 100% prepared SQL statements and strongly typed PHP filter contracts (`fito_tryon_expired_jobs_to_purge`, `fito_tryon_handle_purge_temporary_jobs`).
+  - Eliminated raw SQL string interpolation in `Fito_Tryon_Database::get_expired_jobs()`: replaced with 100% prepared SQL statements and strongly typed PHP filter contracts (`fito_tryon_expired_jobs_to_purge`, `fito_tryon_handle_purge_temporary_jobs`).
   - Decoupled visual audit log images from Free REST controllers via `fito_tryon_log_data` filter, ensuring Free REST controllers contain zero dormant Pro schema keys (`user_image_url`, `result_image_url`).
   - Replaced class-level phpcs:disable directives with targeted, line-specific `phpcs:ignore` annotations on custom table query operations in `Fito_Tryon_Database`, eliminating class-level suppressions of PluginCheck rules.
   - Hardened uninstaller transient cleanup in `uninstall.php` using `$wpdb->prepare()` with `$wpdb->esc_like()`.
@@ -267,7 +267,7 @@ elfit-ai-virtual-try-on-for-woocommerce/
   - Prefixed all global variables in `uninstall.php` with `fito_tryon_`.
   - Removed discouraged `load_plugin_textdomain()` call to comply with WordPress 4.6+ auto-loading standard.
   - Shortened `readme.txt` short description to under 150 characters to satisfy WordPress.org directory constraints.
-  - Refined `readme.txt` `== External Services ==` section per Guideline 6 to document OpenRouter as the exclusive external service for the Free core plugin with full description, data transmission triggers, and direct links to its official Terms of Service and Privacy Policy.
+  - Refined `readme.txt` `== External Services ==` section per Guideline 6 to document OpenRouter as the primary AI inference provider, and added Section 2 disclosing outbound HTTP requests made to retrieve generated images from provider CDNs and remote product images.
   - Enforced WordPress.org Guideline 5 (No Trialware / No Dead or Locked Code) via Option A: verified complete removal of all direct Gemini/OpenAI API handlers (`class-fito-tryon-gemini.php`, `class-fito-tryon-openai.php`) and result-caching logic (`class-fito-tryon-cache.php`) from the free repository plugin, isolating them strictly inside the commercial Pro Addon. Confirmed zero license checks, phone-home routines, or disabled controls exist in the free core plugin.
   - Decoupled visual audit log thumbnail cleanup from Free core: `Fito_Tryon_Database::get_expired_logs()` queries only native Free column `id`, and `Fito_Tryon_Privacy::run_cleanup()` fires `fito_tryon_before_delete_expired_logs` lifecycle hook, enabling Pro Addon to clean up stored thumbnail files before database row deletion.
   - Sanitized suggested privacy policy content in Free core by removing Pro customer account saving references in favor of a static generic statement.
@@ -277,10 +277,13 @@ elfit-ai-virtual-try-on-for-woocommerce/
     - Purged dormant variation wrapper animation lookups (`#fito-variation-tryon-wrapper`) and archive button conditionals from Free's `assets/js/public.js`, relocating the variation button handler to Pro's `assets/js/pro-public.js`.
     - Corrected `readme.txt` version 1.1.0 changelog entry to eliminate the inadvertent claim that prompt duplication was previously shipped in Free.
     - Added explicit source repository URL in `assets/js/chart.umd.min.js` header for Guideline 4 human-readable source compliance.
-    - Stated Assumption: Retained `Tested up to: 7.1` in `readme.txt` per explicit store developer directive.
+    - Removed dormant method `delete_unsaved_jobs()` from `includes/class-fito-tryon-database.php`.
+    - Removed dormant helper method `delete_file_by_url()` from `includes/class-fito-tryon-storage.php`, migrating it into `Fito_Tryon_Pro_Storage::delete_file_by_url()` and updating `includes/class-fito-tryon-pro-account.php`.
+    - Synchronized Gutenberg block metadata version to `1.4.0` in `includes/blocks/tryon-button/block.json`.
+    - Stated User Assumptions: Retained `Contributors: micromax2` (vs Author `micromax`) and `Tested up to: 7.1` in `readme.txt` per explicit developer directive.
 
 ## Verification & Automated Testing
-- **Unit test suite (Handshake & Free Standalone - 36 assertions)**: `rtk php tests/test-free-standalone-and-pro-handshake.php`
+- **Unit test suite (Handshake & Free Standalone - 39 assertions)**: `rtk php tests/test-free-standalone-and-pro-handshake.php`
 - **Syntax checks (PHP)**: `rtk php -l <file.php>`
 - **PHP linting on entire codebase**: `rtk powershell -Command "Get-ChildItem -Recurse -Filter *.php | ForEach-Object { php -l `$_.FullName }"`
 - **Frontend JavaScript syntax validation**: `rtk powershell -Command "node -c assets/js/public.js; node -c assets/js/admin.js"`
