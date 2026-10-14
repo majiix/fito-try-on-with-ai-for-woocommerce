@@ -1,8 +1,8 @@
 #, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: Fito Try-On with AI for WooCommerce 1.4.0\n"
-"Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/fito-try-on-with-ai-for-woocommerce\n"
+"Project-Id-Version: Elfit AI Virtual Try-On for WooCommerce 1.4.0\n"
+"Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/elfit-ai-virtual-try-on-for-woocommerce\n"
 "POT-Creation-Date: 2026-09-24 10:01+0000\n"
 "PO-Revision-Date: 2026-09-24 10:01+0000\n"
 "Last-Translator: \n"
@@ -11,7 +11,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "X-Generator: Fito I18n Generator\n"
-"X-Domain: fito-try-on-with-ai-for-woocommerce\n"
+"X-Domain: elfit-ai-virtual-try-on-for-woocommerce\n"
 
 #: admin/class-fito-tryon-admin.php:28 admin/class-fito-tryon-admin.php:29
 msgid "AI Try-On"
@@ -717,11 +717,11 @@ msgstr ""
 msgid "Preset Prompt"
 msgstr ""
 
-#: fito-try-on-with-ai-for-woocommerce.php:63 includes/class-fito-tryon-privacy.php:95
-msgid "Fito Try-On with AI for WooCommerce"
+#: elfit-ai-virtual-try-on-for-woocommerce.php:63 includes/class-fito-tryon-privacy.php:95
+msgid "Elfit AI Virtual Try-On for WooCommerce"
 msgstr ""
 
-#: fito-try-on-with-ai-for-woocommerce.php:64
+#: elfit-ai-virtual-try-on-for-woocommerce.php:64
 msgid "requires WooCommerce to be installed and active."
 msgstr ""
 
@@ -846,6 +846,10 @@ msgstr ""
 msgid "OpenRouter rate limit reached. Please wait a moment and try again."
 msgstr ""
 
+#: includes/class-fito-tryon-openrouter.php:961
+msgid "The AI model provider is temporarily unavailable. Please try again in a few moments."
+msgstr ""
+
 #. // translators: %s: AI service error message
 #: includes/class-fito-tryon-openrouter.php:1025
 msgid "AI Service Error: %s"
@@ -864,8 +868,8 @@ msgstr ""
 msgid "When you use our virtual try-on feature, your uploaded or camera-captured photo is temporarily transmitted to our AI processing service provider solely to render the preview."
 msgstr ""
 
-#: includes/class-fito-tryon-privacy.php:91
-msgid "Customer photos are automatically deleted from server storage within 24 hours unless you explicitly save the try-on result to your customer account. Photos are never used to train third-party public models."
+#: includes/class-fito-tryon-privacy.php:88
+msgid "Customer photos are automatically deleted from server storage after temporary processing. Photos are never used to train third-party public models."
 msgstr ""
 
 #: includes/class-fito-tryon-privacy.php:105
@@ -1201,36 +1205,32 @@ msgstr ""
 msgid "OpenRouter (BYOK)"
 msgstr ""
 
-#: admin/class-fito-tryon-admin.php:75
+#: admin/class-fito-tryon-admin.php:75 admin/class-fito-tryon-admin.php:76
 msgid "Go Pro"
 msgstr ""
 
-#: admin/class-fito-tryon-admin.php:76
-msgid "Go Pro ⭐"
+#: admin/class-fito-tryon-admin.php:1338
+msgid "ELFIT TRY-ON PRO ADDON"
 msgstr ""
 
-#: admin/class-fito-tryon-admin.php:1318
-msgid "FITO TRY-ON PRO ADDON"
-msgstr ""
-
-#: admin/class-fito-tryon-admin.php:1320
+#: admin/class-fito-tryon-admin.php:1340
 msgid "Supercharge Your Virtual Fitting Room"
 msgstr ""
 
-#: admin/class-fito-tryon-admin.php:1322
+#: admin/class-fito-tryon-admin.php:1342
 msgid "Maximize WooCommerce conversions, eliminate AI downtime with automatic fallback routing, and customize every visual aspect of your fitting experience."
 msgstr ""
 
-#: admin/class-fito-tryon-admin.php:1326 admin/class-fito-tryon-admin.php:1583
-msgid "Get Fito Pro Addon Now"
+#: admin/class-fito-tryon-admin.php:1346 admin/class-fito-tryon-admin.php:1603
+msgid "Get Elfit Pro Addon Now"
 msgstr ""
 
-#: admin/class-fito-tryon-admin.php:1329
+#: admin/class-fito-tryon-admin.php:1349
 msgid "Instant Download & Lifetime Updates"
 msgstr ""
 
-#: admin/class-fito-tryon-admin.php:1336
-msgid "Why Upgrade to Fito Pro?"
+#: admin/class-fito-tryon-admin.php:1356
+msgid "Why Upgrade to Elfit Pro?"
 msgstr ""
 
 #: admin/class-fito-tryon-admin.php:1337
@@ -1249,8 +1249,8 @@ msgstr ""
 msgid "Ready to Elevate Your Store Experience?"
 msgstr ""
 
-#: admin/class-fito-tryon-admin.php:1579
-msgid "Get instant access to the Fito Try-On Pro Addon and unlock all premium capabilities today."
+#: admin/class-fito-tryon-admin.php:1599
+msgid "Get instant access to the Elfit Try-On Pro Addon and unlock all premium capabilities today."
 msgstr ""
 
 

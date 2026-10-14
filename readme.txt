@@ -1,4 +1,4 @@
-=== Fito Try-On with AI for WooCommerce ===
+=== Elfit AI Virtual Try-On for WooCommerce ===
 Contributors: micromax2
 Tags: try on, virtual fitting, woocommerce, fashion, ai
 Requires at least: 6.0
@@ -13,7 +13,7 @@ AI-powered virtual try-on for WooCommerce products. Customers upload a photo or 
 
 == Description ==
 
-**Fito Try-On with AI for WooCommerce** brings studio-grade artificial intelligence virtual fitting technology directly into your WooCommerce store. Shoppers can upload a personal photo or snap a live selfie with their webcam or mobile camera to preview realistic try-ons of apparel, footwear, eyewear, jewelry, watches, hats, and accessories.
+**Elfit AI Virtual Try-On for WooCommerce** brings studio-grade artificial intelligence virtual fitting technology directly into your WooCommerce store. Shoppers can upload a personal photo or snap a live selfie with their webcam or mobile camera to preview realistic try-ons of apparel, footwear, eyewear, jewelry, watches, hats, and accessories.
 
 All image generations are powered by a Bring-Your-Own-Key (BYOK) architecture with OpenRouter. Connect directly to upstream AI vision models with zero middleman fees, zero recurring SaaS markups, and complete data privacy control.
 
@@ -25,7 +25,7 @@ All image generations are powered by a Bring-Your-Own-Key (BYOK) architecture wi
 * **Zero Middleman Fees**: Pay only raw AI compute fees directly to the provider (fractions of a cent per generation).
 * **Interactive Comparison Split Slider**: Responsive mouse-drag and mobile touch-friendly split slider allowing shoppers to inspect exact Before and After fitting results.
 * **Fullscreen Try-On Stage**: Immersive full-screen view mode with mobile optimization and keyboard Escape key closing.
-* **Storefront Button Placements**: Flexible button display on single product pages (Above Add to Cart, Below Add to Cart, Custom Product Tab, or `[fito_tryon]` shortcode).
+* **Storefront Button Placements**: Flexible button display on single product pages (Above Add to Cart, Below Add to Cart, Custom Product Tab, or `[elfit_tryon]` shortcode).
 * **Camera Capture & File Upload**: Drag-and-drop file upload zone supporting JPG, PNG, and WebP, plus integrated live webcam/mobile camera capture.
 * **Category-Gated Store Filtering**: Enable virtual try-on storewide or exclusively for designated product categories with automatic subcategory coverage.
 * **Store Access Controls & Guest Showcase**: Choose between public access for all visitors or restrict try-on strictly to registered users with custom guest Before/After showcase images and login prompts.
@@ -48,7 +48,7 @@ An optional commercial Pro Addon is available for advanced features such as addi
 
 == Upgrade ==
 
-The commercial **Fito Try-On Pro Addon** extends Fito Try-On with advanced features:
+The commercial **Elfit Try-On Pro Addon** extends Elfit AI Virtual Try-On with advanced features:
 * Direct Google Gemini API integration (Gemini 2.5 & 3.1 Flash Image via Google AI Studio).
 * Direct OpenAI API integration (GPT Image and DALL-E models).
 * Automatic Fallback Model Routing across providers with secondary failover protection.
@@ -65,21 +65,32 @@ Learn more and purchase the Pro Addon: https://violo.ir/?p=721
 
 == External Services ==
 
-This plugin connects to third-party AI image generation APIs using the store administrator's personal API keys:
+This plugin connects to external artificial intelligence APIs to generate realistic virtual try-on images. All connections use a Bring-Your-Own-Key (BYOK) architecture where the store administrator provides their own developer API key. No personal or customer data is transmitted until a shopper explicitly clicks the Try-On button and submits a fitting request, or when an administrator tests their API credentials in settings.
 
-1. OpenRouter (openrouter.ai):
-   - Service: Routes virtual try-on requests to multimodal vision and diffusion models.
-   - Data sent: Base64-encoded customer try-on photo, product image, and category fitting prompts.
-   - Terms of Service: https://openrouter.ai/terms
-   - Privacy Policy: https://openrouter.ai/privacy
+= 1. OpenRouter (Core Free Provider) =
+* **What it is and what it does**: OpenRouter (openrouter.ai) is an AI model aggregator and routing service that processes virtual try-on requests using multimodal vision and diffusion models (such as FLUX, Recraft, and Gemini models via OpenRouter).
+* **When data is transmitted**: Data is transmitted when a customer submits a try-on request from a single product page or shortcode, or when the administrator clicks "Test Connection" in settings to verify API key validity.
+* **What data is transmitted**: When a try-on is requested, the customer's uploaded or camera-captured photo, the WooCommerce product image, and category-specific prompt instructions are transmitted for AI inference. During connection tests, only the API key is verified without sending customer data.
+* **Terms of Service**: https://openrouter.ai/terms
+* **Privacy Policy**: https://openrouter.ai/privacy
+
+== Third-Party Assets ==
+
+This plugin bundles the following open-source third-party library:
+
+* **Chart.js** (v4.5.1)
+  * Purpose: Powers analytics and try-on activity data visualization in the admin dashboard.
+  * Source: https://github.com/chartjs/Chart.js/releases/tag/v4.5.1
+  * License: MIT License (https://github.com/chartjs/Chart.js/blob/master/LICENSE.md)
+  * Copyright: (c) 2025 Chart.js Contributors
 
 == Installation ==
 
-1. Upload the `fito-try-on-with-ai-for-woocommerce` folder to your `/wp-content/plugins/` directory.
+1. Upload the `elfit-ai-virtual-try-on-for-woocommerce` folder to your `/wp-content/plugins/` directory.
 2. Activate the plugin through the 'Plugins' menu in WordPress.
 3. Navigate to **AI Try-On > Settings** in your WordPress admin menu.
 4. Enter your OpenRouter API Key and click **Test Connection** to verify connectivity.
-5. Choose your Primary Model (or activate Pro Addon for auto-failover fallback model protection).
+5. Choose your Primary Model from the available image generation models.
 6. Configure button placement, store access controls, and enabled product categories as desired.
 7. Navigate to **AI Try-On > Prompts** to customize fitting prompt instructions for your product categories.
 
@@ -123,8 +134,8 @@ No. All assets, including Chart.js for analytics, are bundled locally within the
 == Changelog ==
 
 = 1.4.0 =
-* Architecture: Established extensible action and filter contracts for Fito Try-On Pro Addon.
-* Feature: Added dedicated "Go Pro ⭐" submenu page featuring a comprehensive Free vs Pro comparison matrix.
+* Architecture: Established extensible action and filter contracts for Elfit Try-On Pro Addon.
+* Feature: Added dedicated "Go Pro" submenu page featuring a comprehensive Free vs Pro comparison matrix.
 * Extensibility: Added modular action and filter hooks for optional extension plugins.
 * Enhancement: Added fito_tryon_loaded, fito_tryon_admin_submenus, and fito_tryon_settings_form_bottom hook contracts.
 * Maintenance: Bumped core plugin version to 1.4.0.
@@ -147,7 +158,7 @@ No. All assets, including Chart.js for analytics, are bundled locally within the
 * Feature: Added configurable database log retention options (1 day, 3 days, 1 week, 30 days, or never).
 
 = 1.1.0 =
-* Feature: Added Category Prompts manager with mutually exclusive category mappings and prompt duplication.
+* Feature: Added Category Prompts manager with mutually exclusive category mappings for 7 built-in apparel categories.
 * Feature: Added Guest Sample Showcase modal card and access control gating.
 * Feature: Added Fullscreen try-on inspection stage.
 

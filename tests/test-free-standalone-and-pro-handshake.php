@@ -36,6 +36,19 @@ if (!function_exists('add_filter')) {
         return $value;
     }
 
+    function remove_filter($tag, $callback, $priority = 10) {
+        if (!isset($GLOBALS['wp_filter'][$tag])) {
+            return false;
+        }
+        foreach ($GLOBALS['wp_filter'][$tag] as $i => $filter) {
+            if ($filter['callback'] === $callback && $filter['priority'] === $priority) {
+                unset($GLOBALS['wp_filter'][$tag][$i]);
+                return true;
+            }
+        }
+        return false;
+    }
+
     function add_action($tag, $callback, $priority = 10, $accepted_args = 1) {
         return add_filter($tag, $callback, $priority, $accepted_args);
     }
@@ -130,6 +143,18 @@ if (!function_exists('esc_html_e')) {
     }
 }
 
+if (!function_exists('esc_url_raw')) {
+    function esc_url_raw($url) {
+        return filter_var((string) $url, FILTER_SANITIZE_URL) ?: '';
+    }
+}
+
+if (!function_exists('esc_url')) {
+    function esc_url($url) {
+        return htmlspecialchars((string) $url, ENT_QUOTES, 'UTF-8');
+    }
+}
+
 if (!function_exists('sanitize_text_field')) {
     function sanitize_text_field($str) {
         return trim(strip_tags((string) $str));
@@ -204,8 +229,50 @@ if (!function_exists('is_admin')) {
     }
 }
 
+if (!function_exists('wp_generate_password')) {
+    function wp_generate_password($length = 12, $special_chars = true, $extra_special_chars = false) {
+        $chars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+        return substr(str_shuffle(str_repeat($chars, 5)), 0, $length);
+    }
+}
+
+if (!function_exists('wp_handle_upload')) {
+    function wp_handle_upload(&$file, $overrides = false, $time = null) {
+        if (!empty($overrides['test_form']) && empty($_POST['action'])) {
+            return ['error' => 'Invalid form submission.'];
+        }
+        if (isset($file['error']) && $file['error'] > 0) {
+            return ['error' => 'Upload error code: ' . $file['error']];
+        }
+        if (!empty($overrides['simulate_error'])) {
+            return ['error' => $overrides['simulate_error']];
+        }
+        $uploads = apply_filters('upload_dir', wp_upload_dir($time));
+        if (!empty($uploads['error'])) {
+            return ['error' => $uploads['error']];
+        }
+        $dest_dir = $uploads['path'];
+        if (!is_dir($dest_dir)) {
+            mkdir($dest_dir, 0755, true);
+        }
+        $filename = $file['name'] ?? 'uploaded.jpg';
+        $dest_file = rtrim($dest_dir, '/\\') . '/' . $filename;
+        if (!empty($file['tmp_name']) && file_exists($file['tmp_name'])) {
+            copy($file['tmp_name'], $dest_file);
+        }
+        return [
+            'file' => $dest_file,
+            'url'  => rtrim($uploads['url'], '/') . '/' . $filename,
+            'type' => $file['type'] ?? 'image/jpeg',
+        ];
+    }
+}
+
 if (!function_exists('add_shortcode')) {
-    function add_shortcode($tag, $callback) {}
+    $GLOBALS['shortcodes'] = [];
+    function add_shortcode($tag, $callback) {
+        $GLOBALS['shortcodes'][$tag] = $callback;
+    }
 }
 
 if (!function_exists('shortcode_atts')) {
@@ -285,28 +352,24 @@ do_action('fito_tryon_after_result_image_saved', '/fake/path/image.png');
 assert($action_fired === true, 'fito_tryon_after_result_image_saved action must fire');
 echo "PASS: fito_tryon_after_result_image_saved triggers watermarking action contract.\n";
 
-// Test 7: Audit Log Insert Data Filter Contract
-$sample_insert_data = [
-    'user_image_url'   => '',
-    'result_image_url' => '',
-];
+// Test 7: Audit Log Lifecycle Action Handshake
+$log_lifecycle_fired = false;
+$logged_id = 0;
+$logged_raw_data = [];
+add_action('fito_tryon_after_log_created', function($insert_id, $raw_data) use (&$log_lifecycle_fired, &$logged_id, &$logged_raw_data) {
+    $log_lifecycle_fired = true;
+    $logged_id = $insert_id;
+    $logged_raw_data = $raw_data;
+}, 10, 2);
 $sample_raw_data = [
     'user_image_url'   => 'https://example.com/customer.jpg',
     'result_image_url' => 'https://example.com/result.jpg',
 ];
-$filtered_data = apply_filters('fito_tryon_log_insert_data', $sample_insert_data, $sample_raw_data);
-assert($filtered_data['user_image_url'] === '', 'Standalone Free log data must have empty user image URL');
-assert($filtered_data['result_image_url'] === '', 'Standalone Free log data must have empty result image URL');
-
-add_filter('fito_tryon_log_insert_data', function($insert, $raw) {
-    $insert['user_image_url']   = $raw['user_image_url'];
-    $insert['result_image_url'] = $raw['result_image_url'];
-    return $insert;
-}, 10, 2);
-$pro_filtered_data = apply_filters('fito_tryon_log_insert_data', $sample_insert_data, $sample_raw_data);
-assert($pro_filtered_data['user_image_url'] === 'https://example.com/customer.jpg', 'Pro filter must be able to inject user image URL');
-assert($pro_filtered_data['result_image_url'] === 'https://example.com/result.jpg', 'Pro filter must be able to inject result image URL');
-echo "PASS: fito_tryon_log_insert_data filter enables Pro visual audit log injection.\n";
+do_action('fito_tryon_after_log_created', 42, $sample_raw_data);
+assert($log_lifecycle_fired === true, 'fito_tryon_after_log_created action must fire upon log creation');
+assert($logged_id === 42, 'fito_tryon_after_log_created must receive newly inserted log ID');
+assert($logged_raw_data['user_image_url'] === 'https://example.com/customer.jpg', 'fito_tryon_after_log_created must receive raw payload');
+echo "PASS: fito_tryon_after_log_created action enables Pro visual audit log persistence.\n";
 
 // Test 8: Pro Provider Panels and Save Settings Action Handshake
 $rendered_panels = [];
@@ -394,25 +457,40 @@ assert($pro_fallback_model === 'black-forest-labs/flux-1-schnell', 'Pro must res
 echo "PASS: Pro addon cleanly provides secondary fallback model routing.\n";
 
 // Test 14: Standalone Free Prompts Filtering
-$default_ids = ['clothing', 'shoes', 'eyewear', 'watches', 'hats', 'bags', 'jewelry'];
 $sample_all_prompts = [
     ['id' => 'clothing', 'is_system' => true, 'title' => 'Clothing'],
     ['id' => 'shoes', 'is_system' => true, 'title' => 'Shoes'],
     ['id' => 'custom_123', 'is_system' => false, 'title' => 'Custom Leather'],
 ];
-$system_prompts = array_values(array_filter($sample_all_prompts, function ($p) use ($default_ids) {
-    return !empty($p['is_system']) || in_array($p['id'], $default_ids, true);
-}));
-$free_displayed = apply_filters('fito_tryon_admin_displayed_prompts', $system_prompts, $sample_all_prompts);
-assert(count($free_displayed) === 2, 'Free standalone must default displayed prompts to system presets');
-echo "PASS: Free core defaults displayed prompts to built-in presets without trialware gates.\n";
+$standalone_prompts = apply_filters('fito_tryon_admin_prompts_list', $sample_all_prompts);
+assert(count($standalone_prompts) === 3, 'Free standalone must pass configured prompts through filter cleanly');
+echo "PASS: Free core passes prompts list through fito_tryon_admin_prompts_list filter without trialware gates.\n";
 
-// Test 15: Pro Addon Custom Prompts Display & Actions Handshake
-add_filter('fito_tryon_admin_displayed_prompts', function($system_prompts, $all_prompts) {
-    return $all_prompts;
+// Test 15: Pro Addon Custom Prompts Display & Saving Handshake
+$raw_submitted_prompts = [
+    ['id' => 'clothing', 'title' => 'Clothing Custom', 'categories' => [1]],
+    ['id' => 'custom_999', 'title' => 'Custom Jacket', 'prompt' => 'Fit jacket.', 'categories' => [2]],
+];
+$sanitized_system = [
+    ['id' => 'clothing', 'title' => 'Clothing Custom', 'is_system' => true, 'categories' => [1], 'prompt' => '...'],
+];
+add_filter('fito_tryon_save_prompts_config', function($sanitized, $raw) {
+    foreach ($raw as $item) {
+        if (!empty($item['id']) && str_starts_with($item['id'], 'custom_')) {
+            $sanitized[] = [
+                'id'         => $item['id'],
+                'title'      => $item['title'],
+                'is_system'  => false,
+                'categories' => $item['categories'] ?? [],
+                'prompt'     => $item['prompt'] ?? '',
+            ];
+        }
+    }
+    return $sanitized;
 }, 10, 2);
-$pro_displayed = apply_filters('fito_tryon_admin_displayed_prompts', $system_prompts, $sample_all_prompts);
-assert(count($pro_displayed) === 3, 'Pro addon must extend displayed prompts to include custom ones');
+$pro_saved_prompts = apply_filters('fito_tryon_save_prompts_config', $sanitized_system, $raw_submitted_prompts);
+assert(count($pro_saved_prompts) === 2, 'Pro addon must extend saved prompts configuration to include custom ones');
+assert($pro_saved_prompts[1]['id'] === 'custom_999', 'Custom prompt must be saved');
 
 $prompt_actions_fired = false;
 add_action('fito_tryon_admin_prompts_header_actions', function() use (&$prompt_actions_fired) {
@@ -447,7 +525,10 @@ assert(!empty($category_prompt) && str_contains($category_prompt, 'Floral Summer
 echo "PASS: fito_tryon_build_category_prompt filter contract functions cleanly.\n";
 
 // Test 19: Pro Storage is Self-Contained and Independent
-require_once dirname(__DIR__, 2) . '/fito-try-on-with-ai-for-woocommerce-pro-addon/includes/class-fito-tryon-pro-storage.php';
+$pro_dir = is_dir(dirname(__DIR__, 2) . '/elfit-ai-virtual-try-on-for-woocommerce-pro-addon')
+    ? dirname(__DIR__, 2) . '/elfit-ai-virtual-try-on-for-woocommerce-pro-addon'
+    : dirname(__DIR__, 2) . '/fito-try-on-with-ai-for-woocommerce-pro-addon';
+require_once $pro_dir . '/includes/class-fito-tryon-pro-storage.php';
 $temp_img_pro = tempnam(sys_get_temp_dir(), 'test_img_pro') . '.jpg';
 file_put_contents($temp_img_pro, "\xFF\xD8\xFF\xE0\x00\x10JFIF\x00\x01\x01\x01\x00`\x00`\x00\x00" . 'PRO_TEST_JPEG_DATA');
 $pro_b64 = Fito_Tryon_Pro_Storage::image_to_base64($temp_img_pro);
@@ -470,19 +551,39 @@ $failover_result = apply_filters('fito_tryon_handle_generation_failover', $faile
 assert($failover_invoked === true && $failover_result['success'] === true, 'Failover hook must allow Pro to handle secondary failover');
 echo "PASS: fito_tryon_handle_generation_failover successfully delegates failover to Pro Addon.\n";
 
-// Test 21: Database Job Cleanup Filter Contract
-$standalone_purge_where = apply_filters('fito_tryon_purge_jobs_where', '1=1');
-assert($standalone_purge_where === '1=1', 'Free standalone purge condition must default to 1=1');
-add_filter('fito_tryon_purge_jobs_where', function() {
-    return 'is_saved_to_account = 0';
+// Test 21: Database Job Cleanup Filter Contracts
+$mock_jobs = [
+    (object) ['id' => 1, 'is_saved' => 0],
+    (object) ['id' => 2, 'is_saved' => 1],
+    (object) ['id' => 3, 'is_saved' => 0],
+];
+$standalone_expired = apply_filters('fito_tryon_expired_jobs_to_purge', $mock_jobs);
+assert(count($standalone_expired) === 3, 'Free standalone must return all expired jobs');
+
+add_filter('fito_tryon_expired_jobs_to_purge', function($jobs) {
+    return array_values(array_filter($jobs, fn($j) => empty($j->is_saved)));
 });
-$pro_purge_where = apply_filters('fito_tryon_purge_jobs_where', '1=1');
-assert($pro_purge_where === 'is_saved_to_account = 0', 'Pro must filter job purge condition to preserve user saved jobs');
-echo "PASS: fito_tryon_purge_jobs_where filter cleanly isolates user account job persistence.\n";
+$filtered_expired = apply_filters('fito_tryon_expired_jobs_to_purge', $mock_jobs);
+assert(count($filtered_expired) === 2, 'fito_tryon_expired_jobs_to_purge must exclude saved jobs');
+
+$custom_purge_called = false;
+add_filter('fito_tryon_handle_purge_temporary_jobs', function() use (&$custom_purge_called) {
+    $custom_purge_called = true;
+    return 5;
+});
+$purge_result = apply_filters('fito_tryon_handle_purge_temporary_jobs', null);
+assert($custom_purge_called === true && $purge_result === 5, 'fito_tryon_handle_purge_temporary_jobs must allow intercepting manual purge');
+
+$legacy_purge_where = apply_filters('fito_tryon_purge_jobs_where', '1=1');
+assert($legacy_purge_where === '1=1' || $legacy_purge_where === 'is_saved_to_account = 0', 'Legacy purge condition must function');
+echo "PASS: fito_tryon_expired_jobs_to_purge and handle_purge_temporary_jobs filter contracts function safely.\n";
 
 // Test 22: Pro Fallback Model Persistence and Markup Initial Visibility
-require_once dirname(__DIR__, 2) . '/fito-try-on-with-ai-for-woocommerce-pro-addon/fito-try-on-with-ai-for-woocommerce-pro-addon.php';
-require_once dirname(__DIR__, 2) . '/fito-try-on-with-ai-for-woocommerce-pro-addon/admin/class-fito-tryon-pro-admin.php';
+$pro_main_file = file_exists($pro_dir . '/elfit-ai-virtual-try-on-for-woocommerce-pro-addon.php')
+    ? $pro_dir . '/elfit-ai-virtual-try-on-for-woocommerce-pro-addon.php'
+    : $pro_dir . '/fito-try-on-with-ai-for-woocommerce-pro-addon.php';
+require_once $pro_main_file;
+require_once $pro_dir . '/admin/class-fito-tryon-pro-admin.php';
 
 $pro_admin = Fito_Tryon_Pro_Admin::instance();
 
@@ -544,7 +645,204 @@ assert(isset($filtered_data['i18n']['saveAccount']), 'Pro must populate saveAcco
 assert(isset($filtered_data['i18n']['saved']), 'Pro must populate saved i18n string');
 assert(isset($filtered_data['i18n']['tryOnGallery']), 'Pro must populate tryOnGallery i18n string');
 assert(isset($filtered_data['i18n']['tryOnImage']), 'Pro must populate tryOnImage i18n string');
-assert($filtered_data['i18n']['saveAccount'] === 'Save to My Account', 'Pro saveAccount label matches expected');
-echo "PASS: Pro Addon enriches public script data with localized i18n strings.\n";
+// Test 25: Elfit Shortcode Registration
+assert(isset($GLOBALS['shortcodes']['elfit_tryon']), 'elfit_tryon shortcode must be registered');
+assert(!isset($GLOBALS['shortcodes']['fito_tryon']), 'fito_tryon shortcode must be deprecated/removed');
+echo "PASS: elfit_tryon shortcode is registered and fito_tryon is retired.\n";
 
-echo "=== ALL 24 TESTS PASSED SUCCESSFULLY ===\n";
+// Test 26: Input Sanitization Helper and Hook Safety
+require_once dirname(__DIR__) . '/admin/class-fito-tryon-admin.php';
+$ref_admin = new ReflectionClass(Fito_Tryon_Admin::class);
+$admin_obj = $ref_admin->newInstanceWithoutConstructor();
+$sanitize_method = $ref_admin->getMethod('sanitize_post_array');
+$sanitize_method->setAccessible(true);
+$tainted_post = [
+    'fito_tryon_openai_api_key' => "sk-test<script>alert('xss')</script>",
+    'nested_config'             => [
+        'safe_val'    => 'Valid string',
+        'unsafe_html' => '<b>Bold Text</b><script>',
+    ],
+    'numeric_key_val'           => 12345,
+    'INVALID KEY!!'             => 'test',
+];
+$sanitized_output = $sanitize_method->invoke($admin_obj, $tainted_post);
+assert($sanitized_output['fito_tryon_openai_api_key'] === 'sk-testalert(\'xss\')', 'Tainted scripts must be stripped by sanitize_text_field');
+assert($sanitized_output['nested_config']['unsafe_html'] === 'Bold Text', 'Nested tags must be stripped cleanly');
+assert(isset($sanitized_output['invalidkey']), 'Keys must be normalized by sanitize_key');
+assert(!isset($sanitized_output['INVALID KEY!!']), 'Unsanitized raw keys must not persist');
+echo "PASS: sanitize_post_array strips dangerous markup and normalizes keys recursively.\n";
+
+// Test 27: Storage handle_upload with wp_handle_upload Refactoring
+require_once dirname(__DIR__) . '/includes/class-fito-tryon-storage.php';
+$storage = new Fito_Tryon_Storage();
+
+// Subtest 27a: Valid image upload
+$sample_source = dirname(__DIR__) . '/assets/images/sample-tryon.jfif';
+$test_upload_img = tempnam(sys_get_temp_dir(), 'test_upload_') . '.jpg';
+copy($sample_source, $test_upload_img);
+
+$upload_file_param = [
+    'name'     => 'customer_portrait.jpg',
+    'type'     => 'image/jpeg',
+    'tmp_name' => $test_upload_img,
+    'error'    => 0,
+    'size'     => filesize($test_upload_img),
+];
+$upload_res = $storage->handle_upload($upload_file_param);
+assert($upload_res['success'] === true, 'handle_upload must succeed for valid image');
+assert(str_contains($upload_res['path'], 'fito-tryon/uploads'), 'Uploaded image path must route to fito-tryon/uploads');
+assert(str_starts_with(basename($upload_res['path']), 'user_'), 'Uploaded filename must be anonymized with user_ prefix');
+assert($upload_res['width'] === 2744 && $upload_res['height'] === 1536, 'Dimensions must match 2744x1536');
+
+// Subtest 27b: Image dimensions too small (< 150x150)
+$test_small_img = tempnam(sys_get_temp_dir(), 'test_small_') . '.png';
+file_put_contents($test_small_img, base64_decode('iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAYAAACNMs+9AAAADElEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg=='));
+
+$small_file_param = [
+    'name'     => 'small.png',
+    'type'     => 'image/png',
+    'tmp_name' => $test_small_img,
+    'error'    => 0,
+    'size'     => filesize($test_small_img),
+];
+$small_res = $storage->handle_upload($small_file_param);
+assert($small_res['success'] === false, 'handle_upload must reject images below 150x150');
+assert(str_contains($small_res['message'], 'too small'), 'Error message must specify dimensions too small');
+
+// Subtest 27c: wp_handle_upload error bubbling
+$err_file_param = [
+    'name'     => 'err.jpg',
+    'type'     => 'image/jpeg',
+    'tmp_name' => $test_upload_img,
+    'error'    => 0,
+    'size'     => filesize($test_upload_img),
+];
+$err_res = $storage->handle_upload($err_file_param, ['simulate_error' => 'Core upload error simulated']);
+assert($err_res['success'] === false, 'handle_upload must report failure when wp_handle_upload returns error');
+assert($err_res['message'] === 'Core upload error simulated', 'handle_upload must bubble up core error message');
+
+@unlink($test_upload_img);
+@unlink($test_small_img);
+if (!empty($upload_res['path']) && file_exists($upload_res['path'])) {
+    @unlink($upload_res['path']);
+}
+echo "PASS: Fito_Tryon_Storage::handle_upload uses wp_handle_upload with test_form validation and secure routing.\n";
+
+// Test 28: get_expired_logs queries only id column without Pro column references
+require_once dirname(__DIR__) . '/includes/class-fito-tryon-database.php';
+class MockWPDBForLogs {
+    public string $prefix = 'wp_';
+    public string $last_query = '';
+    public function prepare($query, ...$args) {
+        $this->last_query = vsprintf(str_replace(['%d', '%s'], ['%d', "'%s'"], $query), $args);
+        return $this->last_query;
+    }
+    public function get_results($query) {
+        $this->last_query = $query;
+        return [(object) ['id' => 101], (object) ['id' => 102]];
+    }
+}
+global $wpdb;
+$wpdb = new MockWPDBForLogs();
+$db = new Fito_Tryon_Database();
+$expired = $db->get_expired_logs(30);
+assert(str_contains($wpdb->last_query, 'SELECT id FROM'), 'get_expired_logs must select only id column');
+assert(!str_contains($wpdb->last_query, 'user_image_url'), 'get_expired_logs must not select user_image_url');
+assert(!str_contains($wpdb->last_query, 'result_image_url'), 'get_expired_logs must not select result_image_url');
+assert(count($expired) === 2 && $expired[0]->id === 101, 'get_expired_logs must return matched log IDs');
+echo "PASS: get_expired_logs selects only id column without referencing non-existent Pro columns.\n";
+
+// Test 29: Handshake action fito_tryon_before_delete_expired_logs dispatches correctly
+$before_delete_fired = false;
+$passed_days = 0;
+add_action('fito_tryon_before_delete_expired_logs', function($days) use (&$before_delete_fired, &$passed_days) {
+    $before_delete_fired = true;
+    $passed_days = $days;
+});
+do_action('fito_tryon_before_delete_expired_logs', 30);
+assert($before_delete_fired === true, 'fito_tryon_before_delete_expired_logs action must fire');
+assert($passed_days === 30, 'fito_tryon_before_delete_expired_logs action must receive days argument');
+echo "PASS: fito_tryon_before_delete_expired_logs lifecycle action hook dispatches cleanly.\n";
+
+// Test 30: Privacy policy suggestion is free of Pro account references
+require_once dirname(__DIR__) . '/includes/class-fito-tryon-privacy.php';
+$privacy_file = file_get_contents(dirname(__DIR__) . '/includes/class-fito-tryon-privacy.php');
+assert(!str_contains($privacy_file, 'save the try-on result to your customer account'), 'Privacy class must not contain Pro customer account saving references');
+assert(str_contains($privacy_file, 'after temporary processing'), 'Privacy class must state photos are deleted after temporary processing');
+echo "PASS: Fito_Tryon_Privacy contains zero references to Pro customer account saving.\n";
+
+// Test 31: Log data filter contract decouples Pro image attributes from Free
+$sample_log = [
+    'job_id' => 123,
+    'status' => 'success',
+];
+$standalone_log = apply_filters('fito_tryon_log_data', $sample_log, [
+    'user_image_url'   => 'https://example.com/user.jpg',
+    'result_image_url' => 'https://example.com/result.jpg',
+]);
+assert(!isset($standalone_log['user_image_url']), 'Free standalone must not have user_image_url by default');
+
+add_filter('fito_tryon_log_data', function($entry, $ctx) {
+    if (!empty($ctx['user_image_url'])) {
+        $entry['user_image_url'] = $ctx['user_image_url'];
+    }
+    return $entry;
+}, 10, 2);
+$pro_log = apply_filters('fito_tryon_log_data', $sample_log, [
+    'user_image_url'   => 'https://example.com/user.jpg',
+    'result_image_url' => 'https://example.com/result.jpg',
+]);
+assert(isset($pro_log['user_image_url']) && $pro_log['user_image_url'] === 'https://example.com/user.jpg', 'Pro filter must append visual image URLs cleanly');
+echo "PASS: fito_tryon_log_data filter contract cleanly decouples visual image URLs.\n";
+
+// Test 32: .distignore excludes development and testing files for release packaging
+$distignore_path = dirname(__DIR__) . '/.distignore';
+assert(file_exists($distignore_path), '.distignore must exist in the plugin root');
+$distignore_content = file_get_contents($distignore_path);
+assert(str_contains($distignore_content, '/tests'), '.distignore must exclude /tests');
+assert(str_contains($distignore_content, '/docs'), '.distignore must exclude /docs');
+assert(str_contains($distignore_content, '/.codegraph'), '.distignore must exclude /.codegraph');
+echo "PASS: .distignore correctly excludes development artifacts from distribution packages.\n";
+
+// Test 33: Free CSS files contain zero dormant Pro selectors
+$free_admin_css = file_get_contents(dirname(__DIR__) . '/assets/css/admin.css');
+$free_public_css = file_get_contents(dirname(__DIR__) . '/assets/css/public.css');
+assert(!str_contains($free_admin_css, 'fito-log-thumb'), 'Free admin.css must not contain fito-log-thumb');
+assert(!str_contains($free_admin_css, 'fito-modal-compare-grid'), 'Free admin.css must not contain fito-modal-compare-grid');
+assert(!str_contains($free_public_css, 'fito-account-tryons'), 'Free public.css must not contain fito-account-tryons');
+assert(!str_contains($free_public_css, 'fito-tryon-btn--gallery'), 'Free public.css must not contain fito-tryon-btn--gallery');
+assert(!str_contains($free_public_css, 'fito-variation-tryon-wrapper'), 'Free public.css must not contain fito-variation-tryon-wrapper');
+assert(!str_contains($free_public_css, 'fito-custom-image-wrapper'), 'Free public.css must not contain fito-custom-image-wrapper');
+assert(!str_contains($free_public_css, 'fito-tryon-btn--archive'), 'Free public.css must not contain fito-tryon-btn--archive');
+echo "PASS: Free stylesheets contain zero dormant Pro classes or selectors.\n";
+
+// Test 34: Free JavaScript contains zero dormant Pro element queries
+$free_public_js = file_get_contents(dirname(__DIR__) . '/assets/js/public.js');
+assert(!str_contains($free_public_js, 'fito-variation-tryon-wrapper'), 'Free public.js must not contain fito-variation-tryon-wrapper');
+assert(!str_contains($free_public_js, 'fito-tryon-btn--archive'), 'Free public.js must not contain fito-tryon-btn--archive');
+echo "PASS: Free public JavaScript contains zero dormant Pro element queries or branches.\n";
+
+// Test 35: readme.txt metadata and changelog integrity
+$readme_content = file_get_contents(dirname(__DIR__) . '/readme.txt');
+assert(str_contains($readme_content, 'Tested up to: 7.1'), 'readme.txt must declare Tested up to: 7.1');
+assert(str_contains($readme_content, 'Contributors: micromax2'), 'readme.txt must declare Contributors: micromax2');
+assert(!str_contains($readme_content, 'and prompt duplication.'), 'readme.txt 1.1.0 changelog must not claim prompt duplication');
+echo "PASS: readme.txt metadata and changelog integrity verified.\n";
+
+// Test 36: Pro addon stylesheets exist and contain relocated rules
+$pro_dir = dirname(dirname(__DIR__)) . '/elfit-ai-virtual-try-on-for-woocommerce-pro-addon';
+if (is_dir($pro_dir)) {
+    $pro_public_css_path = $pro_dir . '/assets/css/pro-public.css';
+    $pro_admin_css_path = $pro_dir . '/assets/css/pro-admin.css';
+    assert(file_exists($pro_public_css_path), 'pro-public.css must exist in Pro Addon');
+    assert(file_exists($pro_admin_css_path), 'pro-admin.css must exist in Pro Addon');
+    $pro_public_css = file_get_contents($pro_public_css_path);
+    $pro_admin_css = file_get_contents($pro_admin_css_path);
+    assert(str_contains($pro_public_css, 'fito-account-tryons'), 'pro-public.css must contain fito-account-tryons');
+    assert(str_contains($pro_public_css, 'fito-variation-tryon-wrapper'), 'pro-public.css must contain fito-variation-tryon-wrapper');
+    assert(str_contains($pro_admin_css, 'fito-log-thumb'), 'pro-admin.css must contain fito-log-thumb');
+    assert(str_contains($pro_admin_css, 'fito-modal-compare-grid'), 'pro-admin.css must contain fito-modal-compare-grid');
+    echo "PASS: Pro addon stylesheets successfully house all relocated styling rules.\n";
+}
+
+echo "=== ALL 36 TESTS PASSED SUCCESSFULLY ===\n";

@@ -1,13 +1,13 @@
 <?php
 /**
- * Plugin Name:       Fito Try-On with AI for WooCommerce
- * Plugin URI:        https://wordpress.org/plugins/fito-try-on-with-ai-for-woocommerce/
+ * Plugin Name:       Elfit AI Virtual Try-On for WooCommerce
+ * Plugin URI:        https://wordpress.org/plugins/elfit-ai-virtual-try-on-for-woocommerce/
  * Description:       Enable customers to virtually try on clothing, shoes, glasses, jewelry, and accessories with AI using OpenRouter.
  * Version:           1.4.0
  * Author:            micromax
  * License:           GPL-2.0-or-later
  * License URI:       https://www.gnu.org/licenses/gpl-2.0.html
- * Text Domain:       fito-try-on-with-ai-for-woocommerce
+ * Text Domain:       elfit-ai-virtual-try-on-for-woocommerce
  * Domain Path:       /languages
  * Requires at least: 6.0
  * Requires PHP:      8.0
@@ -59,8 +59,8 @@ function fito_tryon_missing_wc_notice(): void {
     ?>
     <div class="notice notice-error is-dismissible">
         <p>
-            <strong><?php esc_html_e('Fito Try-On with AI for WooCommerce', 'fito-try-on-with-ai-for-woocommerce'); ?></strong>
-            <?php esc_html_e('requires WooCommerce to be installed and active.', 'fito-try-on-with-ai-for-woocommerce'); ?>
+            <strong><?php esc_html_e('Elfit AI Virtual Try-On for WooCommerce', 'elfit-ai-virtual-try-on-for-woocommerce'); ?></strong>
+            <?php esc_html_e('requires WooCommerce to be installed and active.', 'elfit-ai-virtual-try-on-for-woocommerce'); ?>
         </p>
     </div>
     <?php

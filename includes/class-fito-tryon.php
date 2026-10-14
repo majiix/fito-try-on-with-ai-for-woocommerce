@@ -1,6 +1,6 @@
 <?php
 /**
- * Master orchestrator class for Fito Try-On with AI for WooCommerce.
+ * Master orchestrator class for Elfit AI Virtual Try-On for WooCommerce.
  */
 
 defined('ABSPATH') || exit;
@@ -77,11 +77,11 @@ class Fito_Tryon {
      */
     public function add_action_links(array $links): array {
         $settings_url = admin_url('admin.php?page=fito-tryon-settings');
-        $settings_link = '<a href="' . esc_url($settings_url) . '">' . esc_html__('Settings', 'fito-try-on-with-ai-for-woocommerce') . '</a>';
+        $settings_link = '<a href="' . esc_url($settings_url) . '">' . esc_html__('Settings', 'elfit-ai-virtual-try-on-for-woocommerce') . '</a>';
         array_unshift($links, $settings_link);
 
         if (apply_filters('fito_tryon_show_pro_card', true)) {
-            $links['go_pro'] = '<a href="https://violo.ir/?p=721" target="_blank" rel="noopener noreferrer" style="color: #7c3aed; font-weight: 600;">' . esc_html__('Go Pro', 'fito-try-on-with-ai-for-woocommerce') . '</a>';
+            $links['go_pro'] = '<a href="https://violo.ir/?p=721" target="_blank" rel="noopener noreferrer" style="color: #7c3aed; font-weight: 600;">' . esc_html__('Go Pro', 'elfit-ai-virtual-try-on-for-woocommerce') . '</a>';
         }
 
         return $links;

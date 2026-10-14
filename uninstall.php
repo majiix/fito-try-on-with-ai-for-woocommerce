@@ -1,6 +1,6 @@
 <?php
 /**
- * Fito Try-On with AI for WooCommerce - Uninstall Cleanup
+ * Elfit AI Virtual Try-On for WooCommerce - Uninstall Cleanup
  */
 
 defined('WP_UNINSTALL_PLUGIN') || exit;
@@ -21,7 +21,6 @@ $fito_tryon_options = [
     'fito_tryon_ai_provider',
     'fito_tryon_openrouter_api_key',
     'fito_tryon_primary_model',
-    'fito_tryon_fallback_model',
     'fito_tryon_timeout_seconds',
     'fito_tryon_button_text',
     'fito_tryon_button_position',
@@ -32,7 +31,6 @@ $fito_tryon_options = [
     'fito_tryon_rate_limit_count',
     'fito_tryon_rate_limit_period',
     'fito_tryon_rate_limit_hourly',
-    'fito_tryon_retention_hours',
     'fito_tryon_log_retention',
     'fito_tryon_consent_text',
     'fito_tryon_access_level',
@@ -49,7 +47,13 @@ foreach ($fito_tryon_options as $fito_tryon_opt) {
 
 // Clean up plugin transients and cached analytics summaries
 // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
-$wpdb->query("DELETE FROM {$wpdb->options} WHERE option_name LIKE '_transient_fito_%' OR option_name LIKE '_transient_timeout_fito_%'");
+$wpdb->query(
+    $wpdb->prepare(
+        "DELETE FROM {$wpdb->options} WHERE option_name LIKE %s OR option_name LIKE %s",
+        $wpdb->esc_like( '_transient_fito_' ) . '%',
+        $wpdb->esc_like( '_transient_timeout_fito_' ) . '%'
+    )
+);
 
 // 4. Clean up uploaded storage directory
 $fito_tryon_upload_dir = wp_upload_dir();

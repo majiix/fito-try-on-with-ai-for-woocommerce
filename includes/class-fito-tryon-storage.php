@@ -1,6 +1,6 @@
 <?php
 /**
- * Storage manager for Fito Try-On with AI.
+ * Storage manager for Elfit AI Virtual Try-On for WooCommerce.
  */
 
 defined('ABSPATH') || exit;
@@ -36,7 +36,7 @@ class Fito_Tryon_Storage {
         // Write protective .htaccess and index.php
         $htaccess_file = trailingslashit($base) . '.htaccess';
         if (!file_exists($htaccess_file)) {
-            $htaccess_content = "# Fito Try-On Security\nOptions -Indexes\n<FilesMatch \"\.(php|php5|phtml|phar|pl|py|cgi)$\">\nDeny from all\n</FilesMatch>\n";
+            $htaccess_content = "# Elfit Try-On Security\nOptions -Indexes\n<FilesMatch \"\.(php|php5|phtml|phar|pl|py|cgi)$\">\nDeny from all\n</FilesMatch>\n";
             file_put_contents($htaccess_file, $htaccess_content);
         }
 
@@ -46,20 +46,27 @@ class Fito_Tryon_Storage {
         }
     }
 
-    public function handle_upload(array $file): array {
+    /**
+     * Handle uploaded customer photo file using wp_handle_upload().
+     *
+     * @param array<string, mixed> $file Single file array from $_FILES or WP_REST_Request file params.
+     * @param array<string, mixed> $overrides Optional wp_handle_upload overrides.
+     * @return array{success: bool, message?: string, path?: string, url?: string, mime?: string, width?: int, height?: int}
+     */
+    public function handle_upload(array $file, array $overrides = []): array {
         self::setup_storage_directory();
 
-        if (empty($file['tmp_name']) || !is_uploaded_file($file['tmp_name'])) {
-            return ['success' => false, 'message' => __('No valid uploaded file found.', 'fito-try-on-with-ai-for-woocommerce')];
+        if (empty($file['tmp_name']) || !file_exists($file['tmp_name'])) {
+            return ['success' => false, 'message' => __('No valid uploaded file found.', 'elfit-ai-virtual-try-on-for-woocommerce')];
         }
 
         $max_size = (int) get_option('fito_tryon_max_upload_size', 10) * 1024 * 1024;
-        if ($file['size'] > $max_size) {
+        if (!empty($file['size']) && $file['size'] > $max_size) {
             return [
                 'success' => false,
                 'message' => sprintf(
                     // translators: %d: Maximum allowed upload size in megabytes
-                    __('Image size exceeds maximum limit of %d MB.', 'fito-try-on-with-ai-for-woocommerce'),
+                    __('Image size exceeds maximum limit of %d MB.', 'elfit-ai-virtual-try-on-for-woocommerce'),
                     (int) get_option('fito_tryon_max_upload_size', 10)
                 ),
             ];
@@ -67,17 +74,17 @@ class Fito_Tryon_Storage {
 
         $image_info = @getimagesize($file['tmp_name']);
         if ($image_info === false) {
-            return ['success' => false, 'message' => __('File is not a valid or recognizable image.', 'fito-try-on-with-ai-for-woocommerce')];
+            return ['success' => false, 'message' => __('File is not a valid or recognizable image.', 'elfit-ai-virtual-try-on-for-woocommerce')];
         }
 
         $mime_type = $image_info['mime'];
         $allowed_mimes = ['image/jpeg', 'image/png', 'image/webp'];
         if (!in_array($mime_type, $allowed_mimes, true)) {
-            return ['success' => false, 'message' => __('Only JPG, PNG, and WebP images are supported.', 'fito-try-on-with-ai-for-woocommerce')];
+            return ['success' => false, 'message' => __('Only JPG, PNG, and WebP images are supported.', 'elfit-ai-virtual-try-on-for-woocommerce')];
         }
 
         if ($image_info[0] < 150 || $image_info[1] < 150) {
-            return ['success' => false, 'message' => __('Image dimensions too small (minimum 150x150 pixels required).', 'fito-try-on-with-ai-for-woocommerce')];
+            return ['success' => false, 'message' => __('Image dimensions too small (minimum 150x150 pixels required).', 'elfit-ai-virtual-try-on-for-woocommerce')];
         }
 
         $ext = 'jpg';
@@ -87,20 +94,54 @@ class Fito_Tryon_Storage {
             $ext = 'webp';
         }
 
-        $filename = 'user_' . wp_generate_password(24, false) . '.' . $ext;
-        $dest_path = trailingslashit(self::get_base_dir()) . 'uploads/' . $filename;
-        $dest_url  = trailingslashit(self::get_base_url()) . 'uploads/' . $filename;
+        // Anonymize filename for user privacy and security
+        $file['name'] = 'user_' . wp_generate_password(24, false) . '.' . $ext;
 
-        // phpcs:ignore Generic.PHP.ForbiddenFunctions.Found -- Direct file upload validation with strict is_uploaded_file and mime inspection used in custom media storage endpoint.
-        if (!move_uploaded_file($file['tmp_name'], $dest_path)) {
-            return ['success' => false, 'message' => __('Failed to save uploaded photo to storage.', 'fito-try-on-with-ai-for-woocommerce')];
+        if (!function_exists('wp_handle_upload')) {
+            require_once ABSPATH . 'wp-admin/includes/file.php';
+        }
+
+        $default_overrides = [
+            'test_form' => false,
+            'mimes'     => [
+                'jpg|jpeg|jpe' => 'image/jpeg',
+                'png'          => 'image/png',
+                'webp'         => 'image/webp',
+            ],
+        ];
+        $upload_overrides = array_merge($default_overrides, $overrides);
+
+        $custom_upload_dir = function (array $uploads): array {
+            $subdir = '/' . self::UPLOAD_DIR_NAME . '/uploads';
+            $uploads['subdir'] = $subdir;
+            $uploads['path']   = $uploads['basedir'] . $subdir;
+            $uploads['url']    = $uploads['baseurl'] . $subdir;
+            return $uploads;
+        };
+
+        add_filter('upload_dir', $custom_upload_dir);
+        $upload_result = wp_handle_upload($file, $upload_overrides);
+        remove_filter('upload_dir', $custom_upload_dir);
+
+        if (!empty($upload_result['error'])) {
+            return [
+                'success' => false,
+                'message' => $upload_result['error'],
+            ];
+        }
+
+        if (empty($upload_result['file']) || !file_exists($upload_result['file'])) {
+            return [
+                'success' => false,
+                'message' => __('Failed to save uploaded photo to storage.', 'elfit-ai-virtual-try-on-for-woocommerce'),
+            ];
         }
 
         return [
             'success' => true,
-            'path'    => $dest_path,
-            'url'     => $dest_url,
-            'mime'    => $mime_type,
+            'path'    => $upload_result['file'],
+            'url'     => $upload_result['url'],
+            'mime'    => $upload_result['type'] ?: $mime_type,
             'width'   => $image_info[0],
             'height'  => $image_info[1],
         ];
@@ -117,7 +158,7 @@ class Fito_Tryon_Storage {
         }
 
         if (!$binary) {
-            return ['success' => false, 'message' => __('Invalid base64 image data received.', 'fito-try-on-with-ai-for-woocommerce')];
+            return ['success' => false, 'message' => __('Invalid base64 image data received.', 'elfit-ai-virtual-try-on-for-woocommerce')];
         }
 
         $max_size = (int) get_option('fito_tryon_max_upload_size', 10) * 1024 * 1024;
@@ -126,7 +167,7 @@ class Fito_Tryon_Storage {
                 'success' => false,
                 'message' => sprintf(
                     // translators: %d: Maximum allowed upload size in megabytes
-                    __('Image size exceeds maximum limit of %d MB.', 'fito-try-on-with-ai-for-woocommerce'),
+                    __('Image size exceeds maximum limit of %d MB.', 'elfit-ai-virtual-try-on-for-woocommerce'),
                     (int) get_option('fito_tryon_max_upload_size', 10)
                 ),
             ];
@@ -134,17 +175,17 @@ class Fito_Tryon_Storage {
 
         $image_info = @getimagesizefromstring($binary);
         if ($image_info === false) {
-            return ['success' => false, 'message' => __('Uploaded data is not a valid or recognizable image.', 'fito-try-on-with-ai-for-woocommerce')];
+            return ['success' => false, 'message' => __('Uploaded data is not a valid or recognizable image.', 'elfit-ai-virtual-try-on-for-woocommerce')];
         }
 
         $mime_type = $image_info['mime'];
         $allowed_mimes = ['image/jpeg', 'image/png', 'image/webp'];
         if (!in_array($mime_type, $allowed_mimes, true)) {
-            return ['success' => false, 'message' => __('Only JPG, PNG, and WebP images are supported.', 'fito-try-on-with-ai-for-woocommerce')];
+            return ['success' => false, 'message' => __('Only JPG, PNG, and WebP images are supported.', 'elfit-ai-virtual-try-on-for-woocommerce')];
         }
 
         if ($image_info[0] < 150 || $image_info[1] < 150) {
-            return ['success' => false, 'message' => __('Image dimensions too small (minimum 150x150 pixels required).', 'fito-try-on-with-ai-for-woocommerce')];
+            return ['success' => false, 'message' => __('Image dimensions too small (minimum 150x150 pixels required).', 'elfit-ai-virtual-try-on-for-woocommerce')];
         }
 
         $ext = 'jpg';
@@ -159,7 +200,7 @@ class Fito_Tryon_Storage {
         $dest_url  = trailingslashit(self::get_base_url()) . 'uploads/' . $filename;
 
         if (file_put_contents($dest_path, $binary) === false) {
-            return ['success' => false, 'message' => __('Failed to save uploaded photo to storage.', 'fito-try-on-with-ai-for-woocommerce')];
+            return ['success' => false, 'message' => __('Failed to save uploaded photo to storage.', 'elfit-ai-virtual-try-on-for-woocommerce')];
         }
 
         return [
@@ -183,14 +224,14 @@ class Fito_Tryon_Storage {
             $parts = explode(',', $data_or_url);
             $binary = base64_decode(end($parts), true);
             if (!$binary) {
-                return ['success' => false, 'message' => __('Invalid base64 image data received.', 'fito-try-on-with-ai-for-woocommerce')];
+                return ['success' => false, 'message' => __('Invalid base64 image data received.', 'elfit-ai-virtual-try-on-for-woocommerce')];
             }
             file_put_contents($dest_path, $binary);
         } elseif (str_starts_with($data_or_url, 'http://') || str_starts_with($data_or_url, 'https://')) {
             $sslverify = (bool) apply_filters('fito_tryon_sslverify', !in_array(wp_get_environment_type(), ['local', 'development'], true));
             $response = wp_remote_get($data_or_url, ['timeout' => 30, 'sslverify' => $sslverify]);
             if (is_wp_error($response) || wp_remote_retrieve_response_code($response) !== 200) {
-                return ['success' => false, 'message' => __('Failed to download generated try-on image from provider.', 'fito-try-on-with-ai-for-woocommerce')];
+                return ['success' => false, 'message' => __('Failed to download generated try-on image from provider.', 'elfit-ai-virtual-try-on-for-woocommerce')];
             }
             file_put_contents($dest_path, wp_remote_retrieve_body($response));
         } elseif (file_exists($data_or_url)) {
@@ -200,7 +241,7 @@ class Fito_Tryon_Storage {
             if ($binary && strlen($binary) > 100) {
                 file_put_contents($dest_path, $binary);
             } else {
-                return ['success' => false, 'message' => __('Unrecognized image format received.', 'fito-try-on-with-ai-for-woocommerce')];
+                return ['success' => false, 'message' => __('Unrecognized image format received.', 'elfit-ai-virtual-try-on-for-woocommerce')];
             }
         }
 

@@ -1,5 +1,5 @@
 /**
- * Fito Try-On with AI - Admin Interactivity & Data Visualization
+ * Elfit AI Virtual Try-On for WooCommerce - Admin Interactivity & Data Visualization
  */
 
 (function ($) {
@@ -12,7 +12,6 @@
             this.bindConnectionTest();
             this.bindAccessControl();
             this.bindLogInspection();
-            this.bindLogHoverPreview();
             this.bindLogDeletion();
             this.bindModelSync();
             this.bindPromptsManager();
@@ -183,35 +182,12 @@
                 const error = $btn.data('error');
                 const pTokens = $btn.data('prompt-tok');
                 const cTokens = $btn.data('comp-tok');
-                const userImg = $btn.data('user-img');
-                const resultImg = $btn.data('result-img');
 
                 const $row = $btn.closest('tr');
                 const promptText = $row.find('.fito-log-raw-prompt').text().trim();
                 const responseText = $row.find('.fito-log-raw-response').text().trim();
 
                 let html = '';
-
-                if (userImg || resultImg) {
-                    html += '<div class="fito-modal-compare-grid">';
-                    html += '  <div class="fito-modal-compare-col">';
-                    html += '    <div class="fito-modal-compare-label">Before (User Photo)</div>';
-                    if (userImg) {
-                        html += '    <a href="' + userImg + '" target="_blank" class="fito-modal-compare-link"><img src="' + userImg + '" alt="Before" class="fito-modal-compare-img"><span class="fito-zoom-hint">View Full Size</span></a>';
-                    } else {
-                        html += '    <div class="fito-modal-no-img">No before image saved</div>';
-                    }
-                    html += '  </div>';
-                    html += '  <div class="fito-modal-compare-col">';
-                    html += '    <div class="fito-modal-compare-label">After (Try-On Result)</div>';
-                    if (resultImg) {
-                        html += '    <a href="' + resultImg + '" target="_blank" class="fito-modal-compare-link"><img src="' + resultImg + '" alt="After" class="fito-modal-compare-img"><span class="fito-zoom-hint">View Full Size</span></a>';
-                    } else {
-                        html += '    <div class="fito-modal-no-img">No result image saved</div>';
-                    }
-                    html += '  </div>';
-                    html += '</div>';
-                }
 
                 const pTokNum = parseInt(pTokens, 10) || 0;
                 const cTokNum = parseInt(cTokens, 10) || 0;
@@ -300,6 +276,7 @@
                 html += '</div>';
 
                 $('#fito-log-modal-content').html(html);
+                $(document).trigger('fito_log_modal_opened', [$btn, $row, $('#fito-log-modal-content')]);
                 $('#fito-log-modal').fadeIn(150);
             });
 
@@ -343,66 +320,6 @@
             $('#fito-close-log-modal, #fito-log-modal').on('click', function (e) {
                 if (e.target === this) {
                     $('#fito-log-modal').fadeOut(150);
-                }
-            });
-        },
-
-        bindLogHoverPreview: function () {
-            let $preview = $('#fito-thumb-floating-preview');
-            if (!$preview.length) {
-                $preview = $(
-                    '<div id="fito-thumb-floating-preview" class="fito-thumb-floating-preview">' +
-                    '  <div class="fito-floating-preview-header">' +
-                    '    <span class="fito-floating-preview-title"></span>' +
-                    '    <span class="fito-floating-preview-hint">Click to open &nearr;</span>' +
-                    '  </div>' +
-                    '  <div class="fito-floating-preview-body">' +
-                    '    <img src="" alt="Preview">' +
-                    '  </div>' +
-                    '</div>'
-                ).appendTo('body');
-            }
-
-            $(document).on('mouseenter', '.fito-log-thumb', function () {
-                const url = $(this).data('preview-url') || $(this).attr('href');
-                if (!url) return;
-
-                const title = $(this).data('preview-title') || $(this).attr('title') || 'Image Preview';
-                $preview.find('.fito-floating-preview-title').text(title);
-                $preview.find('img').attr('src', url);
-
-                const rect = this.getBoundingClientRect();
-                const previewWidth = 240;
-                const previewHeight = 285;
-
-                let top = rect.top + (rect.height / 2) - (previewHeight / 2);
-                let left = rect.right + 12;
-
-                // Position to the left of thumbnail if overflowing right edge
-                if (left + previewWidth > window.innerWidth - 12) {
-                    left = rect.left - previewWidth - 12;
-                }
-
-                // Keep inside vertical viewport
-                if (top < 10) {
-                    top = 10;
-                } else if (top + previewHeight > window.innerHeight - 10) {
-                    top = window.innerHeight - previewHeight - 10;
-                }
-
-                $preview.css({
-                    top: top + 'px',
-                    left: left + 'px'
-                }).addClass('is-active');
-            });
-
-            $(document).on('mouseleave', '.fito-log-thumb', function () {
-                $preview.removeClass('is-active');
-            });
-
-            $(window).on('scroll', function () {
-                if ($preview.hasClass('is-active')) {
-                    $preview.removeClass('is-active');
                 }
             });
         },
@@ -640,19 +557,6 @@
                 e.preventDefault();
                 const $row = $(this).closest('.fito-prompt-row');
                 $row.toggleClass('is-collapsed');
-            });
-
-            // 3. Delete custom prompt row
-            $repeater.on('click', '.fito-prompt-delete:not(.disabled)', function (e) {
-                e.preventDefault();
-                const $row = $(this).closest('.fito-prompt-row');
-                const title = $row.find('.fito-prompt-title-input').val() || 'this prompt';
-                if (confirm('Are you sure you want to delete ' + title + '?')) {
-                    $row.fadeOut(200, function () {
-                        $(this).remove();
-                        syncExclusiveCategories();
-                    });
-                }
             });
 
             // Listen for external category sync trigger (e.g. from Pro Addon)

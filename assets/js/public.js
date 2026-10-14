@@ -1,5 +1,5 @@
 /**
- * Fito Try-On with AI - Public Frontend Widget & Comparison Engine
+ * Elfit AI Virtual Try-On for WooCommerce - Public Frontend Widget & Comparison Engine
  */
 
 (function ($) {
@@ -74,7 +74,7 @@
             // Open modal trigger
             $(document).on('click', '.fito-tryon-btn', function (e) {
                 e.preventDefault();
-                if (fitoData && fitoData.isProductAllowed === false && !$(this).hasClass('fito-tryon-btn--archive')) {
+                if (fitoData && fitoData.isProductAllowed === false) {
                     return;
                 }
                 const $btn = $(this);
@@ -97,8 +97,6 @@
                 const btnVarId = parseInt($btn.data('variation-id'), 10);
                 if (btnVarId) {
                     self.currentVariationId = btnVarId;
-                } else if ($btn.hasClass('fito-tryon-btn--archive')) {
-                    self.currentVariationId = 0;
                 } else {
                     const formVarId = parseInt($('form.variations_form input[name="variation_id"]').val(), 10);
                     self.currentVariationId = formVarId || 0;
@@ -289,40 +287,12 @@
                         $('.fito-tryon-btn--single').data('variation-id', variation.variation_id);
                         $('.fito-tryon-btn--single').attr('data-variation-id', variation.variation_id);
                     }
-
-                    // Update dedicated variation button if present
-                    const $varBtnWrap = $('#fito-variation-tryon-wrapper');
-                    if ($varBtnWrap.length) {
-                        const $varBtn = $('#fito-variation-tryon-btn');
-                        $varBtn.data('variation-id', variation.variation_id);
-                        $varBtn.attr('data-variation-id', variation.variation_id);
-                        if (varImg) {
-                            $varBtn.data('product-image', varImg);
-                            $varBtn.attr('data-product-image', varImg);
-                        }
-                        if (variation.image_id) {
-                            $varBtn.data('image-id', variation.image_id);
-                            $varBtn.attr('data-image-id', variation.image_id);
-                        }
-
-                        let varTitle = self.currentProductTitle;
-                        if (variation.attributes) {
-                            const attrs = Object.values(variation.attributes).filter(Boolean);
-                            if (attrs.length) {
-                                varTitle += ' - ' + attrs.join(', ');
-                            }
-                        }
-                        $varBtn.data('product-title', varTitle);
-                        $varBtn.attr('data-product-title', varTitle);
-                        $varBtnWrap.slideDown(200);
-                    }
                 }
             });
 
             $(document).on('reset_data', '.variations_form', function () {
                 self.currentVariationId = 0;
                 self.currentImageId = 0;
-                $('#fito-variation-tryon-wrapper').slideUp(150);
             });
         },
 

@@ -1,11 +1,9 @@
 <?php
 /**
- * Database operations and schema manager for Fito Try-On.
+ * Database operations and schema manager for Elfit AI Virtual Try-On for WooCommerce.
  */
 
 defined('ABSPATH') || exit;
-
-// phpcs:disable WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, PluginCheck.Security.DirectDB.UnescapedDBParameter
 
 class Fito_Tryon_Database {
     public const DB_VERSION = '1.3.0';
@@ -36,7 +34,6 @@ class Fito_Tryon_Database {
             result_image_url varchar(500) NOT NULL DEFAULT '',
             result_image_path varchar(255) NOT NULL DEFAULT '',
             model_used varchar(100) NOT NULL DEFAULT '',
-            is_saved_to_account tinyint(1) NOT NULL DEFAULT 0,
             created_at datetime NOT NULL,
             updated_at datetime NOT NULL,
             PRIMARY KEY  (id),
@@ -62,8 +59,6 @@ class Fito_Tryon_Database {
             prompt_tokens int(11) NOT NULL DEFAULT 0,
             completion_tokens int(11) NOT NULL DEFAULT 0,
             cost_estimate decimal(8,4) NOT NULL DEFAULT 0.0000,
-            user_image_url varchar(500) NOT NULL DEFAULT '',
-            result_image_url varchar(500) NOT NULL DEFAULT '',
             error_message text,
             prompt_text longtext DEFAULT NULL,
             response_text longtext DEFAULT NULL,
@@ -89,12 +84,14 @@ class Fito_Tryon_Database {
             // Backfill any empty response_text for logs that have an error_message
             global $wpdb;
             $logs_table = $wpdb->prefix . 'fito_tryon_logs';
+            // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Custom table schema upgrade query.
             $empty_rows = $wpdb->get_results(
                 "SELECT id, error_message FROM {$logs_table} WHERE (response_text IS NULL OR response_text = '') AND error_message IS NOT NULL AND error_message != '' LIMIT 500"
             );
             if (!empty($empty_rows)) {
                 foreach ($empty_rows as $row) {
                     $backfill_json = wp_json_encode(['error' => $row->error_message], JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES);
+                    // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Custom table schema upgrade update.
                     $wpdb->update($logs_table, ['response_text' => $backfill_json], ['id' => $row->id]);
                 }
             }
@@ -116,18 +113,18 @@ class Fito_Tryon_Database {
             'variation_id'       => isset($data['variation_id']) ? absint($data['variation_id']) : 0,
             'status'             => 'pending',
             'progress'           => 10,
-            'status_message'     => __('Preparing try-on request...', 'fito-try-on-with-ai-for-woocommerce'),
+            'status_message'     => __('Preparing try-on request...', 'elfit-ai-virtual-try-on-for-woocommerce'),
             'user_image_path'    => isset($data['user_image_path']) ? sanitize_text_field($data['user_image_path']) : '',
             'user_image_url'     => isset($data['user_image_url']) ? esc_url_raw($data['user_image_url']) : '',
             'product_image_url'  => isset($data['product_image_url']) ? esc_url_raw($data['product_image_url']) : '',
             'result_image_url'   => '',
             'result_image_path'  => '',
             'model_used'         => isset($data['model_used']) ? sanitize_text_field($data['model_used']) : '',
-            'is_saved_to_account'=> 0,
             'created_at'         => $now,
             'updated_at'         => $now,
         ];
 
+        // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery -- Custom table insert.
         $wpdb->insert($wpdb->prefix . 'fito_tryon_jobs', $insert_data);
         return $token;
     }
@@ -135,6 +132,7 @@ class Fito_Tryon_Database {
     public function get_job_by_token(string $token): ?object {
         global $wpdb;
         $table = $wpdb->prefix . 'fito_tryon_jobs';
+        // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Custom table query.
         $row = $wpdb->get_row($wpdb->prepare("SELECT * FROM {$table} WHERE job_token = %s LIMIT 1", $token));
         return $row ?: null;
     }
@@ -143,6 +141,7 @@ class Fito_Tryon_Database {
     public function update_job_by_token(string $token, array $data): bool {
         global $wpdb;
         $data['updated_at'] = current_time('mysql');
+        // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Custom table update.
         $result = $wpdb->update(
             $wpdb->prefix . 'fito_tryon_jobs',
             $data,
@@ -170,8 +169,6 @@ class Fito_Tryon_Database {
             'prompt_tokens'     => isset($data['prompt_tokens']) ? absint($data['prompt_tokens']) : 0,
             'completion_tokens' => isset($data['completion_tokens']) ? absint($data['completion_tokens']) : 0,
             'cost_estimate'     => isset($data['cost_estimate']) ? floatval($data['cost_estimate']) : 0.0000,
-            'user_image_url'    => '',
-            'result_image_url'  => '',
             'error_message'     => isset($data['error_message']) ? sanitize_textarea_field($data['error_message']) : null,
             'prompt_text'       => isset($data['prompt_text']) ? (is_string($data['prompt_text']) ? trim($data['prompt_text']) : sanitize_textarea_field((string) $data['prompt_text'])) : null,
             'response_text'     => !empty($data['response_text'])
@@ -180,21 +177,25 @@ class Fito_Tryon_Database {
             'created_at'        => current_time('mysql'),
         ];
 
+        // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery -- Custom table insert.
+        $wpdb->insert($wpdb->prefix . 'fito_tryon_logs', $insert_data);
+        $insert_id = (int) $wpdb->insert_id;
+
         /**
-         * Filter audit log row before insertion into database.
+         * Fires after a try-on audit log entry has been created.
          *
-         * @param array<string, mixed> $insert_data Prepared log row.
+         * @param int $insert_id New log entry ID.
          * @param array<string, mixed> $data Raw log data.
          */
-        $insert_data = (array) apply_filters('fito_tryon_log_insert_data', $insert_data, $data);
+        do_action('fito_tryon_after_log_created', $insert_id, $data);
 
-        $wpdb->insert($wpdb->prefix . 'fito_tryon_logs', $insert_data);
-        return (int) $wpdb->insert_id;
+        return $insert_id;
     }
 
     public function get_log(int $log_id): ?object {
         global $wpdb;
         $table = $wpdb->prefix . 'fito_tryon_logs';
+        // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Custom table query.
         $row = $wpdb->get_row($wpdb->prepare("SELECT * FROM {$table} WHERE id = %d LIMIT 1", $log_id));
         return $row ?: null;
     }
@@ -226,7 +227,7 @@ class Fito_Tryon_Database {
         $params[] = $limit;
         $params[] = $offset;
 
-        // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared -- Dynamic query string constructed with validated conditions and passed to prepare().
+        // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQL.NotPrepared -- Dynamic query string constructed with validated conditions and passed to prepare().
         return $wpdb->get_results($wpdb->prepare($sql, ...$params));
     }
 
@@ -253,15 +254,16 @@ class Fito_Tryon_Database {
         $sql = "SELECT COUNT(*) FROM {$table} WHERE {$where_sql}";
 
         if (!empty($params)) {
-            // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared -- Dynamic query string constructed with validated conditions and passed to prepare().
+            // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQL.NotPrepared -- Dynamic query string constructed with validated conditions and passed to prepare().
             return (int) $wpdb->get_var($wpdb->prepare($sql, ...$params));
         }
-        // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared -- Static query string without parameters.
+        // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQL.NotPrepared -- Static query string without parameters.
         return (int) $wpdb->get_var($sql);
     }
 
     public function delete_log(int $log_id): bool {
         global $wpdb;
+        // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Custom table row delete.
         return $wpdb->delete($wpdb->prefix . 'fito_tryon_logs', ['id' => $log_id]) !== false;
     }
 
@@ -270,6 +272,7 @@ class Fito_Tryon_Database {
         wp_cache_delete('fito_analytics_summary', 'fito_tryon');
         wp_cache_delete('fito_chart_data_14', 'fito_tryon');
         wp_cache_delete('fito_top_products_5', 'fito_tryon');
+        // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Custom table truncation.
         return $wpdb->query("TRUNCATE TABLE {$wpdb->prefix}fito_tryon_logs") !== false;
     }
 
@@ -282,15 +285,22 @@ class Fito_Tryon_Database {
         global $wpdb;
         $table = $wpdb->prefix . 'fito_tryon_logs';
 
+        // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Custom table analytics query.
         $today_count = (int) $wpdb->get_var("SELECT COUNT(*) FROM {$table} WHERE DATE(created_at) = CURDATE()");
+        // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Custom table analytics query.
         $week_count  = (int) $wpdb->get_var("SELECT COUNT(*) FROM {$table} WHERE created_at >= DATE_SUB(NOW(), INTERVAL 7 DAY)");
+        // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Custom table analytics query.
         $month_count = (int) $wpdb->get_var("SELECT COUNT(*) FROM {$table} WHERE created_at >= DATE_SUB(NOW(), INTERVAL 30 DAY)");
+        // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Custom table analytics query.
         $total_count = (int) $wpdb->get_var("SELECT COUNT(*) FROM {$table}");
 
+        // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Custom table analytics query.
         $success_count = (int) $wpdb->get_var("SELECT COUNT(*) FROM {$table} WHERE status = 'success'");
         $success_rate = $total_count > 0 ? round(($success_count / $total_count) * 100, 1) : 100;
 
+        // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Custom table analytics query.
         $avg_duration = (float) $wpdb->get_var("SELECT AVG(duration_sec) FROM {$table} WHERE status = 'success'");
+        // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Custom table analytics query.
         $total_spend = (float) $wpdb->get_var("SELECT SUM(cost_estimate) FROM {$table}");
 
         $summary = [
@@ -317,6 +327,7 @@ class Fito_Tryon_Database {
         global $wpdb;
         $table = $wpdb->prefix . 'fito_tryon_logs';
 
+        // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Custom table chart data query.
         $results = $wpdb->get_results($wpdb->prepare(
             "SELECT DATE(created_at) as log_date, 
                     COUNT(*) as total, 
@@ -367,6 +378,7 @@ class Fito_Tryon_Database {
         global $wpdb;
         $table = $wpdb->prefix . 'fito_tryon_logs';
 
+        // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Custom table analytics query.
         $results = $wpdb->get_results($wpdb->prepare(
             "SELECT product_id, COUNT(*) as tryon_count,
                     SUM(CASE WHEN status = 'success' THEN 1 ELSE 0 END) as success_count
@@ -395,9 +407,9 @@ class Fito_Tryon_Database {
                     $prod_fallback = $product->get_name();
                 } elseif ($pid > 0) {
                     // translators: %d: Product ID number
-                    $prod_fallback = sprintf(__('Deleted Product (ID %d)', 'fito-try-on-with-ai-for-woocommerce'), $pid);
+                    $prod_fallback = sprintf(__('Deleted Product (ID %d)', 'elfit-ai-virtual-try-on-for-woocommerce'), $pid);
                 } else {
-                    $prod_fallback = __('Unknown Product', 'fito-try-on-with-ai-for-woocommerce');
+                    $prod_fallback = __('Unknown Product', 'elfit-ai-virtual-try-on-for-woocommerce');
                 }
                 $top[] = [
                     'id'            => $pid,
@@ -417,13 +429,25 @@ class Fito_Tryon_Database {
     public function get_expired_jobs(int $retention_minutes): array {
         global $wpdb;
         $table = $wpdb->prefix . 'fito_tryon_jobs';
-        return $wpdb->get_results($wpdb->prepare(
+
+        // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Custom table expired jobs query.
+        $results = $wpdb->get_results($wpdb->prepare(
             "SELECT id, user_image_path, result_image_path FROM {$table} 
-             WHERE is_saved_to_account = 0 
-               AND created_at < DATE_SUB(NOW(), INTERVAL %d MINUTE)
+             WHERE created_at < DATE_SUB(NOW(), INTERVAL %d MINUTE)
              LIMIT 100",
             max(1, $retention_minutes)
         ));
+
+        if (!is_array($results) || empty($results)) {
+            return [];
+        }
+
+        /**
+         * Filter expired jobs prior to file deletion and database purge.
+         *
+         * @param array $results List of expired job rows.
+         */
+        return (array) apply_filters('fito_tryon_expired_jobs_to_purge', $results);
     }
 
     /**
@@ -444,9 +468,11 @@ class Fito_Tryon_Database {
             return 0;
         }
 
-        $in_clause = implode(',', $sanitized_ids);
-        // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Prefix table name is safe and $in_clause is strictly composed of absint integers.
-        $deleted = $wpdb->query("DELETE FROM {$table} WHERE id IN ({$in_clause})");
+        $placeholders = implode(',', array_fill(0, count($sanitized_ids), '%d'));
+        // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Placeholders strictly composed of %d.
+        $sql = $wpdb->prepare("DELETE FROM {$table} WHERE id IN ({$placeholders})", ...$sanitized_ids);
+        // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Custom table batch delete.
+        $deleted = $wpdb->query($sql);
         return $deleted !== false ? (int) $deleted : 0;
     }
 
@@ -456,8 +482,9 @@ class Fito_Tryon_Database {
         }
         global $wpdb;
         $table = $wpdb->prefix . 'fito_tryon_logs';
+        // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Custom table expired logs query.
         return $wpdb->get_results($wpdb->prepare(
-            "SELECT id, user_image_url, result_image_url FROM {$table} 
+            "SELECT id FROM {$table} 
              WHERE created_at < DATE_SUB(NOW(), INTERVAL %d DAY) 
              LIMIT %d",
             $days,
@@ -471,6 +498,7 @@ class Fito_Tryon_Database {
         }
         global $wpdb;
         $table = $wpdb->prefix . 'fito_tryon_logs';
+        // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Custom table logs deletion.
         $deleted = $wpdb->query($wpdb->prepare(
             "DELETE FROM {$table} WHERE created_at < DATE_SUB(NOW(), INTERVAL %d DAY)",
             $days
@@ -478,19 +506,32 @@ class Fito_Tryon_Database {
         return $deleted !== false ? (int) $deleted : 0;
     }
 
-    public function delete_unsaved_jobs(): int {
+    public function purge_temporary_jobs(): int {
         global $wpdb;
         $table = $wpdb->prefix . 'fito_tryon_jobs';
-        $where = (string) apply_filters('fito_tryon_purge_jobs_where', '1=1');
-        // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Filtered where condition for job cleanup.
-        $deleted = $wpdb->query("DELETE FROM {$table} WHERE {$where}");
+
+        /**
+         * Allow extensions to intercept or execute custom temporary job purge logic.
+         */
+        $handled = apply_filters('fito_tryon_handle_purge_temporary_jobs', null);
+        if (is_int($handled)) {
+            return $handled;
+        }
+
+        // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Custom table purge.
+        $deleted = $wpdb->query("DELETE FROM {$table}");
         return $deleted !== false ? (int) $deleted : 0;
+    }
+
+    public function delete_unsaved_jobs(): int {
+        return $this->purge_temporary_jobs();
     }
 
     public function has_recent_failed_log(string $ip_address, int $product_id, int $seconds = 60): bool {
         global $wpdb;
         $table = $wpdb->prefix . 'fito_tryon_logs';
         $since = gmdate('Y-m-d H:i:s', time() - $seconds);
+        // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Custom table status query.
         $recent = $wpdb->get_var($wpdb->prepare(
             "SELECT id FROM {$table} WHERE ip_address = %s AND product_id = %d AND status = 'failed' AND created_at >= %s LIMIT 1",
             $ip_address,

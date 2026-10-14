@@ -97,7 +97,7 @@ class Fito_Tryon_Rate_Limiter {
                 'allowed'     => false,
                 'remaining'   => 0,
                 'retry_after' => $period_seconds,
-                'message'     => __('Network try-on limit reached. Please try again later or sign in to continue.', 'fito-try-on-with-ai-for-woocommerce'),
+                'message'     => __('Network try-on limit reached. Please try again later or sign in to continue.', 'elfit-ai-virtual-try-on-for-woocommerce'),
             ];
         }
 
@@ -143,25 +143,25 @@ class Fito_Tryon_Rate_Limiter {
 
     private function get_rate_limit_message(int $max_count, string $period, string $type = 'device'): string {
         $target = $type === 'user'
-            ? __('per user account', 'fito-try-on-with-ai-for-woocommerce')
-            : __('per browser device', 'fito-try-on-with-ai-for-woocommerce');
+            ? __('per user account', 'elfit-ai-virtual-try-on-for-woocommerce')
+            : __('per browser device', 'elfit-ai-virtual-try-on-for-woocommerce');
 
         return match ($period) {
             'minute' => sprintf(
                 // translators: 1: Maximum number of try-ons, 2: Rate limit scope description
-                __('Rate limit exceeded: maximum %1$d try-ons per minute reached %2$s. Please try again in a moment.', 'fito-try-on-with-ai-for-woocommerce'),
+                __('Rate limit exceeded: maximum %1$d try-ons per minute reached %2$s. Please try again in a moment.', 'elfit-ai-virtual-try-on-for-woocommerce'),
                 $max_count,
                 $target
             ),
             'day'    => sprintf(
                 // translators: 1: Maximum number of try-ons, 2: Rate limit scope description
-                __('Rate limit exceeded: maximum %1$d try-ons per day reached %2$s. Please try again tomorrow.', 'fito-try-on-with-ai-for-woocommerce'),
+                __('Rate limit exceeded: maximum %1$d try-ons per day reached %2$s. Please try again tomorrow.', 'elfit-ai-virtual-try-on-for-woocommerce'),
                 $max_count,
                 $target
             ),
             default  => sprintf(
                 // translators: 1: Maximum number of try-ons, 2: Rate limit scope description
-                __('Rate limit exceeded: maximum %1$d try-ons per hour reached %2$s. Please try again later.', 'fito-try-on-with-ai-for-woocommerce'),
+                __('Rate limit exceeded: maximum %1$d try-ons per hour reached %2$s. Please try again later.', 'elfit-ai-virtual-try-on-for-woocommerce'),
                 $max_count,
                 $target
             ),

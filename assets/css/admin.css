@@ -1,5 +1,5 @@
 /**
- * Fito Try-On with AI - Modern SaaS Admin Stylesheet
+ * Elfit AI Virtual Try-On for WooCommerce - Modern SaaS Admin Stylesheet
  */
 
 :root {
@@ -477,120 +477,6 @@
     width: 60%;
 }
 
-/* Audit Logs Preview Thumbnails */
-.fito-log-thumb-group {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-}
-
-.fito-log-thumb {
-    position: relative;
-    display: inline-block;
-    width: 44px;
-    height: 44px;
-    border-radius: 6px;
-    overflow: hidden;
-    border: 1px solid #e2e8f0;
-    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
-    transition: transform 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease;
-    cursor: pointer;
-}
-
-.fito-log-thumb:hover {
-    transform: scale(1.06);
-    border-color: #6366f1;
-    box-shadow: 0 3px 8px rgba(99, 102, 241, 0.25);
-}
-
-.fito-log-thumb img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    display: block;
-}
-
-.fito-thumb-tag {
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    background: rgba(15, 23, 42, 0.78);
-    color: #fff;
-    font-size: 8px;
-    font-weight: 700;
-    text-align: center;
-    padding: 1px 0;
-    line-height: 1.1;
-    text-transform: uppercase;
-    letter-spacing: 0.03em;
-}
-
-/* Floating Large Image Preview on Hover */
-.fito-thumb-floating-preview {
-    position: fixed;
-    z-index: 999999;
-    background: #ffffff;
-    border: 1px solid #cbd5e1;
-    border-radius: 10px;
-    box-shadow: 0 12px 28px -4px rgba(15, 23, 42, 0.22), 0 4px 10px -2px rgba(15, 23, 42, 0.1);
-    padding: 8px;
-    width: 240px;
-    box-sizing: border-box;
-    pointer-events: none;
-    opacity: 0;
-    visibility: hidden;
-    transform: scale(0.94);
-    transition: opacity 0.15s cubic-bezier(0.16, 1, 0.3, 1), transform 0.15s cubic-bezier(0.16, 1, 0.3, 1), visibility 0.15s;
-}
-
-.fito-thumb-floating-preview.is-active {
-    opacity: 1;
-    visibility: visible;
-    transform: scale(1);
-}
-
-.fito-floating-preview-header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 0 2px 6px;
-    border-bottom: 1px solid #f1f5f9;
-    margin-bottom: 6px;
-    font-size: 11px;
-}
-
-.fito-floating-preview-title {
-    font-weight: 600;
-    color: #1e293b;
-}
-
-.fito-floating-preview-hint {
-    color: #6366f1;
-    font-size: 10px;
-    font-weight: 500;
-}
-
-.fito-floating-preview-body {
-    width: 100%;
-    height: 240px;
-    border-radius: 6px;
-    overflow: hidden;
-    background: #f8fafc;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.fito-floating-preview-body img {
-    max-width: 100%;
-    max-height: 100%;
-    width: auto;
-    height: auto;
-    object-fit: contain;
-    display: block;
-}
-
 /* Admin Log Inspect Modal Dialog */
 .fito-admin-modal {
     position: fixed;
@@ -626,68 +512,6 @@
     color: #0f172a;
     border-bottom: 1px solid #f1f5f9;
     padding-bottom: 12px;
-}
-
-/* Modal Before / After Comparison */
-.fito-modal-compare-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 16px;
-    margin-bottom: 20px;
-    padding-bottom: 16px;
-    border-bottom: 1px solid #e2e8f0;
-}
-
-.fito-modal-compare-col {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    background: #f8fafc;
-    border: 1px solid #e2e8f0;
-    border-radius: 8px;
-    padding: 12px;
-}
-
-.fito-modal-compare-label {
-    font-size: 12px;
-    font-weight: 700;
-    color: #334155;
-    margin-bottom: 8px;
-    text-transform: uppercase;
-    letter-spacing: 0.03em;
-}
-
-.fito-modal-compare-link {
-    display: block;
-    position: relative;
-    border-radius: 6px;
-    overflow: hidden;
-    text-decoration: none;
-    max-height: 200px;
-}
-
-.fito-modal-compare-img {
-    max-width: 100%;
-    max-height: 180px;
-    object-fit: contain;
-    display: block;
-    border-radius: 4px;
-}
-
-.fito-zoom-hint {
-    display: block;
-    text-align: center;
-    font-size: 11px;
-    color: #6366f1;
-    font-weight: 600;
-    margin-top: 6px;
-}
-
-.fito-modal-no-img {
-    padding: 30px 10px;
-    color: #94a3b8;
-    font-size: 12px;
-    font-style: italic;
 }
 
 /* Log Inspection Prompt & Response Blocks */
@@ -823,12 +647,6 @@
     border: 1px solid #c7d2fe;
 }
 
-.fito-badge-custom {
-    background: #fef3c7;
-    color: #92400e;
-    border: 1px solid #fde68a;
-}
-
 .fito-prompt-header-right {
     display: flex;
     align-items: center;
@@ -855,17 +673,6 @@
 
 .fito-prompt-row.is-collapsed .fito-prompt-toggle .dashicons {
     transform: rotate(-90deg);
-}
-
-.fito-prompt-duplicate {
-    color: #475569 !important;
-    border-color: #cbd5e1 !important;
-}
-
-.fito-prompt-duplicate:hover {
-    background: #f1f5f9 !important;
-    color: #0f172a !important;
-    border-color: #94a3b8 !important;
 }
 
 .fito-prompt-delete {
@@ -1021,35 +828,6 @@ body.rtl .fito-prompt-cat-id {
 }
 
 /* Button & Dashicon Icon Alignment */
-.button.fito-btn-add-prompt-action {
-    display: inline-flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-    gap: 6px !important;
-    height: auto !important;
-    min-height: 32px !important;
-    padding: 0 12px !important;
-    line-height: 1 !important;
-    vertical-align: middle;
-}
-
-.button.fito-btn-add-prompt-action .dashicons {
-    font-size: 16px !important;
-    width: 16px !important;
-    height: 16px !important;
-    line-height: 16px !important;
-    margin: 0 !important;
-    display: inline-flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-}
-
-.button.fito-btn-add-prompt-action .dashicons:before {
-    font-size: 16px !important;
-    line-height: 1 !important;
-    display: inline-block;
-}
-
 .button.fito-revert-default-prompt {
     display: inline-flex !important;
     align-items: center !important;

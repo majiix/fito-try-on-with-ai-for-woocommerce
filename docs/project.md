@@ -1,7 +1,7 @@
-# Fito Try-On with AI for WooCommerce
+# Elfit AI Virtual Try-On for WooCommerce
 
 ## Overview
-Fito Try-On with AI for WooCommerce is an enterprise-grade WordPress and WooCommerce plugin that adds an AI-driven virtual fitting room experience to single product pages and catalog loops. Customers upload an existing photo or capture a fresh photo via their mobile/desktop camera to view realistic try-on results of apparel, footwear, eyewear, jewelry, watches, hats, and accessories.
+Elfit AI Virtual Try-On for WooCommerce is an enterprise-grade WordPress and WooCommerce plugin that adds an AI-driven virtual fitting room experience to single product pages and catalog loops. Customers upload an existing photo or capture a fresh photo via their mobile/desktop camera to view realistic try-on results of apparel, footwear, eyewear, jewelry, watches, hats, and accessories.
 
 All AI image generations in the free core plugin are powered by an OpenRouter Bring-Your-Own-Key (BYOK) architecture, letting store owners connect their own API keys with zero subscription overhead or middleman fees. The plugin is 100% free, standalone, and fully functional out of the box with zero trialware gating. An optional commercial Pro Addon extends capabilities via extensible WordPress action and filter contracts.
 
@@ -17,41 +17,39 @@ All AI image generations in the free core plugin are powered by an OpenRouter Br
 
 ## Architecture
 ```
-fito-try-on-with-ai-for-woocommerce/
-├── fito-try-on-with-ai-for-woocommerce.php  # Plugin bootstrap, constants & lifecycle hooks
-├── uninstall.php                           # Complete cleanup on deletion
+elfit-ai-virtual-try-on-for-woocommerce/
+├── elfit-ai-virtual-try-on-for-woocommerce.php  # Plugin bootstrap, constants & lifecycle hooks
+├── uninstall.php                                # Complete cleanup on deletion
 ├── includes/
-│   ├── class-fito-tryon.php                # Master orchestrator & provider registration
-│   ├── class-fito-tryon-database.php       # dbDelta schema and database queries
-│   ├── class-fito-tryon-storage.php        # Upload management & directories
-│   ├── class-fito-tryon-openrouter.php     # OpenRouter API client & prompt synthesis
-│   ├── class-fito-tryon-rate-limiter.php   # Per-IP and per-user sliding window throttling
-│   ├── class-fito-tryon-privacy.php        # WP-Cron auto-retention and GDPR photo purges
-│   ├── class-fito-tryon-rest.php           # Nonce-secured REST endpoints & route handlers
-│   ├── class-fito-tryon-public.php         # Product button injection, modal markup & placements
+│   ├── class-fito-tryon.php                     # Master orchestrator & provider registration
+│   ├── class-fito-tryon-database.php            # dbDelta schema and database queries
+│   ├── class-fito-tryon-storage.php             # Upload management & directories
+│   ├── class-fito-tryon-openrouter.php          # OpenRouter API client & prompt synthesis
+│   ├── class-fito-tryon-rate-limiter.php        # Per-IP and per-user sliding window throttling
+│   ├── class-fito-tryon-privacy.php             # WP-Cron auto-retention and GDPR photo purges
+│   ├── class-fito-tryon-rest.php                # Nonce-secured REST endpoints & route handlers
+│   ├── class-fito-tryon-public.php              # Product button injection, modal markup & placements
 │   └── blocks/
-│       └── tryon-button/                   # Gutenberg block definition
+│       └── tryon-button/                        # Gutenberg block definition
 ├── admin/
-│   └── class-fito-tryon-admin.php          # Admin menu, dashboards, settings, prompts & logs
+│   └── class-fito-tryon-admin.php               # Admin menu, dashboards, settings, prompts & logs
 ├── assets/
 │   ├── css/
-│   │   ├── admin.css                       # Modern card-based SaaS admin stylesheet
-│   │   └── public.css                      # Modern frontend modal & split-slider CSS
+│   │   ├── admin.css                            # Modern card-based SaaS admin stylesheet
+│   │   └── public.css                           # Modern frontend modal & split-slider CSS
 │   └── js/
-│       ├── admin.js                        # Admin interactions, Chart.js graphs & API tester
-│       ├── chart.umd.min.js                # Chart.js v4.5.1 library
-│       └── public.js                       # Upload, camera capture, crop, polling & comparison slider
+│       ├── admin.js                             # Admin interactions, Chart.js graphs & API tester
+│       ├── chart.umd.min.js                     # Chart.js v4.5.1 library
+│       └── public.js                            # Upload, camera capture, crop, polling & comparison slider
 ├── languages/
-│   ├── fito-try-on-with-ai-for-woocommerce.pot
-│   ├── fito-try-on-with-ai-for-woocommerce-fa_IR.po
-│   └── fito-try-on-with-ai-for-woocommerce-fa_IR.mo
-├── readme.txt                              # WordPress.org standard documentation & External Services
-└── SETUP.md                                # Setup instructions, API keys config & tuning
+│   └── elfit-ai-virtual-try-on-for-woocommerce.pot
+├── readme.txt                                   # WordPress.org standard documentation & External Services
+└── SETUP.md                                     # Setup instructions, API keys config & tuning
 ```
 
 ## Current Features
 1. **Multi-Provider AI Architecture (OpenRouter, Google Gemini, OpenAI)**:
-   - Configurable AI Provider: OpenRouter is included free out of the box as the multi-model aggregator. Direct Google Gemini and direct OpenAI API integrations are unlocked with the Fito Try-On Pro Addon.
+   - Configurable AI Provider: OpenRouter is included free out of the box as the multi-model aggregator. Direct Google Gemini and direct OpenAI API integrations are unlocked with the Elfit Try-On Pro Addon.
    - Dedicated Credentials & Models per Provider: Separate API keys, primary models, and fallback models are stored independently for each service so settings are preserved when switching providers.
    - Direct Google Gemini Integration (Pro): Connects directly to Google AI Studio API (`/v1beta/models/{model}:generateContent` with `responseModalities: ["IMAGE", "TEXT"]`) supporting the complete Google Nano Banana image generation family (`gemini-3.1-flash-image`, `gemini-3-pro-image`, `gemini-2.5-flash-image`, etc.) and live model discovery.
    - Direct OpenAI Integration (Pro): Connects directly to OpenAI's image generation API (`/v1/images/generations`) supporting modern models (`gpt-image-2.5-flare`, `gpt-image-2.5-sunburst`, `dall-e-3`).
@@ -66,7 +64,7 @@ fito-try-on-with-ai-for-woocommerce/
    - Fallback Model Routing (Pro): Automatically routes to secondary backup models if primary models encounter rate limits or provider downtime (gated behind the Pro Addon). In Free standalone mode, fallback model selection and execution are strictly disabled and hidden from provider settings.
    - Category-adaptive prompting for fashion clothing, shoes, glasses, jewelry, hats, and bags.
 2. **Interactive Try-On Experience**:
-   - Customizable placement & button label: above/below Add to Cart, custom product tab, Gutenberg block, or shortcode `[fito_tryon]`. Custom button text configured in settings (`fito_tryon_button_text`) is resolved dynamically with fallback to default and filter contract `fito_tryon_button_text`.
+   - Customizable placement & button label: above/below Add to Cart, custom product tab, Gutenberg block, or shortcode `[elfit_tryon]`. Custom button text configured in settings (`fito_tryon_button_text`) is resolved dynamically with fallback to default and filter contract `fito_tryon_button_text`.
    - Shop Catalog Loops (Pro): quick try-on action buttons directly on product catalog archive loops (`woocommerce_after_shop_loop_item`).
    - Product Gallery Images Try-On (Pro): quick try-on action overlay button on every image in the WooCommerce product gallery (`woocommerce_single_product_image_thumbnail_html`).
    - Product Variation Images Try-On (Pro): dedicated try-on button automatically bound to active variation photos and swatches (`woocommerce_single_variation`).
@@ -76,13 +74,13 @@ fito-try-on-with-ai-for-woocommerce/
    - Required privacy consent gate.
    - Interactive Before/After split comparison slider with drag handle.
    - Fullscreen Try-On Experience: users can inspect their try-on result and interactive comparison slider in an immersive full-screen view via a floating stage button or toolbar button, with seamless fallback for mobile devices and keyboard Escape support.
-   - Category-Gated Placements across All Surfaces: All try-on entry points (single product buttons, custom product tabs, shortcode `[fito_tryon]`, Gutenberg block, shop archive loops, product gallery images, variation image buttons, and custom image CSS selectors) strictly respect the "Enabled Product Categories" configuration (`fito_tryon_allowed_categories`), with automatic category hierarchy support (parent categories covering subcategories) and product variation parent inheritance.
+   - Category-Gated Placements across All Surfaces: All try-on entry points (single product buttons, custom product tabs, shortcode `[elfit_tryon]`, Gutenberg block, shop archive loops, product gallery images, variation image buttons, and custom image CSS selectors) strictly respect the "Enabled Product Categories" configuration (`fito_tryon_allowed_categories`), with automatic category hierarchy support (parent categories covering subcategories) and product variation parent inheritance.
    - Server-Side Category Guard: Direct REST submissions (`/fito-tryon/v1/submit`) enforce category restrictions on the server, rejecting disallowed product try-on requests with HTTP 403 Forbidden.
    - Variable product integration: tracks active variation image dynamically.
 3. **Async Polling & Caching**:
    - Job queue table with status tracking (pending, processing, completed, failed).
    - Async REST polling with animated progress bar and rotating tip messages.
-   - Result Caching (Pro): Cache identical user photo and product combinations to conserve API usage and minimize generation latency. Gated behind the Fito Try-On Pro Addon. Supports watermark-aware cache keys and manual cache flushing. In the Free version, every generation runs fresh without caching.
+   - Result Caching (Pro): Cache identical user photo and product combinations to conserve API usage and minimize generation latency. Gated behind the Elfit Try-On Pro Addon. Supports watermark-aware cache keys and manual cache flushing. In the Free version, every generation runs fresh without caching.
 4. **Account & Guest Flow**:
    - Access Control Settings: Store owners can configure whether virtual try-on is open to everyone (guests and registered users) or restricted to logged-in users only (`fito_tryon_access_level`).
    - Guest Prompt Modal & Sample Showcase: When restricted to logged-in users, guest clicks on the try-on button open the modal displaying a dedicated signup / login prompt step (`fito-step-login-required`) featuring a compelling sample virtual try-on preview card (`.fito-login-sample-card`) with a "Virtual Try-On Preview" badge and Before/After fitting transformation to encourage visitor signups.
@@ -92,7 +90,7 @@ fito-try-on-with-ai-for-woocommerce/
    - My Account Try-On History (Pro): Dedicated "Virtual Fitting Room" endpoint and tab in WooCommerce My Account allowing logged-in customers to view, inspect, and manage their saved fitting results.
    - Save to Account Button (Pro): Toolbar action inside the try-on completion modal enabling customers to associate guest or current fitting results with their account.
 5. **Watermark & Branding Engine (Pro)**:
-   - Exclusively unlocked via the Fito Try-On Pro Addon.
+   - Exclusively unlocked via the Elfit Try-On Pro Addon.
    - Brand logo image upload via standard WordPress Media Library.
    - Website address / custom text watermark (e.g. www.store.com) with "Use Site Address" quick-fill button.
    - Configurable transparency / opacity slider (10% to 100%).
@@ -103,9 +101,9 @@ fito-try-on-with-ai-for-woocommerce/
 6. **Adaptive Prompts Engine**:
    - Card-based accordion UI with visual category badges and prompt instructions.
    - Mutually Exclusive Category Selection: when a store category is connected to any prompt card, it is immediately hidden in real time from all other prompt cards to prevent assigning multiple fitting prompts to the same category.
-   - One-Click Prompt Duplication (Pro): dedicated duplication action on each prompt card that clones the title and instruction template into a new custom row ready for editing. Gated behind the Fito Try-On Pro Addon.
+   - One-Click Prompt Duplication (Pro): dedicated duplication action on each prompt card that clones the title and instruction template into a new custom row ready for editing. Gated behind the Elfit Try-On Pro Addon.
    - Protected System Presets with Revert option: 7 built-in presets (Clothing, Shoes, Eyewear, Watches, Hats, Bags, Jewelry) cannot be deleted to ensure store fitting stability, but their prompt instructions and connected categories can be customized freely in both Free and Pro versions.
-   - Custom Fitting Profiles (Pro): admins can create unlimited custom prompt profiles for niche product lines (e.g. Scarf, Belt, Hijab, Swimwear) and duplicate existing presets. Adding new custom prompts and prompt duplication are strictly gated behind the Fito Try-On Pro Addon; in Free mode, only the 7 built-in system presets are displayed and editable, with 'Add New Prompt' and 'Duplicate' controls completely concealed.
+   - Custom Fitting Profiles (Pro): admins can create unlimited custom prompt profiles for niche product lines (e.g. Scarf, Belt, Hijab, Swimwear) and duplicate existing presets. Adding new custom prompts and prompt duplication are strictly gated behind the Elfit Try-On Pro Addon; in Free mode, only the 7 built-in system presets are displayed and editable, with 'Add New Prompt' and 'Duplicate' controls completely concealed.
    - Multi-Language & Language-Independent Category Mapping: connects WooCommerce categories by term ID and slug, allowing stores in Persian, German, Spanish, French, or any other language to map their local categories directly to fitting prompts without relying on English keyword matching.
    - Server-Side Deduplication & Input Sanitization: `handle_save_prompts` enforces category exclusivity across all prompt rows at the backend level.
    - Placeholder Tag Injection: `{product_title}` placeholder tag dynamically replaced with the product name at generation time.
@@ -131,8 +129,9 @@ fito-try-on-with-ai-for-woocommerce/
    - `fito_tryon_handle_generation_failover` filter delegating failover secondary model execution to Pro Addon upon primary attempt failure, completely removing retry loops and internal model stubs from Free (Option B).
    - `fito_tryon_purge_jobs_where` filter hook allowing Pro Addon to protect customer account-claimed fitting records during privacy purge while Free purges all temporary jobs standalone (`1=1`).
    - `fito_tryon_flush_cache` action hook notifying Pro Addon to flush transient cached results upon settings updates, category prompt mapping changes, and photo purges.
-   - `fito_tryon_admin_displayed_prompts` filter allowing Pro Addon to extend the prompts manager with unlimited custom fitting profiles (defaults cleanly to the 7 built-in system presets in Free).
-   - `fito_tryon_admin_prompts_header_actions`, `fito_tryon_admin_prompt_row_actions`, `fito_tryon_admin_prompts_repeater_bottom`, `fito_tryon_admin_prompts_page_bottom` action hooks allowing Pro Addon to inject "Add New Prompt" buttons, row duplication actions, and the custom prompt row template.
+   - `fito_tryon_admin_prompts_list` filter allowing Pro Addon to provide custom fitting profiles (defaults cleanly to the 7 built-in system presets in Free).
+   - `fito_tryon_save_prompts_config` filter allowing Pro Addon to sanitize and append custom prompts during configuration persistence without Free knowing about custom prompt formats.
+   - `fito_tryon_admin_prompts_header_actions`, `fito_tryon_admin_prompt_row_actions`, `fito_tryon_admin_prompts_repeater_bottom`, `fito_tryon_admin_prompts_page_bottom` action hooks allowing Pro Addon to inject "Add New Prompt" buttons, row duplication actions, custom prompt deletion controls, and the custom prompt row template.
    - `fito_tryon_is_product_allowed` filter contract allowing Pro Addon catalog placements to query product eligibility without direct class coupling.
    - `fito_tryon_public_init` action hook invoked during storefront frontend initialization.
    - `fito_tryon_public_script_data` filter enabling Pro Addon to pass additional localized script parameters.
@@ -144,12 +143,13 @@ fito-try-on-with-ai-for-woocommerce/
    - `fito_tryon_admin_privacy_settings` action hook enabling Pro Addon to render active privacy, caching, and visual logging settings (Smart Result Caching, Visual Audit Logs, Photo Disk Retention Window) directly under Section 3 ("Abuse Prevention & Data Privacy") of the core settings screen.
    - `fito_tryon_admin_provider_panels` action hook enabling Pro Addon to dynamically render AI provider configuration tables (Gemini, OpenAI).
    - `fito_tryon_admin_save_provider_settings` action hook dispatching submitted provider credentials and settings to Pro Addon.
-   - `fito_tryon_log_insert_data` filter enabling Pro Addon to populate customer photo and result preview image URLs into audit logs when visual logging is enabled.
-   - `fito_tryon_admin_submenus` action hook allowing Pro to register the dedicated "Pro Features" submenu item under Fito Try-On.
+   - `fito_tryon_admin_logs_table_header` and `fito_tryon_admin_logs_table_cell` action hooks allowing Pro Addon to render the Previews column and photo thumbnails when visual logging is active.
+   - `fito_tryon_after_log_created` lifecycle action enabling Pro Addon to store customer photo and result preview image URLs in audit logs when visual logging is enabled, without latent columns in Free schema.
+   - `fito_tryon_admin_submenus` action hook allowing Pro to register the dedicated "Pro Features" submenu item under Elfit Try-On.
    - `fito_tryon_settings_form_bottom` action hook allowing Pro to render the complete Watermark & Branding Overlay configuration card (with Logo Uploader, Text/Site Address, Position, Opacity, and Live Preview) directly on the core settings screen.
    - `fito_tryon_save_settings_post` action hook allowing Pro Addon to intercept settings updates during core form submission and persist active appearance, privacy, caching, visual logging, and watermark options cleanly into Pro Addon storage (`fito_tryon_pro_settings`).
-   - `fito_tryon_show_pro_card` filter gating upsells and the "Go Pro ⭐" submenu page, auto-suppressed when the Pro Addon is active (defaults to true).
-   - Dedicated "Go Pro ⭐" submenu page with feature cards reflecting actual active Pro modules (Direct Gemini & OpenAI APIs, Brand Watermark & Logo Overlay, Archive Loops & Gallery & Variations, Custom Selectors, Variation Swatches, Result Caching & Retention, Customer Account History & Visual Logs), an authentic Free vs Pro comparison matrix, and direct link to official purchase page (`https://violo.ir/?p=721`).
+   - `fito_tryon_show_pro_card` filter gating upsells and the "Go Pro" submenu page, auto-suppressed when the Pro Addon is active (defaults to true).
+   - Dedicated "Go Pro" submenu page with feature cards reflecting actual active Pro modules (Direct Gemini & OpenAI APIs, Brand Watermark & Logo Overlay, Archive Loops & Gallery & Variations, Custom Selectors, Variation Swatches, Result Caching & Retention, Customer Account History & Visual Logs), an authentic Free vs Pro comparison matrix, and direct link to official purchase page (`https://violo.ir/?p=721`).
    - Full compliance with WordPress.org Guideline 5 (Trialware) and Guideline 6 (SaaS): zero disabled inputs, zero filters defaulting to false/null to gate features, zero discarded user inputs, and clean BYOK SaaS integration documented in `readme.txt`.
 
 ## Code Simplifications & Optimizations (Ponytail Audit)
@@ -174,14 +174,37 @@ fito-try-on-with-ai-for-woocommerce/
 
 ## Architectural Quality & WordPress.org Standards Compliance
 - **Plugin Dependencies Header**: Added `Requires Plugins: woocommerce` to the main plugin file header, leveraging native WordPress 6.5+ dependency management.
-- **Shortcode Unique Prefixing**: Standardized primary shortcode to `[fito_tryon]` (4+ character unique prefix) across public renderer, admin UI, and documentation.
-- **Conditional Asset Enqueuing**: Updated `enqueue_assets()` to dynamically detect `has_shortcode($post->post_content, 'fito_tryon')` and `has_block('fito-tryon/button', $post)` on non-WooCommerce posts.
+- **Shortcode Unique Prefixing**: Standardized primary shortcode to `[elfit_tryon]` (4+ character unique prefix) across public renderer, admin UI, and documentation.
+- **Conditional Asset Enqueuing**: Updated `enqueue_assets()` to dynamically detect `has_shortcode($post->post_content, 'elfit_tryon')` and `has_block('fito-tryon/button', $post)` on non-WooCommerce posts.
 - **SSL Security**: Replaced hardcoded `'sslverify' => false` with environment-aware filterable check (`fito_tryon_sslverify`), ensuring strict SSL verification in production environments.
 - **Database Caching**: Implemented `wp_cache_get()` / `wp_cache_set()` on `get_analytics_summary()` with automated invalidation when logs are cleared.
 - **Date Standardization**: Replaced native `date()` calls with `gmdate()` for deterministic timezone-independent date arithmetic.
 - **Autoload Memory Optimization**: Set `autoload => false` when saving large option payloads (`fito_tryon_prompts_config`, `fito_tryon_system_prompt`) to avoid bloat in the `alloptions` cache.
 - **i18n & Translation Comments**: Added standard `// translators:` explanatory comments preceding all placeholder translation strings across all PHP classes.
-- **WordPress.org Readme Compliance**: Enforced maximum 5 tags limit on `readme.txt` and added the mandatory `== External Services ==` disclosure section documenting OpenRouter, Google Gemini, and OpenAI.
+## WordPress.org Strict Compliance Audit Remediation
+- **Database Schema Cleansing (Guideline 5)**:
+  - Removed dormant `is_saved_to_account` column and index from Free plugin `wp_fito_tryon_jobs` schema.
+  - Removed dormant `user_image_url` and `result_image_url` columns from Free plugin `wp_fito_tryon_logs` schema.
+  - Delegated column creation and migration to Pro Addon (`maybe_migrate_db()`) on activation and version upgrade.
+- **Visual Audit Log & Comparison Viewer Decoupling**:
+  - Replaced Free filter `fito_tryon_log_insert_data` with standard lifecycle action `fito_tryon_after_log_created`.
+  - Replaced hardcoded Previews table headers and cells with `fito_tryon_admin_logs_table_header` and `fito_tryon_admin_logs_table_cell` action hooks.
+  - Moved thumbnail hover zoom preview, side-by-side modal comparison viewer, and related styling completely into Pro Addon.
+- **Custom Prompts Engine Decoupling**:
+  - Removed custom prompt persistence, deletion handlers, and custom badge styles from Free plugin.
+  - Replaced dormant masking filter with neutral lifecycle hooks `fito_tryon_admin_prompts_list` and `fito_tryon_save_prompts_config`, allowing Pro Addon to sanitize and append custom prompts independently.
+  - Moved `.fito-badge-custom`, `.fito-prompt-duplicate`, and `.button.fito-btn-add-prompt-action` CSS into `assets/css/pro-admin.css`.
+- **Clean Separation of Uninstall Handlers**:
+  - Removed Pro options `fito_tryon_fallback_model` and `fito_tryon_retention_hours` from Free `uninstall.php`.
+  - Pro Addon `uninstall.php` is solely responsible for cleaning up its own options.
+- **Neutralized AI Error Messages**:
+  - Replaced marketing upsell copy in AI provider HTTP 503/504 error response with neutral error text: 'The AI model provider is temporarily unavailable. Please try again in a few moments.'.
+- **Submenu Branding Compliance**:
+  - Removed decorative star emoji from the Go Pro submenu title (`__('Go Pro', 'elfit-ai-virtual-try-on-for-woocommerce')`).
+- **Readme & Asset Transparency**:
+  - Retained `Tested up to: 7.1` header per configuration requirements.
+  - Removed Pro Addon upsell teaser from installation instructions in `readme.txt`.
+  - Added `== Third-Party Assets ==` section explicitly documenting bundled Chart.js v4.4.1 (MIT license, authors, source URL).
 
 ## High-Traffic Performance & Database Scalability Optimizations
 - **N+1 Query Elimination in Admin & Customer Account**:
@@ -220,24 +243,44 @@ fito-try-on-with-ai-for-woocommerce/
 - **Internationalization (i18n)**:
   - Added descriptive `// translators:` comments clarifying placeholder variables across all PHP classes.
   - Converted multiple translatable string placeholders from unordered (`%d, %d`, `%s, %s`) to ordered syntax (`%1$d, %2$d`, `%1$s, %2$s, %3$s`) to enable accurate localization across RTL/LTR languages.
-- **Output Escaping & Sanitization**:
-  - Escaped admin table pagination links via `wp_kses_post(paginate_links([...]))`.
+- **Output Escaping & Input Sanitization**:
   - Added recursive unslashing and sanitization on complex `$_POST` array structures (`$_POST['prompts']`, `$_POST['fito_tryon_allowed_categories']`).
+  - Added `sanitize_post_array()` recursive sanitization helper in `Fito_Tryon_Admin` ensuring raw superglobal `$_POST` data is never passed directly into hooks; `do_action('fito_tryon_admin_save_provider_settings', $ai_provider, $sanitized_post)` now receives pre-sanitized payload data.
+  - Hardened all `handle_save_settings()` configuration inputs with `wp_unslash()`, explicit integer casting (`absint()`), key sanitization (`sanitize_key()`), and strict allowlists for button positions, log retentions, and rate limit periods.
   - Added unslashing and sanitization on server superglobals (`$_SERVER['REMOTE_ADDR']`, `$_SERVER['HTTP_CF_CONNECTING_IP']`, `$_SERVER['HTTP_X_FORWARDED_FOR']`, `$_COOKIE['fito_device_uuid']`).
 - **Filesystem Security**:
+  - Refactored `Fito_Tryon_Storage::handle_upload()` to use standard WordPress `wp_handle_upload()` instead of direct `move_uploaded_file()`, passing `test_form => false` overrides for REST API compatibility, dynamically routing storage via the `upload_dir` filter to the secure `.htaccess`-protected `fito-tryon/uploads` directory, and validating file mime types, dimensions, and unique anonymized filenames.
   - Replaced all direct `unlink()` calls in `Fito_Tryon_Storage` and test suites with standard WordPress `wp_delete_file()`.
   - Replaced PHP directory iteration recursion (`rmdir`/`unlink`) in `uninstall.php` with standard `WP_Filesystem()->delete()`.
 - **Database & Query Hygiene**:
-  - Replaced cross-file direct `$wpdb` queries in `Fito_Tryon_REST` and `Fito_Tryon_Privacy` with encapsulated database methods (`has_recent_failed_log()`, `delete_unsaved_jobs()`).
-  - Added explicit phpcs documentation and class-level disable directives on custom table query operations in `Fito_Tryon_Database`.
+  - Replaced cross-file direct `$wpdb` queries in `Fito_Tryon_REST` and `Fito_Tryon_Privacy` with encapsulated database methods (`has_recent_failed_log()`, `purge_temporary_jobs()`).
+  - Eliminated raw SQL string interpolation in `Fito_Tryon_Database::get_expired_jobs()` and `delete_unsaved_jobs()`: replaced with 100% prepared SQL statements and strongly typed PHP filter contracts (`fito_tryon_expired_jobs_to_purge`, `fito_tryon_handle_purge_temporary_jobs`).
+  - Decoupled visual audit log images from Free REST controllers via `fito_tryon_log_data` filter, ensuring Free REST controllers contain zero dormant Pro schema keys (`user_image_url`, `result_image_url`).
+  - Replaced class-level phpcs:disable directives with targeted, line-specific `phpcs:ignore` annotations on custom table query operations in `Fito_Tryon_Database`, eliminating class-level suppressions of PluginCheck rules.
+  - Hardened uninstaller transient cleanup in `uninstall.php` using `$wpdb->prepare()` with `$wpdb->esc_like()`.
+- **Packaging & Distribution Hygiene**:
+  - Added `.distignore` to the Free plugin root to automatically exclude tests, docs, and development artifacts (`/tests`, `/docs`, `/.codegraph`) from WordPress.org SVN release zips.
 - **Asset Bundling & Scope Compliance**:
-  - Replaced offloaded CDN script enqueue (`cdn.jsdelivr.net/npm/chart.js`) with locally bundled `assets/js/chart.umd.min.js`.
+  - Replaced offloaded CDN script enqueue (`cdn.jsdelivr.net/npm/chart.js`) with locally bundled `assets/js/chart.umd.min.js` (Chart.js v4.5.1).
+  - Updated `readme.txt` `== Third-Party Assets ==` Chart.js attribution to version v4.5.1 with exact release URL (`https://github.com/chartjs/Chart.js/releases/tag/v4.5.1`) and 2025 copyright matching bundled file header.
   - Replaced assignments to global `$product` in `class-fito-tryon-public.php` with local `$current_product` variables to eliminate `PrefixAllGlobals` violations.
   - Prefixed all global variables in `uninstall.php` with `fito_tryon_`.
   - Removed discouraged `load_plugin_textdomain()` call to comply with WordPress 4.6+ auto-loading standard.
   - Shortened `readme.txt` short description to under 150 characters to satisfy WordPress.org directory constraints.
+  - Refined `readme.txt` `== External Services ==` section per Guideline 6 to document OpenRouter as the exclusive external service for the Free core plugin with full description, data transmission triggers, and direct links to its official Terms of Service and Privacy Policy.
+  - Enforced WordPress.org Guideline 5 (No Trialware / No Dead or Locked Code) via Option A: verified complete removal of all direct Gemini/OpenAI API handlers (`class-fito-tryon-gemini.php`, `class-fito-tryon-openai.php`) and result-caching logic (`class-fito-tryon-cache.php`) from the free repository plugin, isolating them strictly inside the commercial Pro Addon. Confirmed zero license checks, phone-home routines, or disabled controls exist in the free core plugin.
+  - Decoupled visual audit log thumbnail cleanup from Free core: `Fito_Tryon_Database::get_expired_logs()` queries only native Free column `id`, and `Fito_Tryon_Privacy::run_cleanup()` fires `fito_tryon_before_delete_expired_logs` lifecycle hook, enabling Pro Addon to clean up stored thumbnail files before database row deletion.
+  - Sanitized suggested privacy policy content in Free core by removing Pro customer account saving references in favor of a static generic statement.
+  - Pre-Submission Directory Audit Remediation (Guideline 5 & 15 Cleanups):
+    - Purged all latent Pro stylesheet rules from Free's `assets/css/admin.css` (`.fito-log-thumb*`, `.fito-modal-compare-grid*`) and relocated them to Pro's `assets/css/pro-admin.css`.
+    - Purged all latent Pro frontend styling from Free's `assets/css/public.css` (`.fito-tryon-btn--archive`, `.fito-custom-image-wrapper`, `.fito-tryon-btn--overlay`, `.fito-account-tryons*`, `.fito-tryon-btn--gallery`, `.fito-variation-tryon-wrapper`, `.fito-tryon-btn--variation`) and relocated them into Pro's new `assets/css/pro-public.css` stylesheet, enqueued via Pro's `Fito_Tryon_Pro_Placements`.
+    - Purged dormant variation wrapper animation lookups (`#fito-variation-tryon-wrapper`) and archive button conditionals from Free's `assets/js/public.js`, relocating the variation button handler to Pro's `assets/js/pro-public.js`.
+    - Corrected `readme.txt` version 1.1.0 changelog entry to eliminate the inadvertent claim that prompt duplication was previously shipped in Free.
+    - Added explicit source repository URL in `assets/js/chart.umd.min.js` header for Guideline 4 human-readable source compliance.
+    - Stated Assumption: Retained `Tested up to: 7.1` in `readme.txt` per explicit store developer directive.
 
-- **Unit test suite (Handshake & Free Standalone)**: `rtk php tests/test-free-standalone-and-pro-handshake.php`
+## Verification & Automated Testing
+- **Unit test suite (Handshake & Free Standalone - 36 assertions)**: `rtk php tests/test-free-standalone-and-pro-handshake.php`
 - **Syntax checks (PHP)**: `rtk php -l <file.php>`
 - **PHP linting on entire codebase**: `rtk powershell -Command "Get-ChildItem -Recurse -Filter *.php | ForEach-Object { php -l `$_.FullName }"`
 - **Frontend JavaScript syntax validation**: `rtk powershell -Command "node -c assets/js/public.js; node -c assets/js/admin.js"`

@@ -9,7 +9,7 @@
     const { __ } = wp.i18n;
 
     registerBlockType('fito/tryon-button', {
-        title: __('AI Try-On Button', 'fito-try-on-with-ai-for-woocommerce'),
+        title: __('AI Try-On Button', 'elfit-ai-virtual-try-on-for-woocommerce'),
         icon: 'camera',
         category: 'woocommerce',
         edit: function (props) {
@@ -34,9 +34,9 @@
                     null,
                     el(
                         PanelBody,
-                        { title: __('Button Settings', 'fito-try-on-with-ai-for-woocommerce'), initialOpen: true },
+                        { title: __('Button Settings', 'elfit-ai-virtual-try-on-for-woocommerce'), initialOpen: true },
                         el(TextControl, {
-                            label: __('Button Label', 'fito-try-on-with-ai-for-woocommerce'),
+                            label: __('Button Label', 'elfit-ai-virtual-try-on-for-woocommerce'),
                             value: buttonText,
                             onChange: function (newVal) {
                                 setAttributes({ buttonText: newVal });
@@ -62,7 +62,7 @@
                             { style: { marginRight: '8px' } },
                             '✨'
                         ),
-                        el('span', null, buttonText || __('Try It On with AI', 'fito-try-on-with-ai-for-woocommerce'))
+                        el('span', null, buttonText || __('Try It On with AI', 'elfit-ai-virtual-try-on-for-woocommerce'))
                     )
                 )
             );

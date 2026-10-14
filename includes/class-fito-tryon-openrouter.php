@@ -47,7 +47,7 @@ class Fito_Tryon_OpenRouter {
                 'speed'       => 'Moderate (5-10s)',
                 'cost'        => '$$',
                 'quality'     => 'Maximum',
-                'note'        => __('State-of-the-art photorealism, skin textures, and fabric lighting.', 'fito-try-on-with-ai-for-woocommerce'),
+                'note'        => __('State-of-the-art photorealism, skin textures, and fabric lighting.', 'elfit-ai-virtual-try-on-for-woocommerce'),
             ],
             [
                 'id'          => 'black-forest-labs/flux-1-schnell',
@@ -57,7 +57,7 @@ class Fito_Tryon_OpenRouter {
                 'speed'       => 'Fast (2-4s)',
                 'cost'        => '$',
                 'quality'     => 'High',
-                'note'        => __('Direct diffusion generation optimized for speed.', 'fito-try-on-with-ai-for-woocommerce'),
+                'note'        => __('Direct diffusion generation optimized for speed.', 'elfit-ai-virtual-try-on-for-woocommerce'),
             ],
             [
                 'id'          => 'black-forest-labs/flux.2-klein-4b',
@@ -67,7 +67,7 @@ class Fito_Tryon_OpenRouter {
                 'speed'       => 'Ultra Fast (1-3s)',
                 'cost'        => '$',
                 'quality'     => 'High',
-                'note'        => __('Ultra-fast diffusion try-on generation.', 'fito-try-on-with-ai-for-woocommerce'),
+                'note'        => __('Ultra-fast diffusion try-on generation.', 'elfit-ai-virtual-try-on-for-woocommerce'),
             ],
             [
                 'id'          => 'google/gemini-2.5-flash-image',
@@ -77,7 +77,7 @@ class Fito_Tryon_OpenRouter {
                 'speed'       => 'Fast (2-4s)',
                 'cost'        => '$',
                 'quality'     => 'High',
-                'note'        => __('Native Google image generation and multi-reference editing model.', 'fito-try-on-with-ai-for-woocommerce'),
+                'note'        => __('Native Google image generation and multi-reference editing model.', 'elfit-ai-virtual-try-on-for-woocommerce'),
             ],
             [
                 'id'          => 'openai/gpt-5-image-mini',
@@ -87,7 +87,7 @@ class Fito_Tryon_OpenRouter {
                 'speed'       => 'Fast (2-3s)',
                 'cost'        => '$$',
                 'quality'     => 'High',
-                'note'        => __('OpenAI native image generation with multi-reference image-to-image support.', 'fito-try-on-with-ai-for-woocommerce'),
+                'note'        => __('OpenAI native image generation with multi-reference image-to-image support.', 'elfit-ai-virtual-try-on-for-woocommerce'),
             ],
         ];
 
@@ -104,7 +104,7 @@ class Fito_Tryon_OpenRouter {
         if (empty($key)) {
             return [
                 'success' => false,
-                'message' => __('Please enter an OpenRouter API key before testing.', 'fito-try-on-with-ai-for-woocommerce'),
+                'message' => __('Please enter an OpenRouter API key before testing.', 'elfit-ai-virtual-try-on-for-woocommerce'),
             ];
         }
 
@@ -121,7 +121,7 @@ class Fito_Tryon_OpenRouter {
             return [
                 'success' => false,
                 // translators: %s: Error message
-                'message' => sprintf(__('Connection failed: %s', 'fito-try-on-with-ai-for-woocommerce'), $response->get_error_message()),
+                'message' => sprintf(__('Connection failed: %s', 'elfit-ai-virtual-try-on-for-woocommerce'), $response->get_error_message()),
             ];
         }
 
@@ -130,7 +130,7 @@ class Fito_Tryon_OpenRouter {
 
         if ($status_code === 200 && isset($body['data'])) {
             $data = $body['data'];
-            $label = !empty($data['label']) ? $data['label'] : __('Default Key', 'fito-try-on-with-ai-for-woocommerce');
+            $label = !empty($data['label']) ? $data['label'] : __('Default Key', 'elfit-ai-virtual-try-on-for-woocommerce');
             $usage = isset($data['usage']) ? floatval($data['usage']) : 0;
             $limit = isset($data['limit']) ? floatval($data['limit']) : null;
             $limit_str = $limit !== null ? sprintf(' / $%s limit', number_format($limit, 2)) : '';
@@ -139,7 +139,7 @@ class Fito_Tryon_OpenRouter {
                 'success' => true,
                 'message' => sprintf(
                     // translators: 1: API key label, 2: Total spend in dollars, 3: Optional credit limit info
-                    __('Connection verified! Key: "%1$s" (Total spend: $%2$s%3$s)', 'fito-try-on-with-ai-for-woocommerce'),
+                    __('Connection verified! Key: "%1$s" (Total spend: $%2$s%3$s)', 'elfit-ai-virtual-try-on-for-woocommerce'),
                     esc_html($label),
                     number_format($usage, 2),
                     $limit_str
@@ -148,7 +148,7 @@ class Fito_Tryon_OpenRouter {
             ];
         }
 
-        $error_msg = !empty($body['error']['message']) ? $body['error']['message'] : __('Authentication failed. Check your API key.', 'fito-try-on-with-ai-for-woocommerce');
+        $error_msg = !empty($body['error']['message']) ? $body['error']['message'] : __('Authentication failed. Check your API key.', 'elfit-ai-virtual-try-on-for-woocommerce');
         return [
             'success' => false,
             'message' => $error_msg,
@@ -222,7 +222,7 @@ class Fito_Tryon_OpenRouter {
                             'id'          => $id,
                             'name'        => $m['name'] ?? $id,
                             'type'        => 'image_gen',
-                            'type_label'  => __('Image Generation', 'fito-try-on-with-ai-for-woocommerce'),
+                            'type_label'  => __('Image Generation', 'elfit-ai-virtual-try-on-for-woocommerce'),
                             'description' => !empty($m['description']) ? wp_trim_words($m['description'], 15) : '',
                         ];
                     }
@@ -267,7 +267,7 @@ class Fito_Tryon_OpenRouter {
                         'id'          => $id,
                         'name'        => $m['name'] ?? $id,
                         'type'        => 'image_gen',
-                        'type_label'  => __('Image Generation', 'fito-try-on-with-ai-for-woocommerce'),
+                        'type_label'  => __('Image Generation', 'elfit-ai-virtual-try-on-for-woocommerce'),
                         'description' => !empty($m['description']) ? wp_trim_words($m['description'], 15) : '',
                     ];
                 }
@@ -311,7 +311,7 @@ class Fito_Tryon_OpenRouter {
         if (empty($api_key)) {
             return [
                 'success' => false,
-                'message' => __('OpenRouter API key is not configured in settings.', 'fito-try-on-with-ai-for-woocommerce'),
+                'message' => __('OpenRouter API key is not configured in settings.', 'elfit-ai-virtual-try-on-for-woocommerce'),
             ];
         }
 
@@ -342,8 +342,8 @@ class Fito_Tryon_OpenRouter {
             return [
                 'success'       => false,
                 'prompt'        => $prompt,
-                'response_text' => self::sanitize_json_response(['error' => __('Missing or unreadable user photo.', 'fito-try-on-with-ai-for-woocommerce')]),
-                'message'       => __('Missing or unreadable user photo.', 'fito-try-on-with-ai-for-woocommerce'),
+                'response_text' => self::sanitize_json_response(['error' => __('Missing or unreadable user photo.', 'elfit-ai-virtual-try-on-for-woocommerce')]),
+                'message'       => __('Missing or unreadable user photo.', 'elfit-ai-virtual-try-on-for-woocommerce'),
             ];
         }
 
@@ -427,7 +427,7 @@ class Fito_Tryon_OpenRouter {
                 'prompt'        => $prompt,
                 'response_text' => self::sanitize_json_response(['error' => $response->get_error_message()]),
                 // translators: %s: Error message
-                'message'       => sprintf(__('AI request timed out or network error: %s', 'fito-try-on-with-ai-for-woocommerce'), $response->get_error_message()),
+                'message'       => sprintf(__('AI request timed out or network error: %s', 'elfit-ai-virtual-try-on-for-woocommerce'), $response->get_error_message()),
             ];
         }
 
@@ -457,7 +457,7 @@ class Fito_Tryon_OpenRouter {
                 'is_fallback'   => $is_fallback,
                 'prompt'        => $prompt,
                 'response_text' => self::sanitize_json_response(!empty($body) ? $body : ['raw_body' => $raw_body]),
-                'message'       => __('Empty response returned from AI model.', 'fito-try-on-with-ai-for-woocommerce'),
+                'message'       => __('Empty response returned from AI model.', 'elfit-ai-virtual-try-on-for-woocommerce'),
             ];
         }
 
@@ -495,14 +495,14 @@ class Fito_Tryon_OpenRouter {
             }
 
             if ($is_undergarment) {
-                $fail_message = __('This item cannot be virtually fitted due to AI clothing category restrictions. Please try another product.', 'fito-try-on-with-ai-for-woocommerce');
+                $fail_message = __('This item cannot be virtually fitted due to AI clothing category restrictions. Please try another product.', 'elfit-ai-virtual-try-on-for-woocommerce');
             } elseif ($is_moderated) {
-                $fail_message = __('The AI provider rejected the request due to content safety/moderation policies. Please try a different photo or clothing item.', 'fito-try-on-with-ai-for-woocommerce');
+                $fail_message = __('The AI provider rejected the request due to content safety/moderation policies. Please try a different photo or clothing item.', 'elfit-ai-virtual-try-on-for-woocommerce');
             } elseif (!empty($refusal_text)) {
                 // translators: %s: AI refusal notice text
-                $fail_message = sprintf(__('AI Model Notice: %s', 'fito-try-on-with-ai-for-woocommerce'), $refusal_text);
+                $fail_message = sprintf(__('AI Model Notice: %s', 'elfit-ai-virtual-try-on-for-woocommerce'), $refusal_text);
             } else {
-                $fail_message = __('The AI model responded with text but was unable to generate an image.', 'fito-try-on-with-ai-for-woocommerce');
+                $fail_message = __('The AI model responded with text but was unable to generate an image.', 'elfit-ai-virtual-try-on-for-woocommerce');
             }
 
             return [
@@ -575,7 +575,7 @@ class Fito_Tryon_OpenRouter {
                 'success'       => false,
                 'prompt'        => $prompt,
                 'response_text' => self::sanitize_json_response(!empty($decoded_err) ? $decoded_err : ['error' => $err_body]),
-                'message'       => __('OpenRouter Image API request failed.', 'fito-try-on-with-ai-for-woocommerce'),
+                'message'       => __('OpenRouter Image API request failed.', 'elfit-ai-virtual-try-on-for-woocommerce'),
             ];
         }
 
@@ -588,7 +588,7 @@ class Fito_Tryon_OpenRouter {
                 'success'       => false,
                 'prompt'        => $prompt,
                 'response_text' => self::sanitize_json_response(!empty($body) ? $body : ['raw_body' => $raw_body]),
-                'message'       => __('OpenRouter Image API did not return data.', 'fito-try-on-with-ai-for-woocommerce'),
+                'message'       => __('OpenRouter Image API did not return data.', 'elfit-ai-virtual-try-on-for-woocommerce'),
             ];
         }
 
@@ -598,7 +598,7 @@ class Fito_Tryon_OpenRouter {
                 'success'       => false,
                 'prompt'        => $prompt,
                 'response_text' => self::sanitize_json_response(!empty($body) ? $body : ['error' => 'Empty image result returned']),
-                'message'       => __('OpenRouter Image API returned empty image.', 'fito-try-on-with-ai-for-woocommerce'),
+                'message'       => __('OpenRouter Image API returned empty image.', 'elfit-ai-virtual-try-on-for-woocommerce'),
             ];
         }
 
@@ -740,7 +740,7 @@ class Fito_Tryon_OpenRouter {
     }
 
     public function build_category_prompt(array $params): string {
-        $product_title = $params['product_title'] ?? __('Product', 'fito-try-on-with-ai-for-woocommerce');
+        $product_title = $params['product_title'] ?? __('Product', 'elfit-ai-virtual-try-on-for-woocommerce');
         $variation_desc = $params['variation_desc'] ?? '';
         $category_ids = array_map('intval', (array) ($params['category_ids'] ?? []));
         $category_str = strtolower($params['categories'] ?? '');
@@ -809,7 +809,7 @@ class Fito_Tryon_OpenRouter {
 
         if (!empty($variation_desc)) {
             // translators: %s: Product variation attributes
-            $final_prompt .= ' ' . sprintf(__('Selected product variation attributes: %s.', 'fito-try-on-with-ai-for-woocommerce'), $variation_desc);
+            $final_prompt .= ' ' . sprintf(__('Selected product variation attributes: %s.', 'elfit-ai-virtual-try-on-for-woocommerce'), $variation_desc);
         }
 
         return $final_prompt;
@@ -940,31 +940,31 @@ class Fito_Tryon_OpenRouter {
         $lower_msg = strtolower($msg);
         $raw_str = isset($body['error']['metadata']['raw']) ? strtolower(wp_json_encode($body['error']['metadata']['raw'])) : '';
         if (str_contains($lower_msg, 'moderation') || str_contains($lower_msg, 'moderated') || str_contains($raw_str, 'content-moderated') || str_contains($lower_msg, 'safety') || str_contains($lower_msg, 'policy violation')) {
-            return __('The AI provider rejected the request due to content safety/moderation policies. Please try a different photo or clothing item.', 'fito-try-on-with-ai-for-woocommerce');
+            return __('The AI provider rejected the request due to content safety/moderation policies. Please try a different photo or clothing item.', 'elfit-ai-virtual-try-on-for-woocommerce');
         }
 
         // Check for invalid, discontinued, or misconfigured model ID
         if (str_contains($lower_msg, 'not a valid model') || str_contains($lower_msg, 'model not found') || str_contains($lower_msg, 'unknown model') || str_contains($lower_msg, 'does not exist')) {
-            return __('The virtual try-on service is temporarily unavailable. Please try again in a few moments or contact store support.', 'fito-try-on-with-ai-for-woocommerce');
+            return __('The virtual try-on service is temporarily unavailable. Please try again in a few moments or contact store support.', 'elfit-ai-virtual-try-on-for-woocommerce');
         }
 
         if ($code === 401) {
-            return __('Invalid OpenRouter API Key. Please verify your key in Settings.', 'fito-try-on-with-ai-for-woocommerce');
+            return __('Invalid OpenRouter API Key. Please verify your key in Settings.', 'elfit-ai-virtual-try-on-for-woocommerce');
         }
         if ($code === 402) {
-            return __('OpenRouter account quota exceeded. Please top up your credits.', 'fito-try-on-with-ai-for-woocommerce');
+            return __('OpenRouter account quota exceeded. Please top up your credits.', 'elfit-ai-virtual-try-on-for-woocommerce');
         }
         if ($code === 429) {
-            return __('OpenRouter rate limit reached. Please wait a moment and try again.', 'fito-try-on-with-ai-for-woocommerce');
+            return __('OpenRouter rate limit reached. Please wait a moment and try again.', 'elfit-ai-virtual-try-on-for-woocommerce');
         }
         if ($code === 503 || $code === 504) {
-            return __('The AI model provider is temporarily unavailable. Please try our fallback model.', 'fito-try-on-with-ai-for-woocommerce');
+            return __('The AI model provider is temporarily unavailable. Please try again in a few moments.', 'elfit-ai-virtual-try-on-for-woocommerce');
         }
         if (!empty($msg)) {
             // translators: %s: AI service error message
-            return sprintf(__('AI Service Error: %s', 'fito-try-on-with-ai-for-woocommerce'), $msg);
+            return sprintf(__('AI Service Error: %s', 'elfit-ai-virtual-try-on-for-woocommerce'), $msg);
         }
         // translators: %d: HTTP status code
-        return sprintf(__('AI request returned status %d.', 'fito-try-on-with-ai-for-woocommerce'), $code);
+        return sprintf(__('AI request returned status %d.', 'elfit-ai-virtual-try-on-for-woocommerce'), $code);
     }
 }

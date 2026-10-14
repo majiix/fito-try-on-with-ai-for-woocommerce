@@ -8,7 +8,7 @@
   "icon": "camera",
   "description": "Insert a virtual AI Try-On button into your product templates or posts.",
   "keywords": ["try-on", "ai", "virtual fitting", "fashion", "fitting room"],
-  "textdomain": "fito-try-on-with-ai-for-woocommerce",
+  "textdomain": "elfit-ai-virtual-try-on-for-woocommerce",
   "attributes": {
     "buttonText": {
       "type": "string",
