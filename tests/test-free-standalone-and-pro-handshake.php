@@ -328,6 +328,23 @@ assert(in_array('gemini', $extended_providers, true), 'Pro must be able to add g
 assert(in_array('openai', $extended_providers, true), 'Pro must be able to add openai provider via filter');
 echo "PASS: Pro cleanly extends allowed AI providers via filter contract.\n";
 
+// Test 4b: Free Standalone & Pro Provider Labels Filter Handshake
+$free_labels = apply_filters('fito_tryon_provider_labels', [
+    'openrouter' => 'OpenRouter (Multi-Model Aggregator)',
+]);
+assert(isset($free_labels['openrouter']) && count($free_labels) === 1, 'Free standalone provider labels must contain openrouter only');
+
+add_filter('fito_tryon_provider_labels', function($labels) {
+    $labels['gemini'] = 'Google Gemini (Direct API)';
+    $labels['openai'] = 'OpenAI (Direct API)';
+    return $labels;
+});
+$extended_labels = apply_filters('fito_tryon_provider_labels', [
+    'openrouter' => 'OpenRouter (Multi-Model Aggregator)',
+]);
+assert(isset($extended_labels['gemini']) && isset($extended_labels['openai']), 'Pro must append gemini and openai provider labels via filter');
+echo "PASS: fito_tryon_provider_labels filter decouples provider select labels cleanly.\n";
+
 // Test 5: Pro Addon Result Cache & Flush Handshake
 add_filter('fito_tryon_get_cached_result', function($default, $image_path, $product_id, $variation_id, $model) {
     return 'https://example.com/cached-result.png';
@@ -868,4 +885,12 @@ $block_json = json_decode(file_get_contents(dirname(__DIR__) . '/includes/blocks
 assert(!empty($block_json['version']) && $block_json['version'] === '1.4.0', 'block.json version must match 1.4.0');
 echo "PASS: Pro storage houses delete_file_by_url and block.json synchronized to 1.4.0.\n";
 
-echo "=== ALL 39 TESTS PASSED SUCCESSFULLY ===\n";
+// Test 40: Free admin class contains zero dormant Pro provider options or custom prompt badges
+$free_admin_code = file_get_contents(dirname(__DIR__) . '/admin/class-fito-tryon-admin.php');
+assert(!str_contains($free_admin_code, '<option value="gemini"'), 'Free admin must not hardcode gemini option');
+assert(!str_contains($free_admin_code, '<option value="openai"'), 'Free admin must not hardcode openai option');
+assert(!str_contains($free_admin_code, 'is-custom-prompt'), 'Free admin must not contain is-custom-prompt class');
+assert(!str_contains($free_admin_code, "'Custom Prompt'"), 'Free admin must not contain Custom Prompt string');
+echo "PASS: Free admin contains zero hardcoded Pro provider options or dormant prompt badges.\n";
+
+echo "=== ALL 41 TESTS PASSED SUCCESSFULLY ===\n";

@@ -605,13 +605,15 @@ class Fito_Tryon_Admin {
                                 <th scope="row"><label for="fito_ai_provider"><?php esc_html_e('AI Provider', 'elfit-ai-virtual-try-on-for-woocommerce'); ?></label></th>
                                 <td>
                                     <select id="fito_ai_provider" name="fito_tryon_ai_provider" class="regular-text" style="max-width: 320px;">
-                                        <option value="openrouter" <?php selected($ai_provider, 'openrouter'); ?>><?php esc_html_e('OpenRouter (Multi-Model Aggregator)', 'elfit-ai-virtual-try-on-for-woocommerce'); ?></option>
-                                        <?php if (in_array('gemini', $allowed_providers, true)) : ?>
-                                            <option value="gemini" <?php selected($ai_provider, 'gemini'); ?>><?php esc_html_e('Google Gemini (Direct API)', 'elfit-ai-virtual-try-on-for-woocommerce'); ?></option>
-                                        <?php endif; ?>
-                                        <?php if (in_array('openai', $allowed_providers, true)) : ?>
-                                            <option value="openai" <?php selected($ai_provider, 'openai'); ?>><?php esc_html_e('OpenAI (Direct API)', 'elfit-ai-virtual-try-on-for-woocommerce'); ?></option>
-                                        <?php endif; ?>
+                                        <?php
+                                        $provider_labels = (array) apply_filters('fito_tryon_provider_labels', [
+                                            'openrouter' => esc_html__('OpenRouter (Multi-Model Aggregator)', 'elfit-ai-virtual-try-on-for-woocommerce'),
+                                        ]);
+                                        foreach ($allowed_providers as $p_slug) :
+                                            $p_label = $provider_labels[$p_slug] ?? ucfirst($p_slug);
+                                        ?>
+                                            <option value="<?php echo esc_attr($p_slug); ?>" <?php selected($ai_provider, $p_slug); ?>><?php echo esc_html($p_label); ?></option>
+                                        <?php endforeach; ?>
                                     </select>
                                     <p class="description"><?php esc_html_e('Select which service powers virtual try-on image generation.', 'elfit-ai-virtual-try-on-for-woocommerce'); ?></p>
                                 </td>
@@ -1104,13 +1106,13 @@ class Fito_Tryon_Admin {
                                 $cat_count = count($p_categories);
                                 $default_text = $p_is_system ? ($default_map[$p_id] ?? '') : '';
                             ?>
-                                <div class="fito-prompt-row is-collapsed <?php echo $p_is_system ? 'is-system-preset' : 'is-custom-prompt'; ?>" data-index="<?php echo esc_attr($index); ?>">
+                                <div class="fito-prompt-row is-collapsed is-system-preset" data-index="<?php echo esc_attr($index); ?>">
                                     <div class="fito-prompt-row-header">
                                         <div class="fito-prompt-header-left">
                                             <span class="dashicons dashicons-menu fito-prompt-drag-handle" title="<?php esc_attr_e('Drag to reorder', 'elfit-ai-virtual-try-on-for-woocommerce'); ?>"></span>
                                             <input type="text" name="prompts[<?php echo esc_attr($index); ?>][title]" value="<?php echo esc_attr($p_title); ?>" class="regular-text fito-prompt-title-input" placeholder="<?php esc_attr_e('Prompt Title', 'elfit-ai-virtual-try-on-for-woocommerce'); ?>" required>
-                                            <span class="fito-prompt-badge <?php echo $p_is_system ? 'fito-badge-system' : 'fito-badge-custom'; ?>">
-                                                <?php echo $p_is_system ? esc_html__('Built-in Preset', 'elfit-ai-virtual-try-on-for-woocommerce') : esc_html__('Custom Prompt', 'elfit-ai-virtual-try-on-for-woocommerce'); ?>
+                                            <span class="fito-prompt-badge fito-badge-system">
+                                                <?php esc_html_e('Built-in Preset', 'elfit-ai-virtual-try-on-for-woocommerce'); ?>
                                             </span>
                                         </div>
                                         <div class="fito-prompt-header-right">
@@ -1249,15 +1251,18 @@ class Fito_Tryon_Admin {
             }
 
             $id = !empty($item['id']) ? sanitize_key($item['id']) : '';
-            if (!in_array($id, $default_ids, true)) {
+            if (empty($id)) {
                 continue;
             }
 
             $default_obj = null;
-            foreach ($default_prompts as $dp) {
-                if ($dp['id'] === $id) {
-                    $default_obj = $dp;
-                    break;
+            $is_system = in_array($id, $default_ids, true);
+            if ($is_system) {
+                foreach ($default_prompts as $dp) {
+                    if ($dp['id'] === $id) {
+                        $default_obj = $dp;
+                        break;
+                    }
                 }
             }
 
@@ -1279,7 +1284,7 @@ class Fito_Tryon_Admin {
             $sanitized_prompts[] = [
                 'id'         => $id,
                 'title'      => $title,
-                'is_system'  => true,
+                'is_system'  => $is_system,
                 'categories' => array_values(array_unique($cats)),
                 'prompt'     => $prompt,
             ];

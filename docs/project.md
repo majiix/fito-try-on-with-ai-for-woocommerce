@@ -280,10 +280,16 @@ elfit-ai-virtual-try-on-for-woocommerce/
     - Removed dormant method `delete_unsaved_jobs()` from `includes/class-fito-tryon-database.php`.
     - Removed dormant helper method `delete_file_by_url()` from `includes/class-fito-tryon-storage.php`, migrating it into `Fito_Tryon_Pro_Storage::delete_file_by_url()` and updating `includes/class-fito-tryon-pro-account.php`.
     - Synchronized Gutenberg block metadata version to `1.4.0` in `includes/blocks/tryon-button/block.json`.
-    - Stated User Assumptions: Retained `Contributors: micromax2` (vs Author `micromax`) and `Tested up to: 7.1` in `readme.txt` per explicit developer directive.
+    - Stated User Assumptions: Retained `Contributors: micromax2` (vs Author `micromax`) and `Tested up to: 7.1` in `readme.txt` per explicit developer directive. Retained single-site uninstall cleanup in `uninstall.php` for performance.
+    - Final Pre-Submission Directory Audit Remediation:
+      - Replaced hardcoded Pro AI provider `<option>` tags (Gemini, OpenAI) in `admin/class-fito-tryon-admin.php` with dynamic filter contract `fito_tryon_provider_labels`, implemented in `Fito_Tryon_Pro_Admin::filter_provider_labels()` within the Pro textdomain.
+      - Cleaned up dormant `is-custom-prompt` class and `Custom Prompt` badge from Free prompts repeater template; presets render uniformly as built-in presets in Free.
+      - Generalized `handle_save_prompts()` sanitization loop to process all valid prompt entries without silently discarding non-default IDs.
+      - Consolidated `readme.txt` `== External Services ==` section under OpenRouter with explicit Terms of Service and Privacy Policy URLs, documenting upstream generated image downloads and removing redundant CDN placeholder text.
+      - Cleaned orphaned `Custom Prompt` and `Delete Custom Prompt` msgids from `languages/elfit-ai-virtual-try-on-for-woocommerce.pot`.
 
 ## Verification & Automated Testing
-- **Unit test suite (Handshake & Free Standalone - 39 assertions)**: `rtk php tests/test-free-standalone-and-pro-handshake.php`
+- **Unit test suite (Handshake & Free Standalone - 41 assertions)**: `rtk php tests/test-free-standalone-and-pro-handshake.php`
 - **Syntax checks (PHP)**: `rtk php -l <file.php>`
 - **PHP linting on entire codebase**: `rtk powershell -Command "Get-ChildItem -Recurse -Filter *.php | ForEach-Object { php -l `$_.FullName }"`
 - **Frontend JavaScript syntax validation**: `rtk powershell -Command "node -c assets/js/public.js; node -c assets/js/admin.js"`

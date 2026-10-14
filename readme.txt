@@ -68,18 +68,11 @@ Learn more and purchase the Pro Addon: https://violo.ir/?p=721
 This plugin connects to external artificial intelligence APIs to generate realistic virtual try-on images. All connections use a Bring-Your-Own-Key (BYOK) architecture where the store administrator provides their own developer API key. No personal or customer data is transmitted until a shopper explicitly clicks the Try-On button and submits a fitting request, or when an administrator tests their API credentials in settings.
 
 = 1. OpenRouter (Core Free Provider) =
-* **What it is and what it does**: OpenRouter (openrouter.ai) is an AI model aggregator and routing service that processes virtual try-on requests using multimodal vision and diffusion models (such as FLUX, Recraft, and Gemini models via OpenRouter).
-* **When data is transmitted**: Data is transmitted when a customer submits a try-on request from a single product page or shortcode, or when the administrator clicks "Test Connection" in settings to verify API key validity.
-* **What data is transmitted**: When a try-on is requested, the customer's uploaded or camera-captured photo, the WooCommerce product image, and category-specific prompt instructions are transmitted for AI inference. During connection tests, only the API key is verified without sending customer data.
+* **What it is and what it does**: OpenRouter (openrouter.ai) is an AI model aggregator and routing service that processes virtual try-on requests using multimodal vision and diffusion models (such as FLUX, Recraft, and Gemini models via OpenRouter). Upstream generated fitting images returned by OpenRouter endpoints are downloaded via secure server-side HTTP GET requests into the store's local uploads directory for customer display and split-slider comparison.
+* **When data is transmitted**: Data is transmitted when a customer submits a try-on request from a single product page or shortcode, when completed result images are retrieved from OpenRouter to the web server, or when the administrator clicks "Test Connection" in settings to verify API key validity.
+* **What data is transmitted**: When a try-on is requested, the customer's uploaded or camera-captured photo, the WooCommerce product image, and category-specific prompt instructions are transmitted for AI inference. When retrieving completed images, standard HTTP GET request headers are sent to fetch the image bytes. During connection tests, only the API key is verified without sending customer data.
 * **Terms of Service**: https://openrouter.ai/terms
 * **Privacy Policy**: https://openrouter.ai/privacy
-
-= 2. External Image and Media Retrieval =
-* **What it is and what it does**: When an AI model returns a generated try-on image as a remote HTTP/HTTPS URL, or when a WooCommerce product image is hosted on an external Content Delivery Network (CDN), the web server initiates an outbound GET request to download and convert the image into local storage or base64 data for virtual fitting processing.
-* **When data is transmitted**: Data is retrieved during the active virtual try-on generation process or when storing the completed image to the local uploads directory.
-* **What data is transmitted**: Standard HTTP GET request headers are sent to retrieve the image bytes. No customer credentials, passwords, or personal account data are transmitted.
-* **Terms of Service**: Dependent on the store owner's selected AI provider and external media hosting CDN.
-* **Privacy Policy**: Dependent on the store owner's selected AI provider and external media hosting CDN.
 
 == Third-Party Assets ==
 

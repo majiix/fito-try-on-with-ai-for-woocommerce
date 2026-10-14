@@ -628,10 +628,6 @@ msgstr ""
 msgid "Built-in Preset"
 msgstr ""
 
-#: admin/class-fito-tryon-admin.php:1753 admin/class-fito-tryon-admin.php:1861 admin/class-fito-tryon-admin.php:1958
-msgid "Custom Prompt"
-msgstr ""
-
 #. // translators: %d: Number of connected categories
 #: admin/class-fito-tryon-admin.php:1761
 msgid "%d categories connected"
@@ -647,10 +643,6 @@ msgstr ""
 
 #: admin/class-fito-tryon-admin.php:1772 admin/class-fito-tryon-admin.php:1868
 msgid "Toggle Prompt Details"
-msgstr ""
-
-#: admin/class-fito-tryon-admin.php:1776 admin/class-fito-tryon-admin.php:1871
-msgid "Delete Custom Prompt"
 msgstr ""
 
 #: admin/class-fito-tryon-admin.php:1790 admin/class-fito-tryon-admin.php:1881
