@@ -109,7 +109,7 @@ class Fito_Tryon_Admin {
                 'chartjs',
                 FITO_TRYON_URL . 'assets/js/chart.umd.min.js',
                 [],
-                '4.4.1',
+                '4.5.1',
                 true
             );
             $admin_js_deps[] = 'chartjs';

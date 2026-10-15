@@ -255,7 +255,7 @@ class Fito_Tryon_Public {
     }
 
     /**
-     * Render the [fito_tryon] shortcode.
+     * Render the [elfit_tryon] shortcode.
      *
      * @param array<string, mixed>|string $atts Shortcode attributes.
      * @return string

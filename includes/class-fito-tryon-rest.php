@@ -7,7 +7,6 @@ defined('ABSPATH') || exit;
 
 class Fito_Tryon_Rest {
     public const NAMESPACE = 'fito-tryon/v1';
-    public const LEGACY_NAMESPACE = 'ai-tryon/v1';
 
     private Fito_Tryon $plugin;
 
@@ -17,10 +16,9 @@ class Fito_Tryon_Rest {
     }
 
     public function register_routes(): void {
-        $namespaces = [self::NAMESPACE, self::LEGACY_NAMESPACE];
+        $ns = self::NAMESPACE;
 
-        foreach ($namespaces as $ns) {
-            register_rest_route($ns, '/submit', [
+        register_rest_route($ns, '/submit', [
                 'methods'             => 'POST',
                 'callback'            => [$this, 'handle_submit'],
                 'permission_callback' => [$this, 'check_frontend_permission'],
@@ -81,7 +79,6 @@ class Fito_Tryon_Rest {
                     ],
                 ],
             ]);
-        }
     }
 
     public function check_frontend_permission(WP_REST_Request $request): bool {

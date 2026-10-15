@@ -891,6 +891,16 @@ assert(!str_contains($free_admin_code, '<option value="gemini"'), 'Free admin mu
 assert(!str_contains($free_admin_code, '<option value="openai"'), 'Free admin must not hardcode openai option');
 assert(!str_contains($free_admin_code, 'is-custom-prompt'), 'Free admin must not contain is-custom-prompt class');
 assert(!str_contains($free_admin_code, "'Custom Prompt'"), 'Free admin must not contain Custom Prompt string');
-echo "PASS: Free admin contains zero hardcoded Pro provider options or dormant prompt badges.\n";
+// Test 41: Free REST class uses canonical 10-char namespace and zero legacy ai-tryon aliases
+require_once dirname(__DIR__) . '/includes/class-fito-tryon-rest.php';
+$rest_reflection = new ReflectionClass('Fito_Tryon_Rest');
+assert($rest_reflection->getConstant('NAMESPACE') === 'fito-tryon/v1', 'Fito_Tryon_Rest::NAMESPACE must be fito-tryon/v1');
+// Test 42: Block index.asset.php exists and Chart.js version sync
+$asset_file = dirname(__DIR__) . '/includes/blocks/tryon-button/index.asset.php';
+assert(file_exists($asset_file), 'tryon-button index.asset.php must exist');
+$asset_data = include $asset_file;
+assert(is_array($asset_data) && in_array('wp-blocks', $asset_data['dependencies'] ?? [], true), 'index.asset.php must declare wp-blocks dependency');
+assert(str_contains($free_admin_code, "'4.5.1'"), 'Chart.js enqueued version must match 4.5.1');
+echo "PASS: Gutenberg block index.asset.php and Chart.js 4.5.1 enqueued version validated.\n";
 
-echo "=== ALL 41 TESTS PASSED SUCCESSFULLY ===\n";
+echo "=== ALL 43 TESTS PASSED SUCCESSFULLY ===\n";

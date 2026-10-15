@@ -10,7 +10,7 @@ All AI image generations in the free core plugin are powered by an OpenRouter Br
 - **Core Platform**: WordPress 6.0+, WooCommerce 7.0+
 - **Frontend Architecture**: Vanilla JavaScript (ES6+), Canvas API, Web Share API, MediaDevices API
 - **Styling**: CSS Custom Properties, modern Flexbox/Grid, clean Light Mode UI, RTL support
-- **REST Endpoints**: WordPress REST API (`/wp-json/fito-tryon/v1/...` with legacy alias `/wp-json/ai-tryon/v1/...`)
+- **REST Endpoints**: WordPress REST API (`/wp-json/fito-tryon/v1/...`)
 - **Database Engine**: Custom MySQL tables (`wp_fito_tryon_jobs`, `wp_fito_tryon_logs`) managed via `dbDelta`
 - **Charts & Data Visualization**: Chart.js for admin analytics dashboards
 - **Internationalization**: WordPress i18n (`__()`, `_e()`, `esc_html__()`), bundled English and Persian (fa_IR) translations
@@ -30,7 +30,7 @@ elfit-ai-virtual-try-on-for-woocommerce/
 │   ├── class-fito-tryon-rest.php                # Nonce-secured REST endpoints & route handlers
 │   ├── class-fito-tryon-public.php              # Product button injection, modal markup & placements
 │   └── blocks/
-│       └── tryon-button/                        # Gutenberg block definition
+│       └── tryon-button/                        # Gutenberg block definition (block.json, index.js, index.asset.php)
 ├── admin/
 │   └── class-fito-tryon-admin.php               # Admin menu, dashboards, settings, prompts & logs
 ├── assets/
@@ -287,9 +287,13 @@ elfit-ai-virtual-try-on-for-woocommerce/
       - Generalized `handle_save_prompts()` sanitization loop to process all valid prompt entries without silently discarding non-default IDs.
       - Consolidated `readme.txt` `== External Services ==` section under OpenRouter with explicit Terms of Service and Privacy Policy URLs, documenting upstream generated image downloads and removing redundant CDN placeholder text.
       - Cleaned orphaned `Custom Prompt` and `Delete Custom Prompt` msgids from `languages/elfit-ai-virtual-try-on-for-woocommerce.pot`.
+      - Synchronized enqueued Chart.js version to 4.5.1 in admin/class-fito-tryon-admin.php.
+      - Created includes/blocks/tryon-button/index.asset.php with core editor script dependencies.
+      - Removed inline styling from Go Pro action link in includes/class-fito-tryon.php.
+      - Updated shortcode docblock to [elfit_tryon] in includes/class-fito-tryon-public.php.
 
 ## Verification & Automated Testing
-- **Unit test suite (Handshake & Free Standalone - 41 assertions)**: `rtk php tests/test-free-standalone-and-pro-handshake.php`
+- **Unit test suite (Handshake & Free Standalone - 43 assertions)**: `rtk php tests/test-free-standalone-and-pro-handshake.php`
 - **Syntax checks (PHP)**: `rtk php -l <file.php>`
 - **PHP linting on entire codebase**: `rtk powershell -Command "Get-ChildItem -Recurse -Filter *.php | ForEach-Object { php -l `$_.FullName }"`
 - **Frontend JavaScript syntax validation**: `rtk powershell -Command "node -c assets/js/public.js; node -c assets/js/admin.js"`
