@@ -5,7 +5,7 @@ Requires at least: 6.2
 Tested up to: 7.1
 Requires PHP: 8.0
 Requires Plugins: woocommerce
-Stable tag: 1.4.0
+Stable tag: 1.5.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -132,6 +132,11 @@ No. All assets, including Chart.js for analytics, are bundled locally within the
 8. Guest signup prompt modal with sample Before/After preview card.
 
 == Changelog ==
+
+= 1.5.0 =
+* Security: Hardened database SQL queries with $wpdb->prepare() using %i identifier placeholders.
+* Compliance: Resolved direct database query parameters to achieve 100% PluginCheck DirectDB compliance.
+* Maintenance: Bumped core plugin and Gutenberg block version to 1.5.0.
 
 = 1.4.0 =
 * Architecture: Established extensible action and filter contracts for Elfit Try-On Pro Addon.

@@ -7,7 +7,7 @@ if (!defined('ABSPATH')) {
     define('ABSPATH', __DIR__ . '/');
 }
 if (!defined('FITO_TRYON_VERSION')) {
-    define('FITO_TRYON_VERSION', '1.4.0');
+    define('FITO_TRYON_VERSION', '1.5.0');
 }
 
 // Minimal WordPress function stubs for unit testing.
@@ -874,7 +874,7 @@ $storage_reflection = new ReflectionClass('Fito_Tryon_Storage');
 assert(!$storage_reflection->hasMethod('delete_file_by_url'), 'Fito_Tryon_Storage must not contain delete_file_by_url');
 echo "PASS: Free storage class contains zero dormant delete_file_by_url method.\n";
 
-// Test 39: Pro storage class houses delete_file_by_url and block.json version matches 1.4.0
+// Test 39: Pro storage class houses delete_file_by_url and block.json version matches 1.5.0
 if (is_dir($pro_dir)) {
     require_once $pro_dir . '/includes/class-fito-tryon-pro-storage.php';
     $pro_storage_reflection = new ReflectionClass('Fito_Tryon_Pro_Storage');
@@ -882,8 +882,8 @@ if (is_dir($pro_dir)) {
     assert($pro_storage_reflection->getMethod('delete_file_by_url')->isStatic(), 'Fito_Tryon_Pro_Storage::delete_file_by_url must be static');
 }
 $block_json = json_decode(file_get_contents(dirname(__DIR__) . '/includes/blocks/tryon-button/block.json'), true);
-assert(!empty($block_json['version']) && $block_json['version'] === '1.4.0', 'block.json version must match 1.4.0');
-echo "PASS: Pro storage houses delete_file_by_url and block.json synchronized to 1.4.0.\n";
+assert(!empty($block_json['version']) && $block_json['version'] === '1.5.0', 'block.json version must match 1.5.0');
+echo "PASS: Pro storage houses delete_file_by_url and block.json synchronized to 1.5.0.\n";
 
 // Test 40: Free admin class contains zero dormant Pro provider options or custom prompt badges
 $free_admin_code = file_get_contents(dirname(__DIR__) . '/admin/class-fito-tryon-admin.php');

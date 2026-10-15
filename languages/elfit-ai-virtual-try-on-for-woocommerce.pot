@@ -1,7 +1,7 @@
 #, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: Elfit AI Virtual Try-On for WooCommerce 1.4.0\n"
+"Project-Id-Version: Elfit AI Virtual Try-On for WooCommerce 1.5.0\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/elfit-ai-virtual-try-on-for-woocommerce\n"
 "POT-Creation-Date: 2026-09-24 10:01+0000\n"
 "PO-Revision-Date: 2026-09-24 10:01+0000\n"

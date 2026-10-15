@@ -290,8 +290,8 @@ elfit-ai-virtual-try-on-for-woocommerce/
       - Synchronized enqueued Chart.js version to 4.5.1 in admin/class-fito-tryon-admin.php.
       - Created includes/blocks/tryon-button/index.asset.php with core editor script dependencies.
       - Removed inline styling from Go Pro action link in includes/class-fito-tryon.php.
-      - Updated shortcode docblock to [elfit_tryon] in includes/class-fito-tryon-public.php.
       - Hardened SQL queries in includes/class-fito-tryon-database.php using $wpdb->prepare() with %i identifier placeholders and eliminated DirectDB/NotPrepared sniffs.
+      - Synchronized Free Core plugin, Pro Addon, Gutenberg block, asset metadata, and translation POT files to version 1.5.0.
 
 ## Verification & Automated Testing
 - **Unit test suite (Handshake & Free Standalone - 43 assertions)**: `rtk php tests/test-free-standalone-and-pro-handshake.php`
