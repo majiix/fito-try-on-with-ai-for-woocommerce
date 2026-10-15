@@ -1,7 +1,7 @@
 === Elfit AI Virtual Try-On for WooCommerce ===
 Contributors: micromax2
 Tags: try on, virtual fitting, woocommerce, fashion, ai
-Requires at least: 6.0
+Requires at least: 6.2
 Tested up to: 7.1
 Requires PHP: 8.0
 Requires Plugins: woocommerce

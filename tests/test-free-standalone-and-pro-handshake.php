@@ -751,7 +751,7 @@ class MockWPDBForLogs {
     public string $prefix = 'wp_';
     public string $last_query = '';
     public function prepare($query, ...$args) {
-        $this->last_query = vsprintf(str_replace(['%d', '%s'], ['%d', "'%s'"], $query), $args);
+        $this->last_query = vsprintf(str_replace(['%d', '%s', '%i'], ['%d', "'%s'", '`%s`'], $query), $args);
         return $this->last_query;
     }
     public function get_results($query) {

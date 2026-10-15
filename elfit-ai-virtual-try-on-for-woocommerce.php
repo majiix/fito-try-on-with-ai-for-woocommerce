@@ -9,7 +9,7 @@
  * License URI:       https://www.gnu.org/licenses/gpl-2.0.html
  * Text Domain:       elfit-ai-virtual-try-on-for-woocommerce
  * Domain Path:       /languages
- * Requires at least: 6.0
+ * Requires at least: 6.2
  * Requires PHP:      8.0
  * Requires Plugins:  woocommerce
  * WC requires at least: 7.0
