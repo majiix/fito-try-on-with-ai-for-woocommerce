@@ -406,7 +406,7 @@
                             $primarySelect.val(imageGenModels[0].id);
                         }
 
-                        // Trigger event for extensions (e.g. Pro Addon to populate fallback model)
+                        // Trigger event for extensions and secondary model selectors
                         $(document).trigger('fito_models_loaded', [imageGenModels, activeProvider, $panel, genOptions]);
 
                         // Smoothly transition from skeleton to selects
@@ -559,7 +559,7 @@
                 $row.toggleClass('is-collapsed');
             });
 
-            // Listen for external category sync trigger (e.g. from Pro Addon)
+            // Listen for external category sync trigger
             $(document).on('fito_sync_exclusive_categories', function () {
                 syncExclusiveCategories();
             });

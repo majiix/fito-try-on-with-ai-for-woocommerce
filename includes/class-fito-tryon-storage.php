@@ -46,6 +46,18 @@ class Fito_Tryon_Storage {
         }
     }
 
+    public function get_results_dir(): string {
+        $dir = trailingslashit(self::get_base_dir()) . 'results';
+        if (!is_dir($dir)) {
+            wp_mkdir_p($dir);
+        }
+        return $dir;
+    }
+
+    public function get_results_url(): string {
+        return trailingslashit(self::get_base_url()) . 'results';
+    }
+
     /**
      * Handle uploaded customer photo file using wp_handle_upload().
      *
@@ -245,9 +257,6 @@ class Fito_Tryon_Storage {
             }
         }
 
-        // Fire action hook allowing extensions (e.g. Pro watermark overlay) to process saved image.
-        do_action('fito_tryon_after_result_image_saved', $dest_path);
-
         return [
             'success' => true,
             'path'    => $dest_path,
@@ -310,6 +319,10 @@ class Fito_Tryon_Storage {
             return '';
         }
         return 'data:' . $mime . ';base64,' . base64_encode($data);
+    }
+
+    public static function file_to_base64(string $path): string {
+        return self::image_to_base64($path);
     }
 
     /**
@@ -378,5 +391,34 @@ class Fito_Tryon_Storage {
         }
 
         return '';
+    }
+
+    public static function resolve_to_base64(string $path_or_url, int $attachment_id = 0): string {
+        return self::resolve_image_base64($path_or_url, $attachment_id);
+    }
+
+    /**
+     * Delete a storage file by its public URL.
+     *
+     * @param string|null $url
+     * @return bool
+     */
+    public static function delete_file_by_url(?string $url): bool {
+        if (empty($url)) {
+            return false;
+        }
+        $base_url = self::get_base_url();
+        if (!str_starts_with($url, $base_url)) {
+            return false;
+        }
+        $rel_path = ltrim(substr($url, strlen($base_url)), '/\\');
+        $full_path = trailingslashit(self::get_base_dir()) . $rel_path;
+        if (file_exists($full_path) && is_file($full_path)) {
+            if (function_exists('wp_delete_file')) {
+                return (bool) wp_delete_file($full_path);
+            }
+            return @unlink($full_path);
+        }
+        return false;
     }
 }

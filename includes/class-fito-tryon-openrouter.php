@@ -320,18 +320,13 @@ class Fito_Tryon_OpenRouter {
         $start_time = microtime(true);
         $result = $this->call_openrouter($primary_model, $params, $api_key);
 
-        // Allow extensions (e.g. Pro Addon) to handle failover model routing if primary attempt fails
-        if (!$result['success']) {
-            $result = (array) apply_filters('fito_tryon_handle_generation_failover', $result, $params, 'openrouter', $api_key, $this);
-        }
-
         $duration = round(microtime(true) - $start_time, 2);
         $result['duration'] = $duration;
 
         return $result;
     }
 
-    public function call_openrouter(string $model, array $params, string $api_key, bool $is_fallback = false): array {
+    public function call_openrouter(string $model, array $params, string $api_key): array {
         $prompt = $this->build_category_prompt($params);
         $user_image_b64 = $this->image_to_base64($params['user_image_path'] ?? '');
         $product_image_url = $params['product_image_url'] ?? '';
@@ -351,7 +346,7 @@ class Fito_Tryon_OpenRouter {
 
         // Check if model is a dedicated image generation model
         if ($this->is_image_gen_model($model)) {
-            $image_api_result = $this->call_image_generation_api($model, $prompt, $user_image_b64, $product_image_b64, $api_key, $timeout, $is_fallback);
+            $image_api_result = $this->call_image_generation_api($model, $prompt, $user_image_b64, $product_image_b64, $api_key, $timeout);
             if ($image_api_result['success']) {
                 return $image_api_result;
             }
@@ -423,7 +418,7 @@ class Fito_Tryon_OpenRouter {
             return [
                 'success'       => false,
                 'model'         => $model,
-                'is_fallback'   => $is_fallback,
+                'is_fallback'   => false,
                 'prompt'        => $prompt,
                 'response_text' => self::sanitize_json_response(['error' => $response->get_error_message()]),
                 // translators: %s: Error message
@@ -441,7 +436,7 @@ class Fito_Tryon_OpenRouter {
             return [
                 'success'       => false,
                 'model'         => $model,
-                'is_fallback'   => $is_fallback,
+                'is_fallback'   => false,
                 'prompt'        => $prompt,
                 'response_text' => self::sanitize_json_response(!empty($body) ? $body : ['error' => $raw_body, 'http_code' => $code]),
                 'message'       => $msg,
@@ -454,7 +449,7 @@ class Fito_Tryon_OpenRouter {
             return [
                 'success'       => false,
                 'model'         => $model,
-                'is_fallback'   => $is_fallback,
+                'is_fallback'   => false,
                 'prompt'        => $prompt,
                 'response_text' => self::sanitize_json_response(!empty($body) ? $body : ['raw_body' => $raw_body]),
                 'message'       => __('Empty response returned from AI model.', 'elfit-ai-virtual-try-on-for-woocommerce'),
@@ -508,7 +503,7 @@ class Fito_Tryon_OpenRouter {
             return [
                 'success'           => false,
                 'model'             => $model,
-                'is_fallback'       => $is_fallback,
+                'is_fallback'       => false,
                 'is_moderated'      => $is_moderated,
                 'prompt'            => $prompt,
                 'response_text'     => self::sanitize_json_response(!empty($body) ? $body : ['content' => $content, 'refusal' => $refusal_text]),
@@ -525,7 +520,7 @@ class Fito_Tryon_OpenRouter {
         return [
             'success'           => true,
             'model'             => $model,
-            'is_fallback'       => $is_fallback,
+            'is_fallback'       => false,
             'result_image_data' => $extracted_image,
             'description'       => $response_desc,
             'prompt'            => $prompt,
@@ -536,7 +531,7 @@ class Fito_Tryon_OpenRouter {
         ];
     }
 
-    private function call_image_generation_api(string $model, string $prompt, string $user_b64, string $prod_b64, string $api_key, int $timeout, bool $is_fallback): array {
+    private function call_image_generation_api(string $model, string $prompt, string $user_b64, string $prod_b64, string $api_key, int $timeout): array {
         $input_references = [];
         if (!empty($user_b64)) {
             $input_references[] = [
@@ -609,7 +604,7 @@ class Fito_Tryon_OpenRouter {
         return [
             'success'           => true,
             'model'             => $model,
-            'is_fallback'       => $is_fallback,
+            'is_fallback'       => false,
             'result_image_data' => $img_result,
             'description'       => 'Generated via OpenRouter Image API',
             'prompt'            => $prompt,

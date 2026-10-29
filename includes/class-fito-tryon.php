@@ -80,10 +80,6 @@ class Fito_Tryon {
         $settings_link = '<a href="' . esc_url($settings_url) . '">' . esc_html__('Settings', 'elfit-ai-virtual-try-on-for-woocommerce') . '</a>';
         array_unshift($links, $settings_link);
 
-        if (apply_filters('fito_tryon_show_pro_card', true)) {
-            $links['go_pro'] = '<a href="https://violo.ir/?p=721" target="_blank" rel="noopener noreferrer">' . esc_html__('Go Pro', 'elfit-ai-virtual-try-on-for-woocommerce') . '</a>';
-        }
-
         return $links;
     }
 
@@ -143,9 +139,6 @@ class Fito_Tryon {
      */
     public function get_active_primary_model(): string {
         $provider = $this->get_active_provider();
-        if ($provider === 'openrouter') {
-            return $this->openrouter->get_primary_model();
-        }
         $client = $this->get_provider_client($provider);
         if ($client && method_exists($client, 'get_primary_model')) {
             return $client->get_primary_model();
@@ -161,9 +154,6 @@ class Fito_Tryon {
      */
     public function generate_tryon(array $params): array {
         $provider = $this->get_active_provider();
-        if ($provider === 'openrouter') {
-            return $this->openrouter->generate_tryon($params);
-        }
         $client = $this->get_provider_client($provider);
         if ($client && method_exists($client, 'generate_tryon')) {
             return $client->generate_tryon($params);

@@ -6,7 +6,7 @@
 defined('ABSPATH') || exit;
 
 class Fito_Tryon_Database {
-    public const DB_VERSION = '1.3.0';
+    public const DB_VERSION = '1.4.0';
 
     /**
      * Create custom database tables using dbDelta.
@@ -25,6 +25,7 @@ class Fito_Tryon_Database {
             session_id varchar(64) NOT NULL DEFAULT '',
             product_id bigint(20) unsigned NOT NULL,
             variation_id bigint(20) unsigned NOT NULL DEFAULT 0,
+            is_saved_to_account tinyint(1) NOT NULL DEFAULT 0,
             status varchar(20) NOT NULL DEFAULT 'pending',
             progress int(11) NOT NULL DEFAULT 0,
             status_message varchar(255) NOT NULL DEFAULT '',
@@ -41,6 +42,7 @@ class Fito_Tryon_Database {
             KEY user_id (user_id),
             KEY session_id (session_id),
             KEY product_id (product_id),
+            KEY is_saved_to_account (is_saved_to_account),
             KEY status (status),
             KEY created_at (created_at),
             KEY user_status_created (user_id, status, created_at)
@@ -59,6 +61,8 @@ class Fito_Tryon_Database {
             prompt_tokens int(11) NOT NULL DEFAULT 0,
             completion_tokens int(11) NOT NULL DEFAULT 0,
             cost_estimate decimal(8,4) NOT NULL DEFAULT 0.0000,
+            user_image_url text DEFAULT NULL,
+            result_image_url text DEFAULT NULL,
             error_message text,
             prompt_text longtext DEFAULT NULL,
             response_text longtext DEFAULT NULL,
@@ -110,22 +114,23 @@ class Fito_Tryon_Database {
         $token = wp_generate_password(32, false);
 
         $insert_data = [
-            'job_token'          => $token,
-            'user_id'            => isset($data['user_id']) ? absint($data['user_id']) : 0,
-            'session_id'         => isset($data['session_id']) ? sanitize_text_field($data['session_id']) : '',
-            'product_id'         => absint($data['product_id']),
-            'variation_id'       => isset($data['variation_id']) ? absint($data['variation_id']) : 0,
-            'status'             => 'pending',
-            'progress'           => 10,
-            'status_message'     => __('Preparing try-on request...', 'elfit-ai-virtual-try-on-for-woocommerce'),
-            'user_image_path'    => isset($data['user_image_path']) ? sanitize_text_field($data['user_image_path']) : '',
-            'user_image_url'     => isset($data['user_image_url']) ? esc_url_raw($data['user_image_url']) : '',
-            'product_image_url'  => isset($data['product_image_url']) ? esc_url_raw($data['product_image_url']) : '',
-            'result_image_url'   => '',
-            'result_image_path'  => '',
-            'model_used'         => isset($data['model_used']) ? sanitize_text_field($data['model_used']) : '',
-            'created_at'         => $now,
-            'updated_at'         => $now,
+            'job_token'           => $token,
+            'user_id'             => isset($data['user_id']) ? absint($data['user_id']) : 0,
+            'session_id'          => isset($data['session_id']) ? sanitize_text_field($data['session_id']) : '',
+            'product_id'          => absint($data['product_id']),
+            'variation_id'        => isset($data['variation_id']) ? absint($data['variation_id']) : 0,
+            'is_saved_to_account' => !empty($data['is_saved_to_account']) ? 1 : 0,
+            'status'              => 'pending',
+            'progress'            => 10,
+            'status_message'      => __('Preparing try-on request...', 'elfit-ai-virtual-try-on-for-woocommerce'),
+            'user_image_path'     => isset($data['user_image_path']) ? sanitize_text_field($data['user_image_path']) : '',
+            'user_image_url'      => isset($data['user_image_url']) ? esc_url_raw($data['user_image_url']) : '',
+            'product_image_url'   => isset($data['product_image_url']) ? esc_url_raw($data['product_image_url']) : '',
+            'result_image_url'    => '',
+            'result_image_path'   => '',
+            'model_used'          => isset($data['model_used']) ? sanitize_text_field($data['model_used']) : '',
+            'created_at'          => $now,
+            'updated_at'          => $now,
         ];
 
         // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery -- Custom table insert.
@@ -142,6 +147,14 @@ class Fito_Tryon_Database {
         return $row ?: null;
     }
 
+    public function get_job(int $job_id): ?object {
+        global $wpdb;
+        $table = $wpdb->prefix . 'fito_tryon_jobs';
+        // phpcs:disable WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, PluginCheck.Security.DirectDB.UnescapedDBParameter
+        $row = $wpdb->get_row($wpdb->prepare('SELECT * FROM %i WHERE id = %d LIMIT 1', $table, $job_id));
+        // phpcs:enable
+        return $row ?: null;
+    }
 
     public function update_job_by_token(string $token, array $data): bool {
         global $wpdb;
@@ -153,6 +166,61 @@ class Fito_Tryon_Database {
             ['job_token' => $token]
         );
         return $result !== false;
+    }
+
+    public function save_job_to_account(string $token, int $user_id): bool {
+        global $wpdb;
+        $table = $wpdb->prefix . 'fito_tryon_jobs';
+        // phpcs:disable WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, PluginCheck.Security.DirectDB.UnescapedDBParameter
+        $result = $wpdb->query(
+            $wpdb->prepare(
+                'UPDATE %i SET user_id = %d, is_saved_to_account = 1, updated_at = %s WHERE job_token = %s AND (user_id = 0 OR user_id = %d)',
+                $table,
+                $user_id,
+                current_time('mysql'),
+                $token,
+                $user_id
+            )
+        );
+        // phpcs:enable
+        return $result !== false && $result > 0;
+    }
+
+    public function get_user_jobs(int $user_id, int $limit = 30): array {
+        global $wpdb;
+        $table = $wpdb->prefix . 'fito_tryon_jobs';
+        // phpcs:disable WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, PluginCheck.Security.DirectDB.UnescapedDBParameter
+        $results = $wpdb->get_results(
+            $wpdb->prepare(
+                "SELECT * FROM %i WHERE user_id = %d AND status = 'completed' AND result_image_url != '' ORDER BY id DESC LIMIT %d",
+                $table,
+                $user_id,
+                $limit
+            )
+        );
+        // phpcs:enable
+        return is_array($results) ? $results : [];
+    }
+
+    public function delete_user_job(int $job_id, int $user_id): bool {
+        global $wpdb;
+        $table = $wpdb->prefix . 'fito_tryon_jobs';
+        // phpcs:disable WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, PluginCheck.Security.DirectDB.UnescapedDBParameter
+        $job = $wpdb->get_row($wpdb->prepare('SELECT * FROM %i WHERE id = %d AND user_id = %d LIMIT 1', $table, $job_id, $user_id));
+        if (!$job) {
+            return false;
+        }
+
+        if (!empty($job->result_image_url)) {
+            Fito_Tryon_Storage::delete_file_by_url($job->result_image_url);
+        }
+        if (!empty($job->user_image_path) && file_exists($job->user_image_path)) {
+            wp_delete_file($job->user_image_path);
+        }
+
+        $res = $wpdb->delete($table, ['id' => $job_id, 'user_id' => $user_id], ['%d', '%d']);
+        // phpcs:enable
+        return $res !== false;
     }
 
     public function add_log(array $data): int {
@@ -181,6 +249,13 @@ class Fito_Tryon_Database {
                 : (!empty($data['error_message']) ? wp_json_encode(['error' => $data['error_message']], JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES) : null),
             'created_at'        => current_time('mysql'),
         ];
+
+        if (!empty($data['user_image_url'])) {
+            $insert_data['user_image_url'] = esc_url_raw($data['user_image_url']);
+        }
+        if (!empty($data['result_image_url'])) {
+            $insert_data['result_image_url'] = esc_url_raw($data['result_image_url']);
+        }
 
         // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery -- Custom table insert.
         $wpdb->insert($wpdb->prefix . 'fito_tryon_logs', $insert_data);
@@ -269,8 +344,19 @@ class Fito_Tryon_Database {
 
     public function delete_log(int $log_id): bool {
         global $wpdb;
-        // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Custom table row delete.
-        return $wpdb->delete($wpdb->prefix . 'fito_tryon_logs', ['id' => $log_id]) !== false;
+        $table = $wpdb->prefix . 'fito_tryon_logs';
+        // phpcs:disable WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, PluginCheck.Security.DirectDB.UnescapedDBParameter
+        $log = $wpdb->get_row($wpdb->prepare('SELECT user_image_url, result_image_url FROM %i WHERE id = %d LIMIT 1', $table, $log_id));
+        if ($log) {
+            if (!empty($log->user_image_url)) {
+                Fito_Tryon_Storage::delete_file_by_url($log->user_image_url);
+            }
+            if (!empty($log->result_image_url)) {
+                Fito_Tryon_Storage::delete_file_by_url($log->result_image_url);
+            }
+        }
+        return $wpdb->delete($table, ['id' => $log_id]) !== false;
+        // phpcs:enable
     }
 
     public function clear_all_logs(): bool {
@@ -348,27 +434,33 @@ class Fito_Tryon_Database {
 
         // Fill all dates in range even if 0
         for ($i = $days; $i >= 0; $i--) {
-            $date = gmdate('Y-m-d', strtotime("-{$i} days"));
-            $labels[] = gmdate('M j', strtotime($date));
-            $found = null;
-            foreach ($results as $r) {
-                if ($r->log_date === $date) {
-                    $found = $r;
-                    break;
+            $d = gmdate('Y-m-d', strtotime("-{$i} days"));
+            $labels[] = gmdate('M j', strtotime($d));
+            $found = false;
+            if ($results) {
+                foreach ($results as $r) {
+                    if ($r->log_date === $d) {
+                        $totals[] = (int) $r->total;
+                        $successes[] = (int) $r->successful;
+                        $found = true;
+                        break;
+                    }
                 }
             }
-            $totals[] = $found ? (int) $found->total : 0;
-            $successes[] = $found ? (int) $found->successful : 0;
+            if (!$found) {
+                $totals[] = 0;
+                $successes[] = 0;
+            }
         }
 
-        $data = [
-            'labels'     => $labels,
-            'totals'     => $totals,
-            'successes'  => $successes,
+        $chart_data = [
+            'labels'    => $labels,
+            'totals'    => $totals,
+            'successes' => $successes,
         ];
 
-        wp_cache_set($cache_key, $data, 'fito_tryon', 3600);
-        return $data;
+        wp_cache_set($cache_key, $chart_data, 'fito_tryon', 300);
+        return $chart_data;
     }
 
     public function get_top_products(int $limit = 5): array {
@@ -383,7 +475,8 @@ class Fito_Tryon_Database {
 
         // phpcs:disable WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, PluginCheck.Security.DirectDB.UnescapedDBParameter
         $results = $wpdb->get_results($wpdb->prepare(
-            "SELECT product_id, COUNT(*) as tryon_count,
+            "SELECT product_id, 
+                    COUNT(*) as tryon_count, 
                     SUM(CASE WHEN status = 'success' THEN 1 ELSE 0 END) as success_count
              FROM %i
              WHERE product_id > 0
@@ -438,7 +531,7 @@ class Fito_Tryon_Database {
         // phpcs:disable WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, PluginCheck.Security.DirectDB.UnescapedDBParameter
         $results = $wpdb->get_results($wpdb->prepare(
             "SELECT id, user_image_path, result_image_path FROM %i 
-             WHERE created_at < DATE_SUB(NOW(), INTERVAL %d MINUTE)
+             WHERE is_saved_to_account = 0 AND created_at < DATE_SUB(NOW(), INTERVAL %d MINUTE)
              LIMIT 100",
             $table,
             max(1, $retention_minutes)
@@ -490,7 +583,7 @@ class Fito_Tryon_Database {
         $table = $wpdb->prefix . 'fito_tryon_logs';
         // phpcs:disable WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, PluginCheck.Security.DirectDB.UnescapedDBParameter
         $results = $wpdb->get_results($wpdb->prepare(
-            'SELECT id FROM %i WHERE created_at < DATE_SUB(NOW(), INTERVAL %d DAY) LIMIT %d',
+            'SELECT id, user_image_url, result_image_url FROM %i WHERE created_at < DATE_SUB(NOW(), INTERVAL %d DAY) LIMIT %d',
             $table,
             $days,
             $limit
@@ -503,6 +596,20 @@ class Fito_Tryon_Database {
         if ($days <= 0) {
             return 0;
         }
+
+        $logs = $this->get_expired_logs($days, 500);
+        if (!empty($logs)) {
+            do_action('fito_tryon_before_delete_expired_logs', $days);
+            foreach ($logs as $log) {
+                if (!empty($log->user_image_url)) {
+                    Fito_Tryon_Storage::delete_file_by_url($log->user_image_url);
+                }
+                if (!empty($log->result_image_url)) {
+                    Fito_Tryon_Storage::delete_file_by_url($log->result_image_url);
+                }
+            }
+        }
+
         global $wpdb;
         $table = $wpdb->prefix . 'fito_tryon_logs';
         // phpcs:disable WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, PluginCheck.Security.DirectDB.UnescapedDBParameter
@@ -528,7 +635,7 @@ class Fito_Tryon_Database {
         }
 
         // phpcs:disable WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, PluginCheck.Security.DirectDB.UnescapedDBParameter
-        $deleted = $wpdb->query($wpdb->prepare('DELETE FROM %i', $table));
+        $deleted = $wpdb->query($wpdb->prepare('DELETE FROM %i WHERE is_saved_to_account = 0', $table));
         // phpcs:enable
         return $deleted !== false ? (int) $deleted : 0;
     }

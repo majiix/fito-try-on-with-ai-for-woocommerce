@@ -5,7 +5,7 @@ Requires at least: 6.2
 Tested up to: 7.1
 Requires PHP: 8.0
 Requires Plugins: woocommerce
-Stable tag: 1.5.0
+Stable tag: 1.7.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -15,61 +15,41 @@ AI-powered virtual try-on for WooCommerce products. Customers upload a photo or 
 
 **Elfit AI Virtual Try-On for WooCommerce** brings studio-grade artificial intelligence virtual fitting technology directly into your WooCommerce store. Shoppers can upload a personal photo or snap a live selfie with their webcam or mobile camera to preview realistic try-ons of apparel, footwear, eyewear, jewelry, watches, hats, and accessories.
 
-All image generations are powered by a Bring-Your-Own-Key (BYOK) architecture with OpenRouter. Connect directly to upstream AI vision models with zero middleman fees, zero recurring SaaS markups, and complete data privacy control.
+All image generations are powered by a Bring-Your-Own-Key (BYOK) architecture with direct support for OpenRouter. Connect directly to upstream AI vision models with zero middleman fees, zero recurring SaaS markups, and complete data privacy control.
 
 ---
 
-### Key Features (100% Free Core)
+### Key Features (100% Free & Standalone)
 
-* **OpenRouter Bring-Your-Own-Key (BYOK)**: Connect directly to open multimodal vision and diffusion models on OpenRouter (such as FLUX, Recraft, and Gemini via OpenRouter) using your personal developer API key.
-* **Zero Middleman Fees**: Pay only raw AI compute fees directly to the provider (fractions of a cent per generation).
+* **OpenRouter Bring-Your-Own-Key (BYOK)**: Connect directly to OpenRouter using your personal developer API key with access to top vision models.
+* **Storefront Single Product Placements**: Display interactive try-on buttons on single product pages below or above the Add to Cart button, in a custom product tab, via the `[elfit_tryon]` shortcode, or via the Gutenberg block.
 * **Interactive Comparison Split Slider**: Responsive mouse-drag and mobile touch-friendly split slider allowing shoppers to inspect exact Before and After fitting results.
 * **Fullscreen Try-On Stage**: Immersive full-screen view mode with mobile optimization and keyboard Escape key closing.
-* **Storefront Button Placements**: Flexible button display on single product pages (Above Add to Cart, Below Add to Cart, Custom Product Tab, or `[elfit_tryon]` shortcode).
 * **Camera Capture & File Upload**: Drag-and-drop file upload zone supporting JPG, PNG, and WebP, plus integrated live webcam/mobile camera capture.
 * **Category-Gated Store Filtering**: Enable virtual try-on storewide or exclusively for designated product categories with automatic subcategory coverage.
 * **Store Access Controls & Guest Showcase**: Choose between public access for all visitors or restrict try-on strictly to registered users with custom guest Before/After showcase images and login prompts.
-* **Advanced AI Fitting Prompts Manager**:
+* **AI Fitting Prompts Manager**:
   - Built-in prompt presets for Clothing, Shoes, Eyewear, Watches, Hats, Bags, and Jewelry.
+  - Fully customizable fitting prompt instructions and category mappings for each preset.
   - Mutually exclusive category mapping to prevent conflicting fitting instructions.
   - Dynamic `{product_title}` placeholder interpolation.
   - Global AI system prompt configuration for photorealism and identity fidelity.
 * **Abuse Prevention & Privacy Controls**:
   - Adaptive rate limiting per customer account or per device cookie & IP (minute, hour, or day).
   - Configurable audit log retention in database (1 day, 3 days, 1 week, 30 days, or never).
+  - Automated 24-hour photo disk retention auto-cleanup via WP-Cron.
   - One-click manual photo purge tool.
-* **Admin KPI Dashboard & Analytics**: Real-time KPI metrics tracking daily, weekly, monthly, and lifetime try-ons, success rate, duration, spend, and bundled local Chart.js graph.
+* **Analytics & Performance Tracking**: Real-time KPI metrics tracking daily, weekly, monthly, and lifetime try-ons, success rate, duration, spend, and bundled local Chart.js graph.
 * **High-Performance Order Storage (HPOS) Compatible**: Fully isolated database tables compliant with WooCommerce HPOS.
 * **Full RTL & Persian Localization**: Bundled Persian (fa_IR) translation files and native right-to-left layout support.
-
----
-
-An optional commercial Pro Addon is available for advanced features such as additional direct AI providers, watermarking, caching, and extended storefront placements. See the Upgrade section below for details.
-
-== Upgrade ==
-
-The commercial **Elfit Try-On Pro Addon** extends Elfit AI Virtual Try-On with advanced features:
-* Direct Google Gemini API integration (Gemini 2.5 & 3.1 Flash Image via Google AI Studio).
-* Direct OpenAI API integration (GPT Image and DALL-E models).
-* Automatic Fallback Model Routing across providers with secondary failover protection.
-* Unlimited custom fitting prompts and 1-click prompt duplication for specialized apparel lines.
-* GD brand watermarking and logo transparency overlay.
-* Smart transient result caching to prevent duplicate generation costs.
-* Storefront placements across shop catalog archive loops and product gallery thumbnails.
-* Dynamic variation swatch and image synchronization.
-* Customer Account try-on history tab ("My Try-Ons") in WooCommerce My Account.
-* Visual audit logging with customer and result photo storage.
-* Dedicated priority support and regular updates.
-
-Learn more and purchase the Pro Addon: https://violo.ir/?p=721
 
 == External Services ==
 
 This plugin connects to external artificial intelligence APIs to generate realistic virtual try-on images. All connections use a Bring-Your-Own-Key (BYOK) architecture where the store administrator provides their own developer API key. No personal or customer data is transmitted until a shopper explicitly clicks the Try-On button and submits a fitting request, or when an administrator tests their API credentials in settings.
 
-= 1. OpenRouter (Core Free Provider) =
-* **What it is and what it does**: OpenRouter (openrouter.ai) is an AI model aggregator and routing service that processes virtual try-on requests using multimodal vision and diffusion models (such as FLUX, Recraft, and Gemini models via OpenRouter). Upstream generated fitting images returned by OpenRouter endpoints are downloaded via secure server-side HTTP GET requests into the store's local uploads directory for customer display and split-slider comparison.
-* **When data is transmitted**: Data is transmitted when a customer submits a try-on request from a single product page or shortcode, when completed result images are retrieved from OpenRouter to the web server, or when the administrator clicks "Test Connection" in settings to verify API key validity.
+= 1. OpenRouter =
+* **What it is and what it does**: OpenRouter (openrouter.ai) is an AI model aggregator and routing service that processes virtual try-on requests using multimodal vision and diffusion models. Upstream generated fitting images returned by OpenRouter endpoints are downloaded via secure server-side HTTP GET requests into the store's local uploads directory for customer display and split-slider comparison.
+* **When data is transmitted**: Data is transmitted when a customer submits a try-on request, when completed result images are retrieved from OpenRouter to the web server, or when the administrator clicks "Test Connection" in settings to verify API key validity.
 * **What data is transmitted**: When a try-on is requested, the customer's uploaded or camera-captured photo, the WooCommerce product image, and category-specific prompt instructions are transmitted for AI inference. When retrieving completed images, standard HTTP GET request headers are sent to fetch the image bytes. During connection tests, only the API key is verified without sending customer data.
 * **Terms of Service**: https://openrouter.ai/terms
 * **Privacy Policy**: https://openrouter.ai/privacy
@@ -90,17 +70,20 @@ This plugin bundles the following open-source third-party library:
 2. Activate the plugin through the 'Plugins' menu in WordPress.
 3. Navigate to **AI Try-On > Settings** in your WordPress admin menu.
 4. Enter your OpenRouter API Key and click **Test Connection** to verify connectivity.
-5. Choose your Primary Model from the available image generation models.
+5. Choose your Primary Model.
 6. Configure button placement, store access controls, and enabled product categories as desired.
-7. Navigate to **AI Try-On > Prompts** to customize fitting prompt instructions for your product categories.
+7. Navigate to **AI Try-On > Prompts** to customize fitting prompt instructions and category mappings for your product categories.
 
 == Frequently Asked Questions ==
 
-= Which AI provider is supported in the free plugin? =
-The free core plugin supports OpenRouter (openrouter.ai) out of the box with Bring-Your-Own-Key (BYOK) architecture, giving you access to dozens of vision models with zero middleman fees. Additional providers can be registered via the `fito_tryon_allowed_providers` filter or via the official Pro Addon.
+= Which AI providers are supported? =
+The plugin supports OpenRouter out of the box with Bring-Your-Own-Key (BYOK) architecture, giving you direct access to top vision models with zero middleman fees. Additional direct providers are supported via developer filters and the Pro edition.
+
+= Is this plugin completely free? =
+Yes. Core virtual try-on capabilities, including OpenRouter integration, single-product button placements, split comparison slider, rate limiting, and custom category fitting prompts, are 100% free and included directly in this plugin.
 
 = How does customer photo privacy work? =
-Customer photos are stored in an isolated uploads directory protected by index.php files and server restrictions. Store owners can trigger a manual photo purge at any time from the settings screen or configure automatic log retention windows.
+Customer photos are stored in an isolated uploads directory protected by index.php files and server restrictions. Temporary customer photos are automatically purged after 24 hours via WP-Cron, and store owners can trigger an immediate manual photo purge at any time from the settings screen.
 
 = Can I restrict virtual try-on to logged-in customers only? =
 Yes. Set the Access Level to "Logged-In Users Only". When guests click the try-on button, a modal appears showcasing a sample Before/After fitting preview card along with your store's signup and login links. Direct REST submissions from guests are rejected with HTTP 401 Unauthorized.
@@ -112,7 +95,7 @@ When restricted to logged-in customers, limits are enforced per user account so 
 Yes. In **AI Try-On > Settings**, select the enabled product categories. The try-on button will only appear for products in those categories, with automatic subcategory coverage. Submissions for non-allowed products are rejected on the server.
 
 = Does this work with variable products? =
-Yes. On variable products, the try-on button on the product page uses the active product image.
+Yes. The plugin dynamically updates the single product try-on button to target the active variation photo when a shopper selects different attributes.
 
 = How are category prompts kept exclusive? =
 In **AI Try-On > Prompts**, each WooCommerce category can only be mapped to a single fitting prompt card. As soon as a category is selected in one card, it is hidden from all other prompt cards to prevent conflicting instructions.
@@ -126,12 +109,28 @@ No. All assets, including Chart.js for analytics, are bundled locally within the
 2. Interactive Before/After split comparison slider with drag handle.
 3. Immersive full-screen try-on stage preview.
 4. Admin analytics dashboard with try-on metrics and Chart.js activity graph.
-5. Searchable audit logs with prompt and response code inspector.
-6. AI Prompts manager with mutually exclusive category mapping and accordion cards.
+5. Searchable audit logs with prompt and response code inspector, plus Before/After thumbnail popovers.
+6. AI Prompts manager with mutually exclusive category mapping, custom prompts, and row duplication.
 7. Abuse prevention, rate limiting, and customer data privacy settings.
-8. Guest signup prompt modal with sample Before/After preview card.
 
 == Changelog ==
+
+= 1.7.0 =
+* Complete Free Release: 100% standalone and all-inclusive with zero commercial gating or add-on dependencies.
+* OpenRouter BYOK: Dedicated support for OpenRouter with automated secondary model failover.
+* Customer Tools: Customer account history and Before/After visual audit log inspector.
+* Storefront Integration: Direct button placements for catalog archive loops, product gallery thumbnails, and variation swatches.
+* Maintenance: Synchronized block metadata and translation catalog to version 1.7.0.
+
+= 1.6.0 =
+* Feature: Unified all virtual fitting capabilities into a single, 100% free standalone plugin.
+* Feature: Smart transient result caching with configurable duration and atomic cache flush.
+* Feature: Storefront button placements for catalog archive loops, product gallery thumbnails, variation swatches, and custom CSS selectors.
+* Feature: Customer Account "My Try-Ons" tab in WooCommerce My Account with result modal save actions.
+* Feature: Unlimited custom category prompt profiles with 1-click duplication.
+* Feature: Visual audit logs with customer Before/After image storage and 240px hover zoom previews.
+* Cleanup: Removed external upsell references and retired separate add-on requirement.
+* Maintenance: Bumped database schema version to 1.4.0 with account-saving and visual logging columns.
 
 = 1.5.0 =
 * Security: Hardened database SQL queries with $wpdb->prepare() using %i identifier placeholders.
@@ -139,11 +138,8 @@ No. All assets, including Chart.js for analytics, are bundled locally within the
 * Maintenance: Bumped core plugin and Gutenberg block version to 1.5.0.
 
 = 1.4.0 =
-* Architecture: Established extensible action and filter contracts for Elfit Try-On Pro Addon.
-* Feature: Added dedicated "Go Pro" submenu page featuring a comprehensive Free vs Pro comparison matrix.
-* Extensibility: Added modular action and filter hooks for optional extension plugins.
+* Architecture: Established extensible action and filter contracts for try-on modules.
 * Enhancement: Added fito_tryon_loaded, fito_tryon_admin_submenus, and fito_tryon_settings_form_bottom hook contracts.
-* Maintenance: Bumped core plugin version to 1.4.0.
 
 = 1.3.0 =
 * Security: Hardened REST API submit endpoint against SSRF with strict product gallery and upload directory validation.
@@ -155,7 +151,6 @@ No. All assets, including Chart.js for analytics, are bundled locally within the
 * Database: Schema version bumped to 1.3.0 with composite indexes on jobs and logs tables.
 * Database: Implemented atomic batch job deletion for background cleanup tasks.
 * Compliance: Bundled Chart.js locally to comply with WordPress.org external asset offloading rules.
-* Compliance: Full WordPress Coding Standards and PluginCheck verification with clean escaping, unslashing, and translators comments.
 
 = 1.2.0 =
 * Security: Hardened client IP resolution and throttled client error reporting endpoint.

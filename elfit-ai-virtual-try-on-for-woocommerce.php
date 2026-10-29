@@ -2,8 +2,8 @@
 /**
  * Plugin Name:       Elfit AI Virtual Try-On for WooCommerce
  * Plugin URI:        https://wordpress.org/plugins/elfit-ai-virtual-try-on-for-woocommerce/
- * Description:       Enable customers to virtually try on clothing, shoes, glasses, jewelry, and accessories with AI using OpenRouter.
- * Version:           1.5.0
+ * Description:       Enable customers to virtually try on clothing, shoes, glasses, jewelry, and accessories with AI using OpenRouter, Google Gemini, or OpenAI.
+ * Version:           1.7.0
  * Author:            micromax
  * License:           GPL-2.0-or-later
  * License URI:       https://www.gnu.org/licenses/gpl-2.0.html
@@ -18,7 +18,7 @@
 defined('ABSPATH') || exit;
 
 // Core plugin constants.
-define('FITO_TRYON_VERSION', '1.5.0');
+define('FITO_TRYON_VERSION', '1.7.0');
 define('FITO_TRYON_FILE', __FILE__);
 define('FITO_TRYON_PATH', plugin_dir_path(__FILE__));
 define('FITO_TRYON_URL', plugin_dir_url(__FILE__));

@@ -70,17 +70,6 @@ class Fito_Tryon_Admin {
             [$this, 'render_settings_page']
         );
 
-        if (apply_filters('fito_tryon_show_pro_card', true)) {
-            add_submenu_page(
-                'fito-tryon',
-                __('Go Pro', 'elfit-ai-virtual-try-on-for-woocommerce'),
-                __('Go Pro', 'elfit-ai-virtual-try-on-for-woocommerce'),
-                $cap,
-                'fito-tryon-go-pro',
-                [$this, 'render_go_pro_page']
-            );
-        }
-
         do_action('fito_tryon_admin_submenus', 'fito-tryon', $cap);
     }
 
@@ -523,11 +512,11 @@ class Fito_Tryon_Admin {
         $button_text   = get_option('fito_tryon_button_text', __('Try It On with AI', 'elfit-ai-virtual-try-on-for-woocommerce'));
         $button_pos    = get_option('fito_tryon_button_position', 'after_add_to_cart');
 
-        $rl_enabled    = get_option('fito_tryon_rate_limit_enabled', 'yes');
-        $rl_count      = (int) get_option('fito_tryon_rate_limit_count', get_option('fito_tryon_rate_limit_hourly', 10000));
-        $rl_period     = get_option('fito_tryon_rate_limit_period', 'hour');
-        $log_retention = get_option('fito_tryon_log_retention', '30');
-        $consent_text  = Fito_Tryon_Privacy::get_consent_text();
+        $rl_enabled       = get_option('fito_tryon_rate_limit_enabled', 'yes');
+        $rl_count         = (int) get_option('fito_tryon_rate_limit_count', get_option('fito_tryon_rate_limit_hourly', 10000));
+        $rl_period        = get_option('fito_tryon_rate_limit_period', 'hour');
+        $log_retention    = get_option('fito_tryon_log_retention', '30');
+        $consent_text     = Fito_Tryon_Privacy::get_consent_text();
 
         $access_level  = get_option('fito_tryon_access_level', 'everyone');
         $my_acct_url   = function_exists('wc_get_page_permalink') ? wc_get_page_permalink('myaccount') : wp_login_url();
@@ -578,6 +567,21 @@ class Fito_Tryon_Admin {
                 </div>
             <?php endif; ?>
 
+            <?php
+            // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Read-only notification flag and count.
+            $cache_flushed = isset($_GET['cache_flushed']) ? absint(wp_unslash($_GET['cache_flushed'])) : null;
+            if ($cache_flushed !== null) :
+            ?>
+                <div class="notice notice-success is-dismissible">
+                    <p>
+                        <?php
+                        // translators: %d: Number of purged cache entries
+                        printf(esc_html__('Try-on result cache flushed successfully (%d cached items removed).', 'elfit-ai-virtual-try-on-for-woocommerce'), absint($cache_flushed));
+                        ?>
+                    </p>
+                </div>
+            <?php endif; ?>
+
             <form method="post" action="<?php echo esc_url(admin_url('admin-post.php')); ?>">
                 <input type="hidden" name="action" value="fito_tryon_save_settings">
                 <?php wp_nonce_field('fito_tryon_save_settings_nonce'); ?>
@@ -602,26 +606,21 @@ class Fito_Tryon_Admin {
                     <div class="fito-card-body">
                         <table class="form-table">
                             <tr>
-                                <th scope="row"><label for="fito_ai_provider"><?php esc_html_e('AI Provider', 'elfit-ai-virtual-try-on-for-woocommerce'); ?></label></th>
+                                <th scope="row"><label><?php esc_html_e('AI Engine', 'elfit-ai-virtual-try-on-for-woocommerce'); ?></label></th>
                                 <td>
-                                    <select id="fito_ai_provider" name="fito_tryon_ai_provider" class="regular-text" style="max-width: 320px;">
-                                        <?php
-                                        $provider_labels = (array) apply_filters('fito_tryon_provider_labels', [
-                                            'openrouter' => esc_html__('OpenRouter (Multi-Model Aggregator)', 'elfit-ai-virtual-try-on-for-woocommerce'),
-                                        ]);
-                                        foreach ($allowed_providers as $p_slug) :
-                                            $p_label = $provider_labels[$p_slug] ?? ucfirst($p_slug);
-                                        ?>
-                                            <option value="<?php echo esc_attr($p_slug); ?>" <?php selected($ai_provider, $p_slug); ?>><?php echo esc_html($p_label); ?></option>
-                                        <?php endforeach; ?>
-                                    </select>
-                                    <p class="description"><?php esc_html_e('Select which service powers virtual try-on image generation.', 'elfit-ai-virtual-try-on-for-woocommerce'); ?></p>
+                                    <input type="hidden" id="fito_ai_provider" name="fito_tryon_ai_provider" value="openrouter">
+                                    <div style="display: flex; align-items: center; gap: 8px;">
+                                        <span class="fito-provider-badge" style="display: inline-flex; align-items: center; padding: 4px 10px; background: #e0f2fe; color: #0369a1; font-weight: 600; border-radius: 4px; font-size: 13px;">
+                                            <?php esc_html_e('OpenRouter (Multi-Model Aggregator)', 'elfit-ai-virtual-try-on-for-woocommerce'); ?>
+                                        </span>
+                                    </div>
+                                    <p class="description"><?php esc_html_e('OpenRouter powers AI virtual try-on image generation with access to top vision models.', 'elfit-ai-virtual-try-on-for-woocommerce'); ?></p>
                                 </td>
                             </tr>
                         </table>
 
                         <!-- Provider Panel: OpenRouter -->
-                        <div class="fito-provider-panel" id="fito-panel-openrouter" style="<?php echo $ai_provider === 'openrouter' ? '' : 'display: none;'; ?>">
+                        <div class="fito-provider-panel" id="fito-panel-openrouter">
                             <table class="form-table fito-provider-table" id="fito-models-wrapper-openrouter" data-provider="openrouter" data-saved-primary="<?php echo esc_attr($primary_model); ?>">
                                 <tr>
                                     <th scope="row"><label for="fito_openrouter_api_key"><?php esc_html_e('OpenRouter API Key', 'elfit-ai-virtual-try-on-for-woocommerce'); ?></label></th>
@@ -701,7 +700,6 @@ class Fito_Tryon_Admin {
                                     <p class="description"><?php esc_html_e('Choose where the AI Virtual Try-On button appears on single product pages.', 'elfit-ai-virtual-try-on-for-woocommerce'); ?></p>
                                 </td>
                             </tr>
-
                             <?php do_action('fito_tryon_admin_appearance_settings'); ?>
                         </table>
                     </div>
@@ -847,20 +845,22 @@ class Fito_Tryon_Admin {
                 </div>
             </form>
 
-            <!-- Manual Purge Form -->
-            <div class="fito-card fito-purge-card" style="margin-top: 32px;">
-                <div class="fito-card-header">
-                    <h3><?php esc_html_e('Manual Photo Purge', 'elfit-ai-virtual-try-on-for-woocommerce'); ?></h3>
-                </div>
-                <div class="fito-card-body">
-                    <p><?php esc_html_e('Immediately delete all temporary customer photos and generated preview files from the server.', 'elfit-ai-virtual-try-on-for-woocommerce'); ?></p>
-                    <form method="post" action="<?php echo esc_url(admin_url('admin-post.php')); ?>" onsubmit="return confirm('<?php echo esc_js(__('Are you sure you want to purge all stored photos?', 'elfit-ai-virtual-try-on-for-woocommerce')); ?>');">
-                        <input type="hidden" name="action" value="fito_tryon_purge_photos">
-                        <?php wp_nonce_field('fito_tryon_purge_nonce'); ?>
-                        <button type="submit" class="button button-secondary">
-                            <?php esc_html_e('Purge All Stored Photos', 'elfit-ai-virtual-try-on-for-woocommerce'); ?>
-                        </button>
-                    </form>
+            <!-- Maintenance Actions -->
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; margin-top: 32px;">
+                <div class="fito-card fito-purge-card">
+                    <div class="fito-card-header">
+                        <h3><?php esc_html_e('Manual Photo Purge', 'elfit-ai-virtual-try-on-for-woocommerce'); ?></h3>
+                    </div>
+                    <div class="fito-card-body">
+                        <p><?php esc_html_e('Immediately delete all temporary customer photos and generated preview files from the server disk.', 'elfit-ai-virtual-try-on-for-woocommerce'); ?></p>
+                        <form method="post" action="<?php echo esc_url(admin_url('admin-post.php')); ?>" onsubmit="return confirm('<?php echo esc_js(__('Are you sure you want to purge all stored photos?', 'elfit-ai-virtual-try-on-for-woocommerce')); ?>');">
+                            <input type="hidden" name="action" value="fito_tryon_purge_photos">
+                            <?php wp_nonce_field('fito_tryon_purge_nonce'); ?>
+                            <button type="submit" class="button button-secondary">
+                                <?php esc_html_e('Purge All Stored Photos', 'elfit-ai-virtual-try-on-for-woocommerce'); ?>
+                            </button>
+                        </form>
+                    </div>
                 </div>
             </div>
         </div>
@@ -976,8 +976,6 @@ class Fito_Tryon_Admin {
 
         do_action('fito_tryon_save_settings_post');
 
-        do_action('fito_tryon_flush_cache');
-
         wp_safe_redirect(add_query_arg(['page' => 'fito-tryon-settings', 'settings_updated' => '1'], admin_url('admin.php')));
         exit;
     }
@@ -990,7 +988,6 @@ class Fito_Tryon_Admin {
         check_admin_referer('fito_tryon_purge_nonce');
 
         $count = $this->plugin->privacy->purge_all_temporary_photos();
-        do_action('fito_tryon_flush_cache');
 
         wp_safe_redirect(add_query_arg(['page' => 'fito-tryon-settings', 'photos_purged' => $count], admin_url('admin.php')));
         exit;
@@ -1022,12 +1019,10 @@ class Fito_Tryon_Admin {
         foreach ($builtin_defaults as $def_item) {
             $default_map[$def_item['id']] = $def_item['prompt'] ?? '';
         }
-        /**
-         * Filter prompts displayed on the admin prompts management screen.
-         *
-         * @param array<int, array<string, mixed>> $prompts Prompts list.
-         */
-        $prompts = (array) apply_filters('fito_tryon_admin_prompts_list', $prompts);
+        $builtin_ids = array_column($builtin_defaults, 'id');
+        $prompts = array_values(array_filter($prompts, function ($p) use ($builtin_ids) {
+            return !empty($p['id']) && in_array($p['id'], $builtin_ids, true);
+        }));
 
         // Map category ID to the prompt index that owns it (first prompt wins to ensure mutual exclusivity)
         $cat_to_prompt_owner = [];
@@ -1082,12 +1077,9 @@ class Fito_Tryon_Admin {
 
                 <!-- 2. Category Fitting Prompts Repeater -->
                 <div class="fito-card fito-settings-card">
-                    <div class="fito-card-header" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
-                        <div>
-                            <h2><?php esc_html_e('2. Category Try-On Prompts', 'elfit-ai-virtual-try-on-for-woocommerce'); ?></h2>
-                            <p class="fito-muted"><?php esc_html_e('Map WooCommerce product categories to specialized fitting prompts. Works across any language because mapping uses category IDs. If a product has no mapped prompt, the default Clothing & Apparel prompt is used.', 'elfit-ai-virtual-try-on-for-woocommerce'); ?></p>
-                        </div>
-                        <?php do_action('fito_tryon_admin_prompts_header_actions'); ?>
+                    <div class="fito-card-header">
+                        <h2><?php esc_html_e('2. Category Try-On Prompts', 'elfit-ai-virtual-try-on-for-woocommerce'); ?></h2>
+                        <p class="fito-muted"><?php esc_html_e('Map WooCommerce product categories to specialized fitting prompts. Works across any language because mapping uses category IDs. If a product has no mapped prompt, the default Clothing & Apparel prompt is used.', 'elfit-ai-virtual-try-on-for-woocommerce'); ?></p>
                     </div>
                     <div class="fito-card-body">
                         <div class="fito-prompts-repeater" id="fitoPromptsRepeater">
@@ -1111,9 +1103,15 @@ class Fito_Tryon_Admin {
                                         <div class="fito-prompt-header-left">
                                             <span class="dashicons dashicons-menu fito-prompt-drag-handle" title="<?php esc_attr_e('Drag to reorder', 'elfit-ai-virtual-try-on-for-woocommerce'); ?>"></span>
                                             <input type="text" name="prompts[<?php echo esc_attr($index); ?>][title]" value="<?php echo esc_attr($p_title); ?>" class="regular-text fito-prompt-title-input" placeholder="<?php esc_attr_e('Prompt Title', 'elfit-ai-virtual-try-on-for-woocommerce'); ?>" required>
-                                            <span class="fito-prompt-badge fito-badge-system">
-                                                <?php esc_html_e('Built-in Preset', 'elfit-ai-virtual-try-on-for-woocommerce'); ?>
-                                            </span>
+                                            <?php if ($p_is_system) : ?>
+                                                <span class="fito-prompt-badge fito-badge-system">
+                                                    <?php esc_html_e('Built-in Preset', 'elfit-ai-virtual-try-on-for-woocommerce'); ?>
+                                                </span>
+                                            <?php else : ?>
+                                                <span class="fito-prompt-badge fito-badge-custom">
+                                                    <?php esc_html_e('Custom Prompt', 'elfit-ai-virtual-try-on-for-woocommerce'); ?>
+                                                </span>
+                                            <?php endif; ?>
                                         </div>
                                         <div class="fito-prompt-header-right">
                                             <span class="fito-prompt-cat-count" data-count="<?php echo esc_attr($cat_count); ?>">
@@ -1128,7 +1126,6 @@ class Fito_Tryon_Admin {
                                                 }
                                                 ?>
                                             </span>
-                                            <?php do_action('fito_tryon_admin_prompt_row_actions', $prompt_item, $index); ?>
                                             <button type="button" class="button button-small fito-prompt-toggle" title="<?php esc_attr_e('Toggle Prompt Details', 'elfit-ai-virtual-try-on-for-woocommerce'); ?>">
                                                 <span class="dashicons dashicons-arrow-down-alt2"></span>
                                             </button>
@@ -1207,8 +1204,6 @@ class Fito_Tryon_Admin {
                                 </div>
                             <?php endforeach; ?>
                         </div>
-
-                        <?php do_action('fito_tryon_admin_prompts_repeater_bottom'); ?>
                     </div>
                 </div>
 
@@ -1218,8 +1213,6 @@ class Fito_Tryon_Admin {
                     </button>
                 </div>
             </form>
-
-            <?php do_action('fito_tryon_admin_prompts_page_bottom'); ?>
         </div>
         <?php
     }
@@ -1251,18 +1244,15 @@ class Fito_Tryon_Admin {
             }
 
             $id = !empty($item['id']) ? sanitize_key($item['id']) : '';
-            if (empty($id)) {
+            if (empty($id) || !in_array($id, $default_ids, true)) {
                 continue;
             }
 
             $default_obj = null;
-            $is_system = in_array($id, $default_ids, true);
-            if ($is_system) {
-                foreach ($default_prompts as $dp) {
-                    if ($dp['id'] === $id) {
-                        $default_obj = $dp;
-                        break;
-                    }
+            foreach ($default_prompts as $dp) {
+                if ($dp['id'] === $id) {
+                    $default_obj = $dp;
+                    break;
                 }
             }
 
@@ -1309,300 +1299,7 @@ class Fito_Tryon_Admin {
 
         update_option('fito_tryon_prompts_config', $sanitized_prompts, false);
 
-        // Invalidate try-on cache so updated category mappings take effect immediately
-        do_action('fito_tryon_flush_cache');
-
         wp_safe_redirect(add_query_arg(['page' => 'fito-tryon-prompts', 'prompts_updated' => '1'], admin_url('admin.php')));
         exit;
-    }
-
-    /**
-     * Render the Go Pro showcase and comparison page.
-     */
-    public function render_go_pro_page(): void {
-        if (!current_user_can('manage_woocommerce') && !current_user_can('manage_options')) {
-            wp_die(esc_html__('Unauthorized access.', 'elfit-ai-virtual-try-on-for-woocommerce'));
-        }
-
-        $buy_url = 'https://violo.ir/?p=721';
-        ?>
-        <div class="wrap fito-admin-wrap fito-go-pro-wrap">
-            <!-- Hero Header Banner -->
-            <div class="fito-go-pro-hero">
-                <div class="fito-go-pro-hero-content">
-                    <span class="fito-go-pro-badge">
-                        <span class="dashicons dashicons-star-filled"></span>
-                        <?php esc_html_e('ELFIT TRY-ON PRO ADDON', 'elfit-ai-virtual-try-on-for-woocommerce'); ?>
-                    </span>
-                    <h1><?php esc_html_e('Supercharge Your Virtual Fitting Room', 'elfit-ai-virtual-try-on-for-woocommerce'); ?></h1>
-                    <p class="fito-go-pro-lead">
-                        <?php esc_html_e('Maximize WooCommerce conversions, eliminate AI downtime with automatic fallback routing, and customize every visual aspect of your fitting experience.', 'elfit-ai-virtual-try-on-for-woocommerce'); ?>
-                    </p>
-                    <div class="fito-go-pro-hero-actions">
-                        <a href="<?php echo esc_url($buy_url); ?>" target="_blank" rel="noopener noreferrer" class="button button-primary button-hero fito-btn-pro-cta">
-                            <span><?php esc_html_e('Get Elfit Pro Addon Now', 'elfit-ai-virtual-try-on-for-woocommerce'); ?></span>
-                            <span class="dashicons dashicons-external"></span>
-                        </a>
-                        <span class="fito-hero-trust-tag"><?php esc_html_e('Instant Download & Lifetime Updates', 'elfit-ai-virtual-try-on-for-woocommerce'); ?></span>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Key Features Grid: Only Actual Real Pro Addon Features -->
-            <div class="fito-go-pro-section-title">
-                <h2><?php esc_html_e('Why Upgrade to Elfit Pro?', 'elfit-ai-virtual-try-on-for-woocommerce'); ?></h2>
-                <p><?php esc_html_e('Unlock advanced AI providers, automated failover, branding protection, and expanded shop placements.', 'elfit-ai-virtual-try-on-for-woocommerce'); ?></p>
-            </div>
-
-            <div class="fito-go-pro-grid">
-                <!-- 1. Direct AI Providers -->
-                <div class="fito-go-pro-card">
-                    <div class="fito-card-icon fito-icon-purple">
-                        <span class="dashicons dashicons-cloud"></span>
-                    </div>
-                    <h3><?php esc_html_e('Direct Google Gemini & OpenAI APIs', 'elfit-ai-virtual-try-on-for-woocommerce'); ?></h3>
-                    <p><?php esc_html_e('Connect directly to Google AI Studio (Gemini 2.5 & 3.1 Flash) and OpenAI APIs with independent keys and primary model selectors, bypassing aggregator markup.', 'elfit-ai-virtual-try-on-for-woocommerce'); ?></p>
-                </div>
-
-                <!-- 2. Direct OpenAI API -->
-                <div class="fito-go-pro-card">
-                    <div class="fito-card-icon fito-icon-blue">
-                        <span class="dashicons dashicons-admin-generic"></span>
-                    </div>
-                    <h3><?php esc_html_e('Direct OpenAI API Integration', 'elfit-ai-virtual-try-on-for-woocommerce'); ?></h3>
-                    <p><?php esc_html_e('Connect directly to OpenAI API for GPT Image and DALL-E models with custom key authorization and dedicated billing.', 'elfit-ai-virtual-try-on-for-woocommerce'); ?></p>
-                </div>
-
-                <!-- 3. Watermark & Branding -->
-                <div class="fito-go-pro-card">
-                    <div class="fito-card-icon fito-icon-indigo">
-                        <span class="dashicons dashicons-format-image"></span>
-                    </div>
-                    <h3><?php esc_html_e('Brand Watermark & Logo Overlay', 'elfit-ai-virtual-try-on-for-woocommerce'); ?></h3>
-                    <p><?php esc_html_e('Stamp store logos or domain watermarks onto try-on images with 7-point positioning, opacity controls (10% to 100%), alpha blending, and instant preview rendering.', 'elfit-ai-virtual-try-on-for-woocommerce'); ?></p>
-                </div>
-
-                <!-- 4. Shop Placements & Variation Swatches -->
-                <div class="fito-go-pro-card">
-                    <div class="fito-card-icon fito-icon-green">
-                        <span class="dashicons dashicons-products"></span>
-                    </div>
-                    <h3><?php esc_html_e('Archive Loops & Product Gallery Overlays', 'elfit-ai-virtual-try-on-for-woocommerce'); ?></h3>
-                    <p><?php esc_html_e('Display Quick Try-On buttons across catalog archive loops and product gallery thumbnails for effortless 1-click customer access.', 'elfit-ai-virtual-try-on-for-woocommerce'); ?></p>
-                </div>
-
-                <!-- 5. Custom CSS Selectors -->
-                <div class="fito-go-pro-card">
-                    <div class="fito-card-icon fito-icon-amber">
-                        <span class="dashicons dashicons-admin-customizer"></span>
-                    </div>
-                    <h3><?php esc_html_e('Custom Selectors & Placement Studio', 'elfit-ai-virtual-try-on-for-woocommerce'); ?></h3>
-                    <p><?php esc_html_e('Attach virtual try-on floating badges to Elementor widgets, lookbooks, custom carousels, and image sliders by simply declaring custom CSS target selectors.', 'elfit-ai-virtual-try-on-for-woocommerce'); ?></p>
-                </div>
-
-                <!-- 6. Variation Swatches Sync -->
-                <div class="fito-go-pro-card">
-                    <div class="fito-card-icon fito-icon-purple">
-                        <span class="dashicons dashicons-forms"></span>
-                    </div>
-                    <h3><?php esc_html_e('Product Variation Swatches & Image Sync', 'elfit-ai-virtual-try-on-for-woocommerce'); ?></h3>
-                    <p><?php esc_html_e('Dynamically binds virtual try-on to active product variation photos and swatches as customers select different colors and styles.', 'elfit-ai-virtual-try-on-for-woocommerce'); ?></p>
-                </div>
-
-                <!-- 7. Result Caching & Extended Retention -->
-                <div class="fito-go-pro-card">
-                    <div class="fito-card-icon fito-icon-blue">
-                        <span class="dashicons dashicons-database"></span>
-                    </div>
-                    <h3><?php esc_html_e('Smart Result Caching & Retention', 'elfit-ai-virtual-try-on-for-woocommerce'); ?></h3>
-                    <p><?php esc_html_e('Cache identical photo and product combinations to eliminate duplicate AI generation fees, and configure photo retention auto-cleanup from 1 to 720 hours.', 'elfit-ai-virtual-try-on-for-woocommerce'); ?></p>
-                </div>
-
-                <!-- 8. Customer Account History & Visual Logs -->
-                <div class="fito-go-pro-card">
-                    <div class="fito-card-icon fito-icon-red">
-                        <span class="dashicons dashicons-admin-users"></span>
-                    </div>
-                    <h3><?php esc_html_e('Customer Account History & Visual Logs', 'elfit-ai-virtual-try-on-for-woocommerce'); ?></h3>
-                    <p><?php esc_html_e('Add a dedicated "My Try-Ons" tab in WooCommerce My Account, enable modal save actions, and store Before/After photos in admin audit logs with 240px hover zoom previews.', 'elfit-ai-virtual-try-on-for-woocommerce'); ?></p>
-                </div>
-            </div>
-
-            <!-- Comparison Matrix -->
-            <div class="fito-go-pro-section-title" style="margin-top: 48px;">
-                <h2><?php esc_html_e('Compare Plans', 'elfit-ai-virtual-try-on-for-woocommerce'); ?></h2>
-                <p><?php esc_html_e('Everything you need to deliver a world-class virtual fitting room experience.', 'elfit-ai-virtual-try-on-for-woocommerce'); ?></p>
-            </div>
-
-            <div class="fito-comparison-card">
-                <table class="fito-comparison-table">
-                    <thead>
-                        <tr>
-                            <th class="fito-th-feature"><?php esc_html_e('Feature', 'elfit-ai-virtual-try-on-for-woocommerce'); ?></th>
-                            <th class="fito-th-free"><?php esc_html_e('Free Version', 'elfit-ai-virtual-try-on-for-woocommerce'); ?></th>
-                            <th class="fito-th-pro">
-                                <span class="fito-table-pro-heading">
-                                    <span class="dashicons dashicons-star-filled"></span>
-                                    <?php esc_html_e('Pro Addon', 'elfit-ai-virtual-try-on-for-woocommerce'); ?>
-                                </span>
-                            </th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr class="fito-highlight-row">
-                            <td>
-                                <strong><?php esc_html_e('Direct Google Gemini & OpenAI Providers', 'elfit-ai-virtual-try-on-for-woocommerce'); ?></strong>
-                                <span class="fito-row-sub"><?php esc_html_e('Connect directly to Google Gemini and OpenAI APIs without intermediary gateway fees', 'elfit-ai-virtual-try-on-for-woocommerce'); ?></span>
-                            </td>
-                            <td><?php esc_html_e('OpenRouter only', 'elfit-ai-virtual-try-on-for-woocommerce'); ?></td>
-                            <td class="fito-td-pro"><span class="fito-check">✓</span> <strong><?php esc_html_e('Unlocked (Pro)', 'elfit-ai-virtual-try-on-for-woocommerce'); ?></strong></td>
-                        </tr>
-                        <tr class="fito-highlight-row">
-                            <td>
-                                <strong><?php esc_html_e('Multi-Provider Fallback Routing', 'elfit-ai-virtual-try-on-for-woocommerce'); ?></strong>
-                                <span class="fito-row-sub"><?php esc_html_e('Seamlessly retries on backup model when primary hits rate limits or errors across providers', 'elfit-ai-virtual-try-on-for-woocommerce'); ?></span>
-                            </td>
-                            <td><span class="fito-cross">✕</span></td>
-                            <td class="fito-td-pro"><span class="fito-check">✓</span> <strong><?php esc_html_e('All Providers (Pro)', 'elfit-ai-virtual-try-on-for-woocommerce'); ?></strong></td>
-                        </tr>
-                        <tr class="fito-highlight-row">
-                            <td>
-                                <strong><?php esc_html_e('Brand Watermark & Transparency Logo Overlay', 'elfit-ai-virtual-try-on-for-woocommerce'); ?></strong>
-                                <span class="fito-row-sub"><?php esc_html_e('Custom logo stamps, site URL watermark, and 7-point position controls', 'elfit-ai-virtual-try-on-for-woocommerce'); ?></span>
-                            </td>
-                            <td><span class="fito-cross">✕</span></td>
-                            <td class="fito-td-pro"><span class="fito-check">✓</span> <strong><?php esc_html_e('Unlocked (Pro)', 'elfit-ai-virtual-try-on-for-woocommerce'); ?></strong></td>
-                        </tr>
-                        <tr class="fito-highlight-row">
-                            <td>
-                                <strong><?php esc_html_e('Custom CSS Element Selectors', 'elfit-ai-virtual-try-on-for-woocommerce'); ?></strong>
-                                <span class="fito-row-sub"><?php esc_html_e('Attach try-on badges to Elementor widgets, lookbooks, and custom sliders', 'elfit-ai-virtual-try-on-for-woocommerce'); ?></span>
-                            </td>
-                            <td><span class="fito-cross">✕</span></td>
-                            <td class="fito-td-pro"><span class="fito-check">✓</span> <strong><?php esc_html_e('Unlocked (Pro)', 'elfit-ai-virtual-try-on-for-woocommerce'); ?></strong></td>
-                        </tr>
-                        <tr class="fito-highlight-row">
-                            <td>
-                                <strong><?php esc_html_e('Catalog Archive Loops, Gallery & Variation Images', 'elfit-ai-virtual-try-on-for-woocommerce'); ?></strong>
-                                <span class="fito-row-sub"><?php esc_html_e('Overlay buttons directly on shop catalog loops, product gallery thumbnails, and variation swatches', 'elfit-ai-virtual-try-on-for-woocommerce'); ?></span>
-                            </td>
-                            <td><span class="fito-cross">✕</span></td>
-                            <td class="fito-td-pro"><span class="fito-check">✓</span> <strong><?php esc_html_e('Unlocked (Pro)', 'elfit-ai-virtual-try-on-for-woocommerce'); ?></strong></td>
-                        </tr>
-                        <tr class="fito-highlight-row">
-                            <td>
-                                <strong><?php esc_html_e('Customer Account Try-On History (Save to Account)', 'elfit-ai-virtual-try-on-for-woocommerce'); ?></strong>
-                                <span class="fito-row-sub"><?php esc_html_e('Allows logged-in customers to save their try-on results and view fitting history in WooCommerce My Account', 'elfit-ai-virtual-try-on-for-woocommerce'); ?></span>
-                            </td>
-                            <td><span class="fito-cross">✕</span></td>
-                            <td class="fito-td-pro"><span class="fito-check">✓</span> <strong><?php esc_html_e('Unlocked (Pro)', 'elfit-ai-virtual-try-on-for-woocommerce'); ?></strong></td>
-                        </tr>
-                        <tr class="fito-highlight-row">
-                            <td>
-                                <strong><?php esc_html_e('Audit Log Before/After Photo Storage', 'elfit-ai-virtual-try-on-for-woocommerce'); ?></strong>
-                                <span class="fito-row-sub"><?php esc_html_e('Store customer images in audit logs with 240px hover zoom previews', 'elfit-ai-virtual-try-on-for-woocommerce'); ?></span>
-                            </td>
-                            <td><?php esc_html_e('Text logs only', 'elfit-ai-virtual-try-on-for-woocommerce'); ?></td>
-                            <td class="fito-td-pro"><span class="fito-check">✓</span> <strong><?php esc_html_e('Unlocked (Pro)', 'elfit-ai-virtual-try-on-for-woocommerce'); ?></strong></td>
-                        </tr>
-                        <tr class="fito-highlight-row">
-                            <td>
-                                <strong><?php esc_html_e('Smart Result Caching & Generation Reuse', 'elfit-ai-virtual-try-on-for-woocommerce'); ?></strong>
-                                <span class="fito-row-sub"><?php esc_html_e('Cache identical photo and product combinations to save AI API usage and minimize latency', 'elfit-ai-virtual-try-on-for-woocommerce'); ?></span>
-                            </td>
-                            <td><span class="fito-cross">✕</span></td>
-                            <td class="fito-td-pro"><span class="fito-check">✓</span> <strong><?php esc_html_e('Unlocked (Pro)', 'elfit-ai-virtual-try-on-for-woocommerce'); ?></strong></td>
-                        </tr>
-                        <tr class="fito-highlight-row">
-                            <td>
-                                <strong><?php esc_html_e('Custom Photo Retention Window', 'elfit-ai-virtual-try-on-for-woocommerce'); ?></strong>
-                                <span class="fito-row-sub"><?php esc_html_e('Configurable photo expiration and auto-purge window from 1 to 720 hours', 'elfit-ai-virtual-try-on-for-woocommerce'); ?></span>
-                            </td>
-                            <td><?php esc_html_e('Fixed 24 hours', 'elfit-ai-virtual-try-on-for-woocommerce'); ?></td>
-                            <td class="fito-td-pro"><span class="fito-check">✓</span> <strong><?php esc_html_e('1 - 720 Hours (Pro)', 'elfit-ai-virtual-try-on-for-woocommerce'); ?></strong></td>
-                        </tr>
-                        <tr class="fito-highlight-row">
-                            <td>
-                                <strong><?php esc_html_e('Custom & Duplicated Fitting Prompts', 'elfit-ai-virtual-try-on-for-woocommerce'); ?></strong>
-                                <span class="fito-row-sub"><?php esc_html_e('Create unlimited custom prompt profiles and clone existing prompts with 1-click duplication', 'elfit-ai-virtual-try-on-for-woocommerce'); ?></span>
-                            </td>
-                            <td><?php esc_html_e('7 Built-in presets only', 'elfit-ai-virtual-try-on-for-woocommerce'); ?></td>
-                            <td class="fito-td-pro"><span class="fito-check">✓</span> <strong><?php esc_html_e('Unlocked (Pro)', 'elfit-ai-virtual-try-on-for-woocommerce'); ?></strong></td>
-                        </tr>
-                        <tr>
-                            <td>
-                                <strong><?php esc_html_e('Interactive Try-On Modal & Camera Capture', 'elfit-ai-virtual-try-on-for-woocommerce'); ?></strong>
-                                <span class="fito-row-sub"><?php esc_html_e('Mobile camera, file dropzone, and responsive aspect ratios', 'elfit-ai-virtual-try-on-for-woocommerce'); ?></span>
-                            </td>
-                            <td><span class="fito-check">✓</span> <?php esc_html_e('Included', 'elfit-ai-virtual-try-on-for-woocommerce'); ?></td>
-                            <td class="fito-td-pro"><span class="fito-check">✓</span> <?php esc_html_e('Included', 'elfit-ai-virtual-try-on-for-woocommerce'); ?></td>
-                        </tr>
-                        <tr>
-                            <td>
-                                <strong><?php esc_html_e('Split Comparison Slider & Fullscreen', 'elfit-ai-virtual-try-on-for-woocommerce'); ?></strong>
-                                <span class="fito-row-sub"><?php esc_html_e('Interactive Before/After comparison handle and full-screen view', 'elfit-ai-virtual-try-on-for-woocommerce'); ?></span>
-                            </td>
-                            <td><span class="fito-check">✓</span> <?php esc_html_e('Included', 'elfit-ai-virtual-try-on-for-woocommerce'); ?></td>
-                            <td class="fito-td-pro"><span class="fito-check">✓</span> <?php esc_html_e('Included', 'elfit-ai-virtual-try-on-for-woocommerce'); ?></td>
-                        </tr>
-                        <tr>
-                            <td>
-                                <strong><?php esc_html_e('Product Category Hierarchy Gating', 'elfit-ai-virtual-try-on-for-woocommerce'); ?></strong>
-                                <span class="fito-row-sub"><?php esc_html_e('Restricts fitting room access to enabled categories & subcategories', 'elfit-ai-virtual-try-on-for-woocommerce'); ?></span>
-                            </td>
-                            <td><span class="fito-check">✓</span> <?php esc_html_e('Included', 'elfit-ai-virtual-try-on-for-woocommerce'); ?></td>
-                            <td class="fito-td-pro"><span class="fito-check">✓</span> <?php esc_html_e('Included', 'elfit-ai-virtual-try-on-for-woocommerce'); ?></td>
-                        </tr>
-                        <tr>
-                            <td>
-                                <strong><?php esc_html_e('Guest Access Control & Sample Preview Showcase', 'elfit-ai-virtual-try-on-for-woocommerce'); ?></strong>
-                                <span class="fito-row-sub"><?php esc_html_e('Restrict try-on to logged-in users with guest sample showcase cards and custom preview imagery', 'elfit-ai-virtual-try-on-for-woocommerce'); ?></span>
-                            </td>
-                            <td><span class="fito-check">✓</span> <?php esc_html_e('Included', 'elfit-ai-virtual-try-on-for-woocommerce'); ?></td>
-                            <td class="fito-td-pro"><span class="fito-check">✓</span> <?php esc_html_e('Included', 'elfit-ai-virtual-try-on-for-woocommerce'); ?></td>
-                        </tr>
-                        <tr>
-                            <td>
-                                <strong><?php esc_html_e('Sliding-Window Rate Limiting & Proxy IP Resolution', 'elfit-ai-virtual-try-on-for-woocommerce'); ?></strong>
-                                <span class="fito-row-sub"><?php esc_html_e('Configure per-minute, per-hour, or per-day limits with Cloudflare header detection', 'elfit-ai-virtual-try-on-for-woocommerce'); ?></span>
-                            </td>
-                            <td><span class="fito-check">✓</span> <?php esc_html_e('Included (Minute / Hour / Day)', 'elfit-ai-virtual-try-on-for-woocommerce'); ?></td>
-                            <td class="fito-td-pro"><span class="fito-check">✓</span> <?php esc_html_e('Included (Minute / Hour / Day)', 'elfit-ai-virtual-try-on-for-woocommerce'); ?></td>
-                        </tr>
-                        <tr>
-                            <td>
-                                <strong><?php esc_html_e('Audit Logging & Conversion Analytics', 'elfit-ai-virtual-try-on-for-woocommerce'); ?></strong>
-                                <span class="fito-row-sub"><?php esc_html_e('Sent prompt text, response payload logs, duration, error capture, and volume charts', 'elfit-ai-virtual-try-on-for-woocommerce'); ?></span>
-                            </td>
-                            <td><span class="fito-check">✓</span> <?php esc_html_e('Included', 'elfit-ai-virtual-try-on-for-woocommerce'); ?></td>
-                            <td class="fito-td-pro"><span class="fito-check">✓</span> <?php esc_html_e('Included', 'elfit-ai-virtual-try-on-for-woocommerce'); ?></td>
-                        </tr>
-                        <tr>
-                            <td>
-                                <strong><?php esc_html_e('Software Updates', 'elfit-ai-virtual-try-on-for-woocommerce'); ?></strong>
-                                <span class="fito-row-sub"><?php esc_html_e('Maintenance and compatibility updates', 'elfit-ai-virtual-try-on-for-woocommerce'); ?></span>
-                            </td>
-                            <td><?php esc_html_e('WordPress.org', 'elfit-ai-virtual-try-on-for-woocommerce'); ?></td>
-                            <td class="fito-td-pro"><span class="fito-check">✓</span> <strong><?php esc_html_e('Pro Addon Updates', 'elfit-ai-virtual-try-on-for-woocommerce'); ?></strong></td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-
-            <!-- Bottom CTA Banner -->
-            <div class="fito-go-pro-cta-card">
-                <div class="fito-cta-content">
-                    <h2><?php esc_html_e('Ready to Elevate Your Store Experience?', 'elfit-ai-virtual-try-on-for-woocommerce'); ?></h2>
-                    <p><?php esc_html_e('Get instant access to the Elfit Try-On Pro Addon and unlock all premium capabilities today.', 'elfit-ai-virtual-try-on-for-woocommerce'); ?></p>
-                </div>
-                <div class="fito-cta-actions">
-                    <a href="<?php echo esc_url($buy_url); ?>" target="_blank" rel="noopener noreferrer" class="button button-primary button-hero fito-btn-pro-cta">
-                        <span><?php esc_html_e('Get Elfit Pro Addon Now', 'elfit-ai-virtual-try-on-for-woocommerce'); ?></span>
-                        <span class="dashicons dashicons-external"></span>
-                    </a>
-                </div>
-            </div>
-        </div>
-        <?php
     }
 }

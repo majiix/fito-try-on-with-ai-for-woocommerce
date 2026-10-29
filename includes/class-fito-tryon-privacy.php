@@ -23,13 +23,17 @@ class Fito_Tryon_Privacy {
         wp_unschedule_hook(self::CRON_HOOK);
     }
 
+    public function get_retention_hours(): int {
+        return (int) apply_filters('fito_tryon_retention_hours', 24);
+    }
+
     public function run_cleanup(): void {
         global $wpdb;
         $db = Fito_Tryon::instance()->db;
         $storage = Fito_Tryon::instance()->storage;
 
         // 1. Clean up temporary try-on jobs & customer photos
-        $retention_hours = (int) apply_filters('fito_tryon_retention_hours', 24);
+        $retention_hours = $this->get_retention_hours();
         $retention_minutes = max(1, $retention_hours * 60);
 
         if ($retention_minutes > 0) {
