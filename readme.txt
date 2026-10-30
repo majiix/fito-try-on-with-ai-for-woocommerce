@@ -2,7 +2,7 @@
 Contributors: micromax2
 Tags: try on, virtual fitting, woocommerce, fashion, ai
 Requires at least: 6.2
-Tested up to: 6.7
+Tested up to: 7.1
 Requires PHP: 8.0
 Requires Plugins: woocommerce
 Stable tag: 1.7.0
@@ -136,7 +136,7 @@ No. All assets, including Chart.js for analytics, are bundled locally within the
 
 = 1.4.0 =
 * Architecture: Established extensible action and filter contracts for try-on modules.
-* Enhancement: Added fito_tryon_loaded, fito_tryon_admin_submenus, and fito_tryon_settings_form_bottom hook contracts.
+* Enhancement: Added fito_tryon_loaded and fito_tryon_admin_submenus hook contracts.
 
 = 1.3.0 =
 * Security: Hardened REST API submit endpoint against SSRF with strict product gallery and upload directory validation.

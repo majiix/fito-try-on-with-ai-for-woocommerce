@@ -19,6 +19,14 @@ if (!defined('FITO_TRYON_URL')) {
 if (!defined('FITO_TRYON_BASENAME')) {
     define('FITO_TRYON_BASENAME', 'elfit-ai-virtual-try-on-for-woocommerce/elfit-ai-virtual-try-on-for-woocommerce.php');
 }
+if (!defined('WP_CONTENT_DIR')) {
+    define('WP_CONTENT_DIR', ABSPATH . 'wp-content');
+}
+if (!function_exists('dbDelta')) {
+    function dbDelta($queries) {
+        return [];
+    }
+}
 
 // Minimal WordPress function stubs for unit testing.
 if (!function_exists('add_filter')) {
@@ -169,6 +177,12 @@ if (!function_exists('__')) {
         }
         return true;
     }
+    function wp_delete_file($file) {
+        if (file_exists($file) && is_file($file)) {
+            return @unlink($file);
+        }
+        return false;
+    }
 }
 
 // Mock wpdb
@@ -189,12 +203,16 @@ if (!isset($GLOBALS['wpdb'])) {
             return 1;
         }
         public function prepare($query, ...$args) {
-            return vsprintf(str_replace(['%s', '%d', '%f'], ["'%s'", '%d', '%f'], $query), $args);
+            $formatted = str_replace(['%i', '%s', '%d', '%f'], ['`%s`', "'%s'", '%d', '%f'], $query);
+            return vsprintf($formatted, $args);
         }
         public function get_var($query = null) {
             return 1;
         }
         public function get_results($query = null, $output = 'OBJECT') {
+            return [];
+        }
+        public function get_col($query = null, $x = 0) {
             return [];
         }
         public function update($table, $data, $where) {
@@ -246,14 +264,7 @@ assert_test($plugin->storage instanceof Fito_Tryon_Storage, "Fito_Tryon::\$stora
 assert_test($plugin->privacy instanceof Fito_Tryon_Privacy, "Fito_Tryon::\$privacy is an instance of Fito_Tryon_Privacy");
 assert_test($plugin->rate_limiter instanceof Fito_Tryon_Rate_Limiter, "Fito_Tryon::\$rate_limiter is an instance of Fito_Tryon_Rate_Limiter");
 
-// 2. AI Provider Settings & Client Resolution
-$allowed_providers = $plugin->get_allowed_providers();
-assert_test($allowed_providers === ['openrouter'], "Allowed providers contains exclusively 'openrouter'");
-assert_test($plugin->get_active_provider() === 'openrouter', "Active provider returns 'openrouter'");
-assert_test($plugin->get_provider_client('openrouter') instanceof Fito_Tryon_OpenRouter, "Provider client for 'openrouter' resolves correctly");
-assert_test($plugin->get_provider_client('unknown') === null, "Provider client for unknown provider returns null");
-
-// 3. OpenRouter Model Resolution
+// 2. OpenRouter Model Resolution
 $openrouter = $plugin->openrouter;
 assert_test(method_exists($openrouter, 'get_primary_model'), "Fito_Tryon_OpenRouter has get_primary_model() method");
 assert_test($plugin->get_active_primary_model() === $openrouter->get_primary_model(), "Active primary model delegates to OpenRouter");
@@ -268,9 +279,12 @@ assert_test(method_exists($public, 'render_product_button'), "Fito_Tryon_Public 
 assert_test(method_exists($public, 'render_block'), "Fito_Tryon_Public has render_block() method");
 
 // 5. Database Schema & Data Model
-assert_test(Fito_Tryon_Database::DB_VERSION === '1.4.1', "Database schema version is 1.4.1");
+assert_test(Fito_Tryon_Database::DB_VERSION === '1.4.2', "Database schema version is 1.4.2");
 $db_file_content = file_get_contents(FITO_TRYON_PATH . 'includes/class-fito-tryon-database.php');
 assert_test(!str_contains($db_file_content, 'session_id'), "Jobs table schema does not define unused session_id column");
+assert_test(!str_contains($db_file_content, 'user_image_url text'), "Logs table schema does not define user_image_url column");
+assert_test(!str_contains($db_file_content, 'result_image_url text'), "Logs table schema does not define result_image_url column");
+assert_test(!str_contains($db_file_content, 'ALTER TABLE'), "Database does not perform direct ALTER TABLE queries");
 assert_test(method_exists($plugin->db, 'create_job'), "Database has create_job() method");
 assert_test(method_exists($plugin->db, 'get_job_by_token'), "Database has get_job_by_token() method");
 assert_test(method_exists($plugin->db, 'update_job_by_token'), "Database has update_job_by_token() method");
@@ -297,6 +311,7 @@ assert_test(count($default_prompts) === 7, "Default prompts contains 7 built-in 
 
 // 9. Storage & Clean Execution
 $storage_content = file_get_contents(FITO_TRYON_PATH . 'includes/class-fito-tryon-storage.php');
+assert_test(!str_contains($storage_content, 'unlink('), "Storage does not call raw unlink()");
 assert_test(!str_contains($storage_content, 'fito_tryon_max_upload_size'), "Storage does not reference orphaned fito_tryon_max_upload_size option");
 assert_test(!str_contains($storage_content, 'get_results_dir'), "Storage does not define dead get_results_dir() method");
 
@@ -306,6 +321,21 @@ assert_test(str_contains($uninstall_content, "class_exists('Fito_Tryon')"), "uni
 assert_test(!str_contains($uninstall_content, 'elfit-ai-virtual-try-on*'), "uninstall.php does not perform sister directory sniffing");
 assert_test(!str_contains($uninstall_content, 'fito_tryon_ai_provider'), "uninstall.php does not reference deleted fito_tryon_ai_provider option");
 assert_test(!str_contains($uninstall_content, 'fito_tryon_max_upload_size'), "uninstall.php does not reference deleted fito_tryon_max_upload_size option");
+
+// 11. Leftover Remnants Guard (WordPress.org Guideline 5)
+$openrouter_content = file_get_contents(FITO_TRYON_PATH . 'includes/class-fito-tryon-openrouter.php');
+assert_test(!str_contains($openrouter_content, 'is_fallback'), "OpenRouter does not contain dead is_fallback key");
+
+$public_content = file_get_contents(FITO_TRYON_PATH . 'includes/class-fito-tryon-public.php');
+assert_test(!str_contains($public_content, 'customer account tab'), "Public class docblock does not reference customer account tab");
+
+$pot_content = file_get_contents(FITO_TRYON_PATH . 'languages/elfit-ai-virtual-try-on-for-woocommerce.pot');
+assert_test(!str_contains($pot_content, 'Invalid or unsupported AI provider specified.'), "POT catalog does not contain orphaned provider validation string");
+assert_test(!str_contains($pot_content, 'Provider connection testing is not available.'), "POT catalog does not contain orphaned provider connection string");
+
+$readme_content = file_get_contents(FITO_TRYON_PATH . 'readme.txt');
+assert_test(str_contains($readme_content, 'Tested up to: 7.1'), "readme.txt declares compatibility up to WordPress 7.1");
+assert_test(!str_contains($readme_content, 'fito_tryon_settings_form_bottom'), "readme.txt does not reference unreleased fito_tryon_settings_form_bottom hook");
 
 echo "\n=======================================================\n";
 echo "Test Results: {$tests_passed} / {$tests_total} tests passed.\n";

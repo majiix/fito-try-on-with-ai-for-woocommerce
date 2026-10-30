@@ -472,11 +472,6 @@
     width: 100%;
 }
 
-.fito-skeleton-text {
-    height: 14px;
-    width: 60%;
-}
-
 /* Admin Log Inspect Modal Dialog */
 .fito-admin-modal {
     position: fixed;

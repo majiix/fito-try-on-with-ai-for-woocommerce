@@ -29,7 +29,6 @@ class Fito_Tryon_Privacy {
     }
 
     public function run_cleanup(): void {
-        global $wpdb;
         $db = Fito_Tryon::instance()->db;
         $storage = Fito_Tryon::instance()->storage;
 

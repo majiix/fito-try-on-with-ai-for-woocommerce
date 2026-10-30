@@ -7,7 +7,7 @@ defined('ABSPATH') || exit;
 
 if (!class_exists('Fito_Tryon_Database')) {
 class Fito_Tryon_Database {
-    public const DB_VERSION = '1.4.1';
+    public const DB_VERSION = '1.4.2';
 
     /**
      * Create custom database tables using dbDelta.
@@ -58,8 +58,6 @@ class Fito_Tryon_Database {
             prompt_tokens int(11) NOT NULL DEFAULT 0,
             completion_tokens int(11) NOT NULL DEFAULT 0,
             cost_estimate decimal(8,4) NOT NULL DEFAULT 0.0000,
-            user_image_url text DEFAULT NULL,
-            result_image_url text DEFAULT NULL,
             error_message text,
             prompt_text longtext DEFAULT NULL,
             response_text longtext DEFAULT NULL,
@@ -73,7 +71,9 @@ class Fito_Tryon_Database {
             KEY ip_product_status_created (ip_address, product_id, status, created_at)
         ) {$charset_collate};";
 
-        require_once ABSPATH . 'wp-admin/includes/upgrade.php';
+        if (!function_exists('dbDelta')) {
+            require_once ABSPATH . 'wp-admin/includes/upgrade.php';
+        }
         dbDelta($sql_jobs);
         dbDelta($sql_logs);
     }
@@ -82,9 +82,10 @@ class Fito_Tryon_Database {
         if (get_option('fito_tryon_db_version') !== self::DB_VERSION) {
             self::create_tables();
 
-            // Backfill any empty response_text for logs that have an error_message
             global $wpdb;
             $logs_table = $wpdb->prefix . 'fito_tryon_logs';
+
+            // Backfill any empty response_text for logs that have an error_message
             // phpcs:disable WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, PluginCheck.Security.DirectDB.UnescapedDBParameter
             $empty_rows = $wpdb->get_results(
                 $wpdb->prepare(
@@ -181,13 +182,6 @@ class Fito_Tryon_Database {
             'created_at'        => current_time('mysql'),
         ];
 
-        if (!empty($data['user_image_url'])) {
-            $insert_data['user_image_url'] = esc_url_raw($data['user_image_url']);
-        }
-        if (!empty($data['result_image_url'])) {
-            $insert_data['result_image_url'] = esc_url_raw($data['result_image_url']);
-        }
-
         // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery -- Custom table insert.
         $wpdb->insert($wpdb->prefix . 'fito_tryon_logs', $insert_data);
         $insert_id = (int) $wpdb->insert_id;
@@ -268,15 +262,6 @@ class Fito_Tryon_Database {
         global $wpdb;
         $table = $wpdb->prefix . 'fito_tryon_logs';
         // phpcs:disable WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, PluginCheck.Security.DirectDB.UnescapedDBParameter
-        $log = $wpdb->get_row($wpdb->prepare('SELECT user_image_url, result_image_url FROM %i WHERE id = %d LIMIT 1', $table, $log_id));
-        if ($log) {
-            if (!empty($log->user_image_url)) {
-                Fito_Tryon_Storage::delete_file_by_url($log->user_image_url);
-            }
-            if (!empty($log->result_image_url)) {
-                Fito_Tryon_Storage::delete_file_by_url($log->result_image_url);
-            }
-        }
         return $wpdb->delete($table, ['id' => $log_id]) !== false;
         // phpcs:enable
     }
@@ -505,7 +490,7 @@ class Fito_Tryon_Database {
         $table = $wpdb->prefix . 'fito_tryon_logs';
         // phpcs:disable WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, PluginCheck.Security.DirectDB.UnescapedDBParameter
         $results = $wpdb->get_results($wpdb->prepare(
-            'SELECT id, user_image_url, result_image_url FROM %i WHERE created_at < DATE_SUB(NOW(), INTERVAL %d DAY) LIMIT %d',
+            'SELECT id FROM %i WHERE created_at < DATE_SUB(NOW(), INTERVAL %d DAY) LIMIT %d',
             $table,
             $days,
             $limit
@@ -519,18 +504,7 @@ class Fito_Tryon_Database {
             return 0;
         }
 
-        $logs = $this->get_expired_logs($days, 500);
-        if (!empty($logs)) {
-            do_action('fito_tryon_before_delete_expired_logs', $days);
-            foreach ($logs as $log) {
-                if (!empty($log->user_image_url)) {
-                    Fito_Tryon_Storage::delete_file_by_url($log->user_image_url);
-                }
-                if (!empty($log->result_image_url)) {
-                    Fito_Tryon_Storage::delete_file_by_url($log->result_image_url);
-                }
-            }
-        }
+        do_action('fito_tryon_before_delete_expired_logs', $days);
 
         global $wpdb;
         $table = $wpdb->prefix . 'fito_tryon_logs';

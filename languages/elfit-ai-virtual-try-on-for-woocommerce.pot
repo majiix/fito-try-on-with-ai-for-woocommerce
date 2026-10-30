@@ -1143,14 +1143,6 @@ msgstr ""
 msgid "Client/network error reported: %s"
 msgstr ""
 
-#: includes/class-fito-tryon-rest.php:499 includes/class-fito-tryon-rest.php:522
-msgid "Invalid or unsupported AI provider specified."
-msgstr ""
-
-#: includes/class-fito-tryon-rest.php:508
-msgid "Provider connection testing is not available."
-msgstr ""
-
 #: includes/class-fito-tryon-rest.php:560
 msgid "Logs updated successfully."
 msgstr ""

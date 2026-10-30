@@ -1,6 +1,6 @@
 <?php
 /**
- * Public frontend display, button injection, modal markup, and customer account tab.
+ * Public frontend display, button injection, and modal markup.
  */
 
 defined('ABSPATH') || exit;

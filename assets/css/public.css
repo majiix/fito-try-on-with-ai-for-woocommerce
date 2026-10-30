@@ -167,15 +167,6 @@ body.fito-modal-open {
     margin-bottom: 0;
 }
 
-.fito-modal-title {
-    margin: 0;
-    font-size: 18px;
-    font-weight: 700;
-    color: var(--fito-text);
-    letter-spacing: -0.02em;
-    line-height: 1.3;
-}
-
 .fito-modal-header-actions {
     display: flex;
     align-items: center;

@@ -395,10 +395,7 @@ class Fito_Tryon_Storage {
         $rel_path = ltrim(substr($url, strlen($base_url)), '/\\');
         $full_path = trailingslashit(self::get_base_dir()) . $rel_path;
         if (file_exists($full_path) && is_file($full_path)) {
-            if (function_exists('wp_delete_file')) {
-                return (bool) wp_delete_file($full_path);
-            }
-            return @unlink($full_path);
+            return (bool) wp_delete_file($full_path);
         }
         return false;
     }

@@ -440,7 +440,6 @@ class Fito_Tryon_Rest {
         $product_id     = absint($request->get_param('product_id'));
         $variation_id   = absint($request->get_param('variation_id'));
         $error_message  = sanitize_text_field($request->get_param('error_message'));
-        $user_image_url = esc_url_raw($request->get_param('user_image_url'));
 
         if (empty($error_message)) {
             return new WP_REST_Response(['success' => false], 400);

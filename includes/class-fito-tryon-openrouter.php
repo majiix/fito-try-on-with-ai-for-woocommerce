@@ -9,22 +9,6 @@ class Fito_Tryon_OpenRouter {
     public const API_BASE = 'https://openrouter.ai/api/v1';
     public const CACHE_KEY_MODELS = 'fito_tryon_live_models_cache';
 
-    public function __construct() {
-        add_filter('fito_tryon_build_category_prompt', [$this, 'filter_build_category_prompt'], 10, 2);
-    }
-
-    /**
-     * Filter callback to synthesize category prompt instructions.
-     *
-     * @param string $default_prompt
-     * @param array<string, mixed> $params
-     * @return string
-     */
-    public function filter_build_category_prompt(string $default_prompt, array $params): string {
-        $prompt = $this->build_category_prompt($params);
-        return !empty($prompt) ? $prompt : $default_prompt;
-    }
-
     public function get_api_key(): string {
         return trim((string) get_option('fito_tryon_openrouter_api_key', ''));
     }
@@ -328,10 +312,10 @@ class Fito_Tryon_OpenRouter {
 
     public function call_openrouter(string $model, array $params, string $api_key): array {
         $prompt = $this->build_category_prompt($params);
-        $user_image_b64 = $this->image_to_base64($params['user_image_path'] ?? '');
+        $user_image_b64 = Fito_Tryon_Storage::image_to_base64($params['user_image_path'] ?? '');
         $product_image_url = $params['product_image_url'] ?? '';
         $product_image_id = (int) ($params['product_image_id'] ?? 0);
-        $product_image_b64 = $this->resolve_image_base64($product_image_url, $product_image_id);
+        $product_image_b64 = Fito_Tryon_Storage::resolve_image_base64($product_image_url, $product_image_id);
 
         if (empty($user_image_b64)) {
             return [
@@ -418,7 +402,6 @@ class Fito_Tryon_OpenRouter {
             return [
                 'success'       => false,
                 'model'         => $model,
-                'is_fallback'   => false,
                 'prompt'        => $prompt,
                 'response_text' => self::sanitize_json_response(['error' => $response->get_error_message()]),
                 // translators: %s: Error message
@@ -436,7 +419,6 @@ class Fito_Tryon_OpenRouter {
             return [
                 'success'       => false,
                 'model'         => $model,
-                'is_fallback'   => false,
                 'prompt'        => $prompt,
                 'response_text' => self::sanitize_json_response(!empty($body) ? $body : ['error' => $raw_body, 'http_code' => $code]),
                 'message'       => $msg,
@@ -449,7 +431,6 @@ class Fito_Tryon_OpenRouter {
             return [
                 'success'       => false,
                 'model'         => $model,
-                'is_fallback'   => false,
                 'prompt'        => $prompt,
                 'response_text' => self::sanitize_json_response(!empty($body) ? $body : ['raw_body' => $raw_body]),
                 'message'       => __('Empty response returned from AI model.', 'elfit-ai-virtual-try-on-for-woocommerce'),
@@ -503,7 +484,6 @@ class Fito_Tryon_OpenRouter {
             return [
                 'success'           => false,
                 'model'             => $model,
-                'is_fallback'       => false,
                 'is_moderated'      => $is_moderated,
                 'prompt'            => $prompt,
                 'response_text'     => self::sanitize_json_response(!empty($body) ? $body : ['content' => $content, 'refusal' => $refusal_text]),
@@ -520,7 +500,6 @@ class Fito_Tryon_OpenRouter {
         return [
             'success'           => true,
             'model'             => $model,
-            'is_fallback'       => false,
             'result_image_data' => $extracted_image,
             'description'       => $response_desc,
             'prompt'            => $prompt,
@@ -604,7 +583,6 @@ class Fito_Tryon_OpenRouter {
         return [
             'success'           => true,
             'model'             => $model,
-            'is_fallback'       => false,
             'result_image_data' => $img_result,
             'description'       => 'Generated via OpenRouter Image API',
             'prompt'            => $prompt,
@@ -867,14 +845,6 @@ class Fito_Tryon_OpenRouter {
             return $m[1];
         }
         return null;
-    }
-
-    public function resolve_image_base64(string $path_or_url, int $attachment_id = 0): string {
-        return Fito_Tryon_Storage::resolve_image_base64($path_or_url, $attachment_id);
-    }
-
-    public function image_to_base64(string $path): string {
-        return Fito_Tryon_Storage::image_to_base64($path);
     }
 
     private function estimate_cost(string $model, int $prompt_tok, int $comp_tok): float {

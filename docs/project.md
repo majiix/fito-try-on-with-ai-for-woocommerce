@@ -7,11 +7,11 @@ All features and capabilities of the plugin are 100% native, standalone, and ful
 
 ## Tech Stack & Dependencies
 - **Language**: PHP 8.0+ (Tested up to PHP 8.3)
-- **Core Platform**: WordPress 6.2+, WooCommerce 7.0+
+- **Core Platform**: WordPress 6.2+ (Tested up to 7.1), WooCommerce 7.0+
 - **Frontend Architecture**: Vanilla JavaScript (ES6+), Canvas API, Web Share API, MediaDevices API
 - **Styling**: CSS Custom Properties, modern Flexbox/Grid, clean Light Mode UI, RTL support
 - **REST Endpoints**: WordPress REST API (`/wp-json/fito-tryon/v1/...`)
-- **Database Engine**: Custom MySQL tables (`wp_fito_tryon_jobs`, `wp_fito_tryon_logs`) managed via `dbDelta` (Schema Version 1.4.1)
+- **Database Engine**: Custom MySQL tables (`wp_fito_tryon_jobs`, `wp_fito_tryon_logs`) managed via `dbDelta` (Schema Version 1.4.2, minimal footprint without orphaned image columns)
 - **Charts & Data Visualization**: Local Chart.js v4.5.1 for admin analytics dashboards
 - **Internationalization**: WordPress i18n (`__()`, `_e()`, `esc_html__()`), bundled English and Persian (fa_IR) translations
 
@@ -78,12 +78,16 @@ elfit-ai-virtual-try-on-for-woocommerce/
    - In-Memory Guard: Checks if the plugin is running in memory (`class_exists('Fito_Tryon') || defined('FITO_TRYON_VERSION')`). Avoids brittle directory sniffing or active plugins scanning.
    - Clean Database & Storage Removal: Drops `wp_fito_tryon_jobs` and `wp_fito_tryon_logs`, removes all registered settings, and deletes temporary upload files.
 
+## Database Schema (v1.4.2)
+- `wp_fito_tryon_jobs`: Background asynchronous job queuing and polling (`id`, `token`, `status`, `product_id`, `variation_id`, `user_id`, `guest_uuid`, `created_at`, `updated_at`).
+- `wp_fito_tryon_logs`: Execution audit trail and analytics (`id`, `created_at`, `status`, `product_id`, `user_id`, `guest_uuid`, `ip_address`, `duration_ms`, `estimated_cost`, `model_name`, `error_message`, `prompt_text`, `response_text`). Unused image URLs are completely omitted to ensure minimal database footprint.
+
 ## Verification & Testing Commands
 - **PHP Syntax Verification**:
   ```powershell
   rtk php -l admin/class-fito-tryon-admin.php elfit-ai-virtual-try-on-for-woocommerce.php includes/class-fito-tryon-database.php includes/class-fito-tryon-openrouter.php includes/class-fito-tryon-privacy.php includes/class-fito-tryon-public.php includes/class-fito-tryon-rate-limiter.php includes/class-fito-tryon-rest.php includes/class-fito-tryon-storage.php includes/class-fito-tryon.php uninstall.php tests/test-all-inclusive-free-plugin.php
   ```
-- **Unit and Feature Test Suite (31 tests)**:
+- **Unit and Feature Test Suite (37 tests)**:
   ```powershell
   rtk php tests/test-all-inclusive-free-plugin.php
   ```

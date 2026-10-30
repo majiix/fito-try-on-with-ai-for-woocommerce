@@ -74,11 +74,11 @@
         },
 
         bindConnectionTest: function () {
-            $(document).on('click', '.fito-btn-test-connection, #fito-btn-test-connection', function () {
+            $(document).on('click', '.fito-btn-test-connection', function () {
                 const $btn = $(this);
                 const provider = 'openrouter';
                 const $panel = $btn.closest('.fito-provider-panel').length ? $btn.closest('.fito-provider-panel') : $('#fito-panel-openrouter');
-                const $result = $panel.find('.fito-connection-test-result, #fito-connection-test-result');
+                const $result = $panel.find('.fito-connection-test-result');
                 const $input = $panel.find('input[type="password"]');
                 const key = $input.length && $input.val() ? $input.val().trim() : '';
 
@@ -317,7 +317,7 @@
             const self = this;
 
             // Load models on page load for OpenRouter
-            if ($('.fito-provider-table, #fito-models-wrapper').length) {
+            if ($('.fito-provider-table').length) {
                 self.loadModelsWithSkeleton(false, 'openrouter');
             }
 
@@ -333,11 +333,11 @@
             const $status = $('#fito-sync-models-status');
             const originalHtml = $btn.length ? $btn.html() : '';
 
-            const $panel = $('#fito-panel-' + activeProvider).length ? $('#fito-panel-' + activeProvider) : $('#fito-models-wrapper').closest('.fito-card-body');
-            const $wrapper = $panel.find('.fito-provider-table').length ? $panel.find('.fito-provider-table') : $('#fito-models-wrapper');
+            const $panel = $('#fito-panel-' + activeProvider).length ? $('#fito-panel-' + activeProvider) : $('.fito-provider-panel');
+            const $wrapper = $panel.find('.fito-provider-table');
             const $primarySelect = $panel.find('select[id$="_primary_model"]');
-            const $skeletons = $panel.find('.fito-primary-skeleton, #fito-primary-skeleton');
-            const $selectWraps = $panel.find('.fito-primary-select-wrap, #fito-primary-select-wrap');
+            const $skeletons = $panel.find('.fito-primary-skeleton');
+            const $selectWraps = $panel.find('.fito-primary-select-wrap');
 
             // Show skeleton loaders, hide selects
             $skeletons.show();

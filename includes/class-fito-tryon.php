@@ -95,37 +95,6 @@ class Fito_Tryon {
     }
 
     /**
-     * Retrieve all permitted AI image generation providers.
-     *
-     * @return array<int, string>
-     */
-    public function get_allowed_providers(): array {
-        return ['openrouter'];
-    }
-
-    /**
-     * Get active AI provider slug.
-     *
-     * @return string
-     */
-    public function get_active_provider(): string {
-        return 'openrouter';
-    }
-
-    /**
-     * Resolve provider client object.
-     *
-     * @param string $provider
-     * @return object|null
-     */
-    public function get_provider_client(string $provider = ''): ?object {
-        if (empty($provider) || $provider === 'openrouter') {
-            return $this->openrouter;
-        }
-        return null;
-    }
-
-    /**
      * Retrieve active primary model for current provider.
      *
      * @return string
