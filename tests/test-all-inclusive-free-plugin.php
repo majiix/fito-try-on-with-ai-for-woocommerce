@@ -290,12 +290,13 @@ assert_test(!class_exists('Fito_Tryon_Placements'), "Fito_Tryon_Placements class
 // 8. No Account History Engine in Free
 assert_test(!class_exists('Fito_Tryon_Account'), "Fito_Tryon_Account class does not exist in free version");
 
-// 9. Database Schema & Preservation
+// 9. Database Schema & Standalone Free Data Model
 assert_test(Fito_Tryon_Database::DB_VERSION === '1.4.0', "Database schema version is 1.4.0");
 $db_file_content = file_get_contents(FITO_TRYON_PATH . 'includes/class-fito-tryon-database.php');
-assert_test(str_contains($db_file_content, 'is_saved_to_account tinyint(1)'), "Jobs table schema defines is_saved_to_account column");
-assert_test(str_contains($db_file_content, 'user_image_url text'), "Logs table schema defines user_image_url column");
-assert_test(str_contains($db_file_content, 'result_image_url text'), "Logs table schema defines result_image_url column");
+assert_test(!str_contains($db_file_content, 'is_saved_to_account'), "Jobs table schema does not define is_saved_to_account column in free version");
+assert_test(!method_exists($plugin->db, 'save_job_to_account'), "Database does not have save_job_to_account() method in free version");
+assert_test(!method_exists($plugin->db, 'get_user_jobs'), "Database does not have get_user_jobs() method in free version");
+assert_test(!method_exists($plugin->db, 'delete_user_job'), "Database does not have delete_user_job() method in free version");
 
 // 10. Fixed 24h Photo Retention Policy in Free
 $privacy = $plugin->privacy;
@@ -327,6 +328,28 @@ $admin_js_content = file_get_contents(FITO_TRYON_PATH . 'assets/js/admin.js');
 assert_test(!str_contains($admin_js_content, 'bindPromptActions'), "Admin JS does not contain bindPromptActions in free version");
 assert_test(!str_contains($admin_js_content, '.fito-prompt-duplicate'), "Admin JS does not contain duplicate prompt click handler in free version");
 assert_test(!str_contains($admin_js_content, '.fito-btn-add-prompt-action'), "Admin JS does not contain add prompt click handler in free version");
+
+// 13. Leftover Hooks & CSS Sweep
+$rest_content = file_get_contents(FITO_TRYON_PATH . 'includes/class-fito-tryon-rest.php');
+assert_test(!str_contains($rest_content, 'fito_tryon_get_cached_result'), "REST class does not contain fito_tryon_get_cached_result in free version");
+assert_test(!str_contains($rest_content, 'fito_tryon_set_cached_result'), "REST class does not contain fito_tryon_set_cached_result in free version");
+assert_test(!str_contains($rest_content, 'fito_tryon_log_data'), "REST class does not contain fito_tryon_log_data in free version");
+
+$public_content = file_get_contents(FITO_TRYON_PATH . 'includes/class-fito-tryon-public.php');
+assert_test(!str_contains($public_content, 'fito_tryon_modal_result_actions'), "Public class does not contain fito_tryon_modal_result_actions in free version");
+
+$css_content = file_get_contents(FITO_TRYON_PATH . 'assets/css/admin.css');
+assert_test(!str_contains($css_content, '.fito-badge-custom'), "Admin CSS does not contain .fito-badge-custom");
+assert_test(!str_contains($css_content, '.fito-prompt-delete'), "Admin CSS does not contain .fito-prompt-delete");
+
+// 14. Data Preservation on Uninstall
+$uninstall_content = file_get_contents(FITO_TRYON_PATH . 'uninstall.php');
+assert_test(str_contains($uninstall_content, "class_exists('Fito_Tryon')"), "uninstall.php aborts if another active instance is running in memory");
+assert_test(str_contains($uninstall_content, 'elfit-ai-virtual-try-on*'), "uninstall.php aborts if a sister edition exists on disk");
+assert_test(!str_contains($uninstall_content, 'fito_tryon_gemini_api_key'), "uninstall.php does not reference Pro gemini settings");
+assert_test(!str_contains($uninstall_content, 'fito_tryon_openai_api_key'), "uninstall.php does not reference Pro openai settings");
+assert_test(!str_contains($uninstall_content, 'fito_tryon_watermark_enabled'), "uninstall.php does not reference Pro watermark settings");
+assert_test(!str_contains($uninstall_content, 'fito_tryon_save_to_account'), "uninstall.php does not reference Pro save to account settings");
 
 echo "\n=======================================================\n";
 echo "Test Results: {$tests_passed} / {$tests_total} tests passed.\n";

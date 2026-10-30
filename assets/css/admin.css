@@ -675,21 +675,6 @@
     transform: rotate(-90deg);
 }
 
-.fito-prompt-delete {
-    color: #ef4444 !important;
-    border-color: #fecaca !important;
-}
-
-.fito-prompt-delete:hover:not(.disabled) {
-    background: #fee2e2 !important;
-    color: #b91c1c !important;
-}
-
-.fito-prompt-delete.disabled {
-    opacity: 0.45;
-    cursor: not-allowed;
-}
-
 .fito-prompt-row-body {
     padding: 18px 20px;
 }
@@ -881,15 +866,6 @@ body.rtl .fito-prompt-cat-id {
 .fito-prompt-header-right .button .dashicons:before {
     font-size: 16px !important;
     line-height: 1 !important;
-}
-
-/* ==========================================================================
-   Custom Prompts Styling
-   ========================================================================== */
-.fito-badge-custom {
-    background: #fef3c7;
-    color: #92400e;
-    border: 1px solid #fde68a;
 }
 
 

@@ -3,8 +3,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Elfit AI Virtual Try-On for WooCommerce 1.7.0\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/elfit-ai-virtual-try-on-for-woocommerce\n"
-"POT-Creation-Date: 2026-10-29 10:49+0000\n"
-"PO-Revision-Date: 2026-10-29 10:49+0000\n"
+"POT-Creation-Date: 2026-10-29 20:36+0000\n"
+"PO-Revision-Date: 2026-10-29 20:36+0000\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -13,711 +13,703 @@ msgstr ""
 "X-Generator: Fito I18n Generator\n"
 "X-Domain: elfit-ai-virtual-try-on-for-woocommerce\n"
 
-#: admin/class-fito-tryon-admin.php:29 admin/class-fito-tryon-admin.php:30
-msgid "AI Try-On"
-msgstr ""
-
-#: admin/class-fito-tryon-admin.php:40 admin/class-fito-tryon-admin.php:41
-msgid "Dashboard"
-msgstr ""
-
-#: admin/class-fito-tryon-admin.php:49 admin/class-fito-tryon-admin.php:50
-msgid "Prompts"
-msgstr ""
-
-#: admin/class-fito-tryon-admin.php:58
-msgid "Try-On Logs"
-msgstr ""
-
-#: admin/class-fito-tryon-admin.php:59
-msgid "Audit Logs"
-msgstr ""
-
-#: admin/class-fito-tryon-admin.php:67 admin/class-fito-tryon-admin.php:68 includes/class-fito-tryon.php:98
-msgid "Settings"
-msgstr ""
-
-#: admin/class-fito-tryon-admin.php:122
-msgid "Testing connection..."
-msgstr ""
-
-#: admin/class-fito-tryon-admin.php:123
-msgid "Connection verified successfully!"
-msgstr ""
-
-#: admin/class-fito-tryon-admin.php:124
-msgid "Fetching live models..."
-msgstr ""
-
-#: admin/class-fito-tryon-admin.php:125
-msgid "Are you sure you want to delete all temporary customer try-on photos? This cannot be undone."
-msgstr ""
-
-#: admin/class-fito-tryon-admin.php:126
-msgid "Are you sure you want to clear all audit logs?"
-msgstr ""
-
-#: admin/class-fito-tryon-admin.php:127
-msgid "Sent AI Prompt"
-msgstr ""
-
-#: admin/class-fito-tryon-admin.php:128
-msgid "Received AI Response"
-msgstr ""
-
-#: admin/class-fito-tryon-admin.php:129
-msgid "No sent prompt recorded for this log entry."
-msgstr ""
-
-#: admin/class-fito-tryon-admin.php:130
-msgid "No AI response recorded for this log entry."
-msgstr ""
-
-#: admin/class-fito-tryon-admin.php:131
-msgid "Copy"
-msgstr ""
-
-#: admin/class-fito-tryon-admin.php:132
-msgid "Copied!"
-msgstr ""
-
-#: admin/class-fito-tryon-admin.php:151
-msgid "AI Try-On Analytics & Overview"
-msgstr ""
-
-#: admin/class-fito-tryon-admin.php:153
-msgid "Monitor customer engagement, AI model performance, and conversion signals."
-msgstr ""
-
-#: admin/class-fito-tryon-admin.php:158
-msgid "Plugin Settings"
-msgstr ""
-
-#: admin/class-fito-tryon-admin.php:166
-msgid "Today / This Week"
-msgstr ""
-
-#: admin/class-fito-tryon-admin.php:168
-msgid "Try-on generations completed"
-msgstr ""
-
-#: admin/class-fito-tryon-admin.php:172
-msgid "Monthly Total"
-msgstr ""
-
-#: admin/class-fito-tryon-admin.php:177
-msgid "Lifetime all-time: %d"
-msgstr ""
-
-#: admin/class-fito-tryon-admin.php:183
-msgid "Success Rate"
-msgstr ""
-
-#: admin/class-fito-tryon-admin.php:185
-msgid "Healthy AI provider completion"
-msgstr ""
-
-#: admin/class-fito-tryon-admin.php:189
-msgid "Avg Generation Time"
-msgstr ""
-
-#: admin/class-fito-tryon-admin.php:191
-msgid "Customer wait time before preview"
-msgstr ""
-
-#: admin/class-fito-tryon-admin.php:195
-msgid "Estimated API Spend"
-msgstr ""
-
-#: admin/class-fito-tryon-admin.php:197
-msgid "Direct AI provider usage"
-msgstr ""
-
-#: admin/class-fito-tryon-admin.php:206
-msgid "Try-On Volume (Past 14 Days)"
-msgstr ""
-
-#: admin/class-fito-tryon-admin.php:216
-msgid "Top Tried-On Products"
-msgstr ""
-
-#: admin/class-fito-tryon-admin.php:220
-msgid "No product try-on records recorded yet."
-msgstr ""
-
-#: admin/class-fito-tryon-admin.php:239
-msgid "%1$d try-ons (%2$d%% success)"
-msgstr ""
-
-#: admin/class-fito-tryon-admin.php:304
-msgid "Try-On Audit Logs"
-msgstr ""
-
-#: admin/class-fito-tryon-admin.php:308
-msgid "Clear All Logs"
-msgstr ""
-
-#: admin/class-fito-tryon-admin.php:317
-msgid "Search model, IP, error..."
-msgstr ""
-
-#: admin/class-fito-tryon-admin.php:319
-msgid "All Statuses"
-msgstr ""
-
-#: admin/class-fito-tryon-admin.php:320
-msgid "Success"
-msgstr ""
-
-#: admin/class-fito-tryon-admin.php:321
-msgid "Failed"
-msgstr ""
-
-#: admin/class-fito-tryon-admin.php:324
-msgid "10 per page"
-msgstr ""
-
-#: admin/class-fito-tryon-admin.php:325
-msgid "20 per page"
-msgstr ""
-
-#: admin/class-fito-tryon-admin.php:326
-msgid "50 per page"
-msgstr ""
-
-#: admin/class-fito-tryon-admin.php:327
-msgid "100 per page"
-msgstr ""
-
-#: admin/class-fito-tryon-admin.php:329
-msgid "Filter"
-msgstr ""
-
-#: admin/class-fito-tryon-admin.php:331
-msgid "Reset"
-msgstr ""
-
-#: admin/class-fito-tryon-admin.php:341
-msgid "ID"
-msgstr ""
-
-#: admin/class-fito-tryon-admin.php:342
-msgid "Date / Time"
-msgstr ""
-
-#: admin/class-fito-tryon-admin.php:343
-msgid "User"
-msgstr ""
-
-#: admin/class-fito-tryon-admin.php:344 includes/class-fito-tryon-account.php:120 includes/class-fito-tryon-openrouter.php:754
-msgid "Product"
-msgstr ""
-
-#: admin/class-fito-tryon-admin.php:346
-msgid "Previews"
-msgstr ""
-
-#: admin/class-fito-tryon-admin.php:349
-msgid "Model Used"
-msgstr ""
-
-#: admin/class-fito-tryon-admin.php:350
-msgid "Status"
-msgstr ""
-
-#: admin/class-fito-tryon-admin.php:351
-msgid "Duration"
-msgstr ""
-
-#: admin/class-fito-tryon-admin.php:352
-msgid "Cost Est."
-msgstr ""
-
-#: admin/class-fito-tryon-admin.php:353
-msgid "Actions"
-msgstr ""
-
-#: admin/class-fito-tryon-admin.php:360
-msgid "No log entries match your criteria."
-msgstr ""
-
-#: admin/class-fito-tryon-admin.php:366
-msgid "User #%d"
-msgstr ""
-
-#: admin/class-fito-tryon-admin.php:366 admin/class-fito-tryon-admin.php:399
-msgid "Guest"
-msgstr ""
-
-#: admin/class-fito-tryon-admin.php:376 includes/class-fito-tryon-account.php:117 includes/class-fito-tryon-database.php:508
-msgid "Deleted Product (ID %d)"
-msgstr ""
-
-#: admin/class-fito-tryon-admin.php:380
-msgid "General / No Product"
-msgstr ""
-
-#: admin/class-fito-tryon-admin.php:420
-msgid "Edit product in WooCommerce admin"
-msgstr ""
-
-#: admin/class-fito-tryon-admin.php:420
-msgid "Edit"
-msgstr ""
-
-#: admin/class-fito-tryon-admin.php:426
-msgid "View product on store frontend"
-msgstr ""
-
-#: admin/class-fito-tryon-admin.php:426
-msgid "View"
-msgstr ""
-
-#: admin/class-fito-tryon-admin.php:440
-msgid "User input"
-msgstr ""
-
-#: admin/class-fito-tryon-admin.php:443
-msgid "Try-on result"
-msgstr ""
-
-#: admin/class-fito-tryon-admin.php:472
-msgid "Inspect"
-msgstr ""
-
-#: admin/class-fito-tryon-admin.php:492
-msgid "Showing %1$d to %2$d of %3$d logs"
-msgstr ""
-
-#: admin/class-fito-tryon-admin.php:495
-msgid "No logs found"
-msgstr ""
-
-#: admin/class-fito-tryon-admin.php:499
-msgid "Logs pagination"
-msgstr ""
-
-#: admin/class-fito-tryon-admin.php:504
-msgid "Prev"
-msgstr ""
-
-#: admin/class-fito-tryon-admin.php:505
-msgid "Next"
-msgstr ""
-
-#: admin/class-fito-tryon-admin.php:518
-msgid "Log Details"
-msgstr ""
-
-#: admin/class-fito-tryon-admin.php:520 includes/class-fito-tryon-public.php:387
-msgid "Close"
-msgstr ""
-
-#: admin/class-fito-tryon-admin.php:543 includes/class-fito-tryon-public.php:300
-msgid "Try It On with AI"
-msgstr ""
-
-#: admin/class-fito-tryon-admin.php:577 includes/class-fito-tryon-public.php:124
-msgid "Please sign up or log in to your account to use our AI Virtual Try-On feature and preview how this item looks on you."
-msgstr ""
-
-#: admin/class-fito-tryon-admin.php:589
-msgid "Virtual Try-On Settings"
-msgstr ""
-
-#: admin/class-fito-tryon-admin.php:599
-msgid "Settings saved successfully."
-msgstr ""
-
-#: admin/class-fito-tryon-admin.php:612
-msgid "Stored photos purged successfully (%d files deleted)."
-msgstr ""
-
-#: admin/class-fito-tryon-admin.php:627
-msgid "Try-on result cache flushed successfully (%d cached items removed)."
-msgstr ""
-
-#: admin/class-fito-tryon-admin.php:642
-msgid "1. AI Provider Connection & Models"
-msgstr ""
-
-#: admin/class-fito-tryon-admin.php:643
-msgid "Choose your preferred AI service provider for virtual try-on image generation."
-msgstr ""
-
-#: admin/class-fito-tryon-admin.php:648
-msgid "Refresh Models from Provider"
-msgstr ""
-
-#: admin/class-fito-tryon-admin.php:657
-msgid "AI Provider"
-msgstr ""
-
-#: admin/class-fito-tryon-admin.php:651
-msgid "AI Engine"
-msgstr ""
-
-#: admin/class-fito-tryon-admin.php:655
-msgid "OpenRouter (Multi-Model Aggregator)"
-msgstr ""
-
-#: admin/class-fito-tryon-admin.php:658
-msgid "OpenRouter powers AI virtual try-on image generation with access to top vision models."
-msgstr ""
-
-#: admin/class-fito-tryon-admin.php:668
-msgid "OpenRouter API Key"
-msgstr ""
-
-#: admin/class-fito-tryon-admin.php:672
-msgid "Test Connection"
-msgstr ""
-
-#: admin/class-fito-tryon-admin.php:674
-msgid "Get your API key at openrouter.ai/keys."
-msgstr ""
-
-#: admin/class-fito-tryon-admin.php:679
-msgid "Primary Model"
-msgstr ""
-
-#: admin/class-fito-tryon-admin.php:688
-msgid "Only image generation models suitable for virtual try-on are displayed (cached for 24 hours)."
-msgstr ""
-
-#: admin/class-fito-tryon-admin.php:837
-msgid "Request Timeout (seconds)"
-msgstr ""
-
-#: admin/class-fito-tryon-admin.php:849
-msgid "2. Frontend Widget & Button Appearance"
-msgstr ""
-
-#: admin/class-fito-tryon-admin.php:854
-msgid "Button Text"
-msgstr ""
-
-#: admin/class-fito-tryon-admin.php:857
-msgid "Custom storefront button label. Leave blank to use default \"Try It On with AI\"."
-msgstr ""
-
-#: admin/class-fito-tryon-admin.php:862
-msgid "Button Placement"
-msgstr ""
-
-#: admin/class-fito-tryon-admin.php:865
-msgid "Below Add to Cart button (Recommended)"
-msgstr ""
-
-#: admin/class-fito-tryon-admin.php:866
-msgid "Above Add to Cart button"
-msgstr ""
-
-#: admin/class-fito-tryon-admin.php:867
-msgid "In a custom Product Tab"
-msgstr ""
-
-#: admin/class-fito-tryon-admin.php:868
-msgid "Shortcode only [elfit_tryon]"
-msgstr ""
-
-#: admin/class-fito-tryon-admin.php:870
-msgid "Choose where the AI Virtual Try-On button appears on single product pages."
-msgstr ""
-
-#: admin/class-fito-tryon-admin.php:929
-msgid "3. Abuse Prevention & Data Privacy"
-msgstr ""
-
-#: admin/class-fito-tryon-admin.php:934
-msgid "Access Control"
-msgstr ""
-
-#: admin/class-fito-tryon-admin.php:937
-msgid "Allow everyone (Guests and registered users)"
-msgstr ""
-
-#: admin/class-fito-tryon-admin.php:938
-msgid "Only logged-in users"
-msgstr ""
-
-#: admin/class-fito-tryon-admin.php:940
-msgid "Choose whether guests can try on items immediately or must sign up / log in to access the virtual fitting room."
-msgstr ""
-
-#: admin/class-fito-tryon-admin.php:944
-msgid "Login / Signup Page URL"
-msgstr ""
-
-#: admin/class-fito-tryon-admin.php:948
-msgid "Use My Account URL"
-msgstr ""
-
-#: admin/class-fito-tryon-admin.php:950
-msgid "Destination URL where guests are directed to sign up or log in. Visitors will be seamlessly returned back to their product page after logging in."
-msgstr ""
-
-#: admin/class-fito-tryon-admin.php:954
-msgid "Signup / Login Prompt Message"
-msgstr ""
-
-#: admin/class-fito-tryon-admin.php:957
-msgid "Message displayed inside the modal when an unregistered visitor clicks the try-on button."
-msgstr ""
-
-#: admin/class-fito-tryon-admin.php:961
-msgid "Guest Sample Try-On Image"
-msgstr ""
-
-#: admin/class-fito-tryon-admin.php:965
-msgid "Sample try-on preview"
-msgstr ""
-
-#: admin/class-fito-tryon-admin.php:970
-msgid "Upload Sample Image"
-msgstr ""
-
-#: admin/class-fito-tryon-admin.php:973 admin/class-fito-tryon-admin.php:1115
-msgid "Remove"
-msgstr ""
-
-#: admin/class-fito-tryon-admin.php:977
-msgid "Upload a sample virtual try-on or Before/After transformation image to display to guest visitors inside the modal. If empty, the built-in high resolution sample showcase is displayed."
-msgstr ""
-
-#: admin/class-fito-tryon-admin.php:982
-msgid "Rate Limiting"
-msgstr ""
-
-#: admin/class-fito-tryon-admin.php:987
-msgid "Enforce try-on limits per user account"
-msgstr ""
-
-#: admin/class-fito-tryon-admin.php:990
-msgid "Enforce try-on limits per device cookie & IP"
-msgstr ""
-
-#: admin/class-fito-tryon-admin.php:994
-msgid "Max try-ons:"
-msgstr ""
-
-#: admin/class-fito-tryon-admin.php:997
-msgid "per minute"
-msgstr ""
-
-#: admin/class-fito-tryon-admin.php:998
-msgid "per hour"
-msgstr ""
-
-#: admin/class-fito-tryon-admin.php:999
-msgid "per day"
-msgstr ""
-
-#: admin/class-fito-tryon-admin.php:1003
-msgid "Throttle repeated virtual try-ons per registered customer account to protect your API balance."
-msgstr ""
-
-#: admin/class-fito-tryon-admin.php:1006
-msgid "Tracks each guest device via a persistent browser cookie so family members sharing the same home WiFi/IP keep independent try-on allowances, backed by an IP safety ceiling against abuse."
-msgstr ""
-
-#: admin/class-fito-tryon-admin.php:1011
-msgid "Log Retention in Database"
-msgstr ""
-
-#: admin/class-fito-tryon-admin.php:1014
-msgid "Do not log"
-msgstr ""
-
-#: admin/class-fito-tryon-admin.php:1015
-msgid "1 day"
-msgstr ""
-
-#: admin/class-fito-tryon-admin.php:1016
-msgid "3 days"
-msgstr ""
-
-#: admin/class-fito-tryon-admin.php:1017
-msgid "1 week"
-msgstr ""
-
-#: admin/class-fito-tryon-admin.php:1018
-msgid "30 days"
-msgstr ""
-
-#: admin/class-fito-tryon-admin.php:1019
-msgid "Never clear logs"
-msgstr ""
-
-#: admin/class-fito-tryon-admin.php:1021
-msgid "Choose how long try-on audit log records are preserved in the database before being automatically purged, or disable logging entirely."
-msgstr ""
-
-#: admin/class-fito-tryon-admin.php:1025
-msgid "Consent Notice Text"
-msgstr ""
-
-#: admin/class-fito-tryon-admin.php:1071
-msgid "4. Enabled Product Categories"
-msgstr ""
-
-#: admin/class-fito-tryon-admin.php:1072
-msgid "Leave all unchecked to enable virtual try-on across your entire store."
-msgstr ""
-
-#: admin/class-fito-tryon-admin.php:1085
-msgid "No product categories found."
-msgstr ""
-
-#: admin/class-fito-tryon-admin.php:1177
-msgid "Save Changes"
-msgstr ""
-
-#: admin/class-fito-tryon-admin.php:1186
-msgid "Manual Photo Purge"
-msgstr ""
-
-#: admin/class-fito-tryon-admin.php:1189
-msgid "Immediately delete all temporary customer photos and generated preview files from the server disk."
-msgstr ""
-
-#: admin/class-fito-tryon-admin.php:1190
-msgid "Are you sure you want to purge all stored photos?"
-msgstr ""
-
-#: admin/class-fito-tryon-admin.php:1194
-msgid "Purge All Stored Photos"
-msgstr ""
-
-#: admin/class-fito-tryon-admin.php:1241 admin/class-fito-tryon-admin.php:1393 admin/class-fito-tryon-admin.php:1731 admin/class-fito-tryon-admin.php:1826
-msgid "Unauthorized."
-msgstr ""
-
-#: admin/class-fito-tryon-admin.php:1407
-msgid "Unauthorized access."
-msgstr ""
-
-#: admin/class-fito-tryon-admin.php:1452
+#: admin/class-fito-tryon-admin.php:1024
 msgid "AI Try-On Prompts"
 msgstr ""
 
-#: admin/class-fito-tryon-admin.php:1453
+#: admin/class-fito-tryon-admin.php:1025
 msgid "Configure AI system guardrails and customize fitting prompts mapped to WooCommerce categories."
 msgstr ""
 
-#: admin/class-fito-tryon-admin.php:1462
+#: admin/class-fito-tryon-admin.php:1034
 msgid "Prompts and category mappings saved successfully."
 msgstr ""
 
-#: admin/class-fito-tryon-admin.php:1474
+#: admin/class-fito-tryon-admin.php:1046
 msgid "1. Global AI System Prompt"
 msgstr ""
 
-#: admin/class-fito-tryon-admin.php:1475
+#: admin/class-fito-tryon-admin.php:1047
 msgid "Sets the role, photographic realism standards, identity preservation, and lighting consistency for vision models."
 msgstr ""
 
-#: admin/class-fito-tryon-admin.php:1478
+#: admin/class-fito-tryon-admin.php:1050
 msgid "Reset to Default"
 msgstr ""
 
-#: admin/class-fito-tryon-admin.php:1484
+#: admin/class-fito-tryon-admin.php:1056
 msgid "This instruction is prepended as the system message to guide photorealism, body proportions, and skin/fabric fidelity."
 msgstr ""
 
-#: admin/class-fito-tryon-admin.php:1493
+#: admin/class-fito-tryon-admin.php:1064
 msgid "2. Category Try-On Prompts"
 msgstr ""
 
-#: admin/class-fito-tryon-admin.php:1494
+#: admin/class-fito-tryon-admin.php:1065
 msgid "Map WooCommerce product categories to specialized fitting prompts. Works across any language because mapping uses category IDs. If a product has no mapped prompt, the default Clothing & Apparel prompt is used."
 msgstr ""
 
-#: admin/class-fito-tryon-admin.php:1508
+#: admin/class-fito-tryon-admin.php:1071
 msgid "Prompt"
 msgstr ""
 
-#: admin/class-fito-tryon-admin.php:1524 admin/class-fito-tryon-admin.php:1661
+#: admin/class-fito-tryon-admin.php:1087
 msgid "Drag to reorder"
 msgstr ""
 
-#: admin/class-fito-tryon-admin.php:1525
+#: admin/class-fito-tryon-admin.php:1088
 msgid "Prompt Title"
 msgstr ""
 
-#: admin/class-fito-tryon-admin.php:1528
+#: admin/class-fito-tryon-admin.php:1090
 msgid "Built-in Preset"
 msgstr ""
 
-#: admin/class-fito-tryon-admin.php:1532 admin/class-fito-tryon-admin.php:1663
-msgid "Custom Prompt"
-msgstr ""
-
-#: admin/class-fito-tryon-admin.php:1541
+#: admin/class-fito-tryon-admin.php:1098
 msgid "%d categories connected"
 msgstr ""
 
-#: admin/class-fito-tryon-admin.php:1543
+#: admin/class-fito-tryon-admin.php:1100
 msgid "Default Fallback (All other categories)"
 msgstr ""
 
-#: admin/class-fito-tryon-admin.php:1545 admin/class-fito-tryon-admin.php:1666
+#: admin/class-fito-tryon-admin.php:1102
 msgid "No categories connected"
 msgstr ""
 
-#: admin/class-fito-tryon-admin.php:1558 admin/class-fito-tryon-admin.php:1670
+#: admin/class-fito-tryon-admin.php:1106
 msgid "Toggle Prompt Details"
 msgstr ""
 
-#: admin/class-fito-tryon-admin.php:1571 admin/class-fito-tryon-admin.php:1686
+#: admin/class-fito-tryon-admin.php:1119
 msgid "Connected WooCommerce Categories:"
 msgstr ""
 
-#: admin/class-fito-tryon-admin.php:1574 admin/class-fito-tryon-admin.php:1689
+#: admin/class-fito-tryon-admin.php:1122
 msgid "Filter categories..."
 msgstr ""
 
-#: admin/class-fito-tryon-admin.php:1591 admin/class-fito-tryon-admin.php:1700
+#: admin/class-fito-tryon-admin.php:1139
 msgid "No available categories to select."
 msgstr ""
 
-#: admin/class-fito-tryon-admin.php:1593 admin/class-fito-tryon-admin.php:1702
+#: admin/class-fito-tryon-admin.php:1141
 msgid "No WooCommerce product categories found."
 msgstr ""
 
-#: admin/class-fito-tryon-admin.php:1596
+#: admin/class-fito-tryon-admin.php:1144
 msgid "Check which store categories trigger this prompt. Categories can be named in any language."
 msgstr ""
 
-#: admin/class-fito-tryon-admin.php:1602 admin/class-fito-tryon-admin.php:1710
+#: admin/class-fito-tryon-admin.php:1150
 msgid "Fitting Prompt Instruction:"
 msgstr ""
 
-#: admin/class-fito-tryon-admin.php:1605 admin/class-fito-tryon-admin.php:1713
+#: admin/class-fito-tryon-admin.php:1153
 msgid "Available tag:"
 msgstr ""
 
-#: admin/class-fito-tryon-admin.php:1608
+#: admin/class-fito-tryon-admin.php:1156
 msgid "Revert instruction back to built-in default"
 msgstr ""
 
-#: admin/class-fito-tryon-admin.php:1610
+#: admin/class-fito-tryon-admin.php:1158
 msgid "Revert to Default"
 msgstr ""
 
-#: admin/class-fito-tryon-admin.php:1620
+#: admin/class-fito-tryon-admin.php:1168
 msgid "Original Built-in Default Prompt (Click to view):"
 msgstr ""
 
-#: admin/class-fito-tryon-admin.php:1628
+#: admin/class-fito-tryon-admin.php:1176
 msgid "Image 1 is the customer photo, Image 2 is the product image. The tag {product_title} is dynamically replaced with the product name. Variation attributes are automatically appended."
 msgstr ""
 
-#: admin/class-fito-tryon-admin.php:1649
+#: admin/class-fito-tryon-admin.php:1189
 msgid "Save Prompts"
 msgstr ""
 
-#: elfit-ai-virtual-try-on-for-woocommerce.php:62 includes/class-fito-tryon-privacy.php:98
+#: admin/class-fito-tryon-admin.php:121
+msgid "Testing connection..."
+msgstr ""
+
+#: admin/class-fito-tryon-admin.php:122
+msgid "Connection verified successfully!"
+msgstr ""
+
+#: admin/class-fito-tryon-admin.php:123
+msgid "Fetching live models..."
+msgstr ""
+
+#: admin/class-fito-tryon-admin.php:124
+msgid "Are you sure you want to delete all temporary customer try-on photos? This cannot be undone."
+msgstr ""
+
+#: admin/class-fito-tryon-admin.php:125
+msgid "Are you sure you want to clear all audit logs?"
+msgstr ""
+
+#: admin/class-fito-tryon-admin.php:126
+msgid "Sent AI Prompt"
+msgstr ""
+
+#: admin/class-fito-tryon-admin.php:127
+msgid "Received AI Response"
+msgstr ""
+
+#: admin/class-fito-tryon-admin.php:128
+msgid "No sent prompt recorded for this log entry."
+msgstr ""
+
+#: admin/class-fito-tryon-admin.php:129
+msgid "No AI response recorded for this log entry."
+msgstr ""
+
+#: admin/class-fito-tryon-admin.php:130
+msgid "Copy"
+msgstr ""
+
+#: admin/class-fito-tryon-admin.php:131
+msgid "Copied!"
+msgstr ""
+
+#: admin/class-fito-tryon-admin.php:150
+msgid "AI Try-On Analytics & Overview"
+msgstr ""
+
+#: admin/class-fito-tryon-admin.php:152
+msgid "Monitor customer engagement, AI model performance, and conversion signals."
+msgstr ""
+
+#: admin/class-fito-tryon-admin.php:157
+msgid "Plugin Settings"
+msgstr ""
+
+#: admin/class-fito-tryon-admin.php:165
+msgid "Today / This Week"
+msgstr ""
+
+#: admin/class-fito-tryon-admin.php:167
+msgid "Try-on generations completed"
+msgstr ""
+
+#: admin/class-fito-tryon-admin.php:171
+msgid "Monthly Total"
+msgstr ""
+
+#: admin/class-fito-tryon-admin.php:176
+msgid "Lifetime all-time: %d"
+msgstr ""
+
+#: admin/class-fito-tryon-admin.php:182
+msgid "Success Rate"
+msgstr ""
+
+#: admin/class-fito-tryon-admin.php:184
+msgid "Healthy AI provider completion"
+msgstr ""
+
+#: admin/class-fito-tryon-admin.php:188
+msgid "Avg Generation Time"
+msgstr ""
+
+#: admin/class-fito-tryon-admin.php:190
+msgid "Customer wait time before preview"
+msgstr ""
+
+#: admin/class-fito-tryon-admin.php:194
+msgid "Estimated API Spend"
+msgstr ""
+
+#: admin/class-fito-tryon-admin.php:196
+msgid "Direct AI provider usage"
+msgstr ""
+
+#: admin/class-fito-tryon-admin.php:205
+msgid "Try-On Volume (Past 14 Days)"
+msgstr ""
+
+#: admin/class-fito-tryon-admin.php:215
+msgid "Top Tried-On Products"
+msgstr ""
+
+#: admin/class-fito-tryon-admin.php:219
+msgid "No product try-on records recorded yet."
+msgstr ""
+
+#: admin/class-fito-tryon-admin.php:238
+msgid "%1$d try-ons (%2$d%% success)"
+msgstr ""
+
+#: admin/class-fito-tryon-admin.php:28 admin/class-fito-tryon-admin.php:29
+msgid "AI Try-On"
+msgstr ""
+
+#: admin/class-fito-tryon-admin.php:303
+msgid "Try-On Audit Logs"
+msgstr ""
+
+#: admin/class-fito-tryon-admin.php:307
+msgid "Clear All Logs"
+msgstr ""
+
+#: admin/class-fito-tryon-admin.php:316
+msgid "Search model, IP, error..."
+msgstr ""
+
+#: admin/class-fito-tryon-admin.php:318
+msgid "All Statuses"
+msgstr ""
+
+#: admin/class-fito-tryon-admin.php:319
+msgid "Success"
+msgstr ""
+
+#: admin/class-fito-tryon-admin.php:320
+msgid "Failed"
+msgstr ""
+
+#: admin/class-fito-tryon-admin.php:323
+msgid "10 per page"
+msgstr ""
+
+#: admin/class-fito-tryon-admin.php:324
+msgid "20 per page"
+msgstr ""
+
+#: admin/class-fito-tryon-admin.php:325
+msgid "50 per page"
+msgstr ""
+
+#: admin/class-fito-tryon-admin.php:326
+msgid "100 per page"
+msgstr ""
+
+#: admin/class-fito-tryon-admin.php:328
+msgid "Filter"
+msgstr ""
+
+#: admin/class-fito-tryon-admin.php:330
+msgid "Reset"
+msgstr ""
+
+#: admin/class-fito-tryon-admin.php:340
+msgid "ID"
+msgstr ""
+
+#: admin/class-fito-tryon-admin.php:341
+msgid "Date / Time"
+msgstr ""
+
+#: admin/class-fito-tryon-admin.php:342
+msgid "User"
+msgstr ""
+
+#: admin/class-fito-tryon-admin.php:343 includes/class-fito-tryon-openrouter.php:738
+msgid "Product"
+msgstr ""
+
+#: admin/class-fito-tryon-admin.php:344
+msgid "Model Used"
+msgstr ""
+
+#: admin/class-fito-tryon-admin.php:345
+msgid "Status"
+msgstr ""
+
+#: admin/class-fito-tryon-admin.php:346
+msgid "Duration"
+msgstr ""
+
+#: admin/class-fito-tryon-admin.php:347
+msgid "Cost Est."
+msgstr ""
+
+#: admin/class-fito-tryon-admin.php:348
+msgid "Actions"
+msgstr ""
+
+#: admin/class-fito-tryon-admin.php:354
+msgid "No log entries match your criteria."
+msgstr ""
+
+#: admin/class-fito-tryon-admin.php:360
+msgid "User #%d"
+msgstr ""
+
+#: admin/class-fito-tryon-admin.php:360 admin/class-fito-tryon-admin.php:393
+msgid "Guest"
+msgstr ""
+
+#: admin/class-fito-tryon-admin.php:370 includes/class-fito-tryon-database.php:450
+msgid "Deleted Product (ID %d)"
+msgstr ""
+
+#: admin/class-fito-tryon-admin.php:374
+msgid "General / No Product"
+msgstr ""
+
+#: admin/class-fito-tryon-admin.php:39 admin/class-fito-tryon-admin.php:40
+msgid "Dashboard"
+msgstr ""
+
+#: admin/class-fito-tryon-admin.php:414
+msgid "Edit product in WooCommerce admin"
+msgstr ""
+
+#: admin/class-fito-tryon-admin.php:414
+msgid "Edit"
+msgstr ""
+
+#: admin/class-fito-tryon-admin.php:420
+msgid "View product on store frontend"
+msgstr ""
+
+#: admin/class-fito-tryon-admin.php:420
+msgid "View"
+msgstr ""
+
+#: admin/class-fito-tryon-admin.php:446
+msgid "Inspect"
+msgstr ""
+
+#: admin/class-fito-tryon-admin.php:466
+msgid "Showing %1$d to %2$d of %3$d logs"
+msgstr ""
+
+#: admin/class-fito-tryon-admin.php:469
+msgid "No logs found"
+msgstr ""
+
+#: admin/class-fito-tryon-admin.php:473
+msgid "Logs pagination"
+msgstr ""
+
+#: admin/class-fito-tryon-admin.php:478
+msgid "Prev"
+msgstr ""
+
+#: admin/class-fito-tryon-admin.php:479
+msgid "Next"
+msgstr ""
+
+#: admin/class-fito-tryon-admin.php:48 admin/class-fito-tryon-admin.php:49
+msgid "Prompts"
+msgstr ""
+
+#: admin/class-fito-tryon-admin.php:492
+msgid "Log Details"
+msgstr ""
+
+#: admin/class-fito-tryon-admin.php:494 includes/class-fito-tryon-public.php:387
+msgid "Close"
+msgstr ""
+
+#: admin/class-fito-tryon-admin.php:510 includes/blocks/tryon-button/index.js:65 includes/class-fito-tryon-public.php:300
+msgid "Try It On with AI"
+msgstr ""
+
+#: admin/class-fito-tryon-admin.php:527 includes/class-fito-tryon-public.php:124
+msgid "Please sign up or log in to your account to use our AI Virtual Try-On feature and preview how this item looks on you."
+msgstr ""
+
+#: admin/class-fito-tryon-admin.php:539
+msgid "Virtual Try-On Settings"
+msgstr ""
+
+#: admin/class-fito-tryon-admin.php:549
+msgid "Settings saved successfully."
+msgstr ""
+
+#: admin/class-fito-tryon-admin.php:562
+msgid "Stored photos purged successfully (%d files deleted)."
+msgstr ""
+
+#: admin/class-fito-tryon-admin.php:57
+msgid "Try-On Logs"
+msgstr ""
+
+#: admin/class-fito-tryon-admin.php:577
+msgid "1. AI Provider Connection & Models"
+msgstr ""
+
+#: admin/class-fito-tryon-admin.php:578
+msgid "Choose your preferred AI service provider for virtual try-on image generation."
+msgstr ""
+
+#: admin/class-fito-tryon-admin.php:58
+msgid "Audit Logs"
+msgstr ""
+
+#: admin/class-fito-tryon-admin.php:583
+msgid "Refresh Models from Provider"
+msgstr ""
+
+#: admin/class-fito-tryon-admin.php:592
+msgid "AI Engine"
+msgstr ""
+
+#: admin/class-fito-tryon-admin.php:597
+msgid "OpenRouter (Multi-Model Aggregator)"
+msgstr ""
+
+#: admin/class-fito-tryon-admin.php:600
+msgid "OpenRouter powers AI virtual try-on image generation with access to top vision models."
+msgstr ""
+
+#: admin/class-fito-tryon-admin.php:609
+msgid "OpenRouter API Key"
+msgstr ""
+
+#: admin/class-fito-tryon-admin.php:613
+msgid "Test Connection"
+msgstr ""
+
+#: admin/class-fito-tryon-admin.php:615
+msgid "Get your API key at openrouter.ai/keys."
+msgstr ""
+
+#: admin/class-fito-tryon-admin.php:620
+msgid "Primary Model"
+msgstr ""
+
+#: admin/class-fito-tryon-admin.php:629
+msgid "Only image generation models suitable for virtual try-on are displayed (cached for 24 hours)."
+msgstr ""
+
+#: admin/class-fito-tryon-admin.php:650
+msgid "Request Timeout (seconds)"
+msgstr ""
+
+#: admin/class-fito-tryon-admin.php:66 admin/class-fito-tryon-admin.php:67 includes/class-fito-tryon.php:80
+msgid "Settings"
+msgstr ""
+
+#: admin/class-fito-tryon-admin.php:662
+msgid "2. Frontend Widget & Button Appearance"
+msgstr ""
+
+#: admin/class-fito-tryon-admin.php:667
+msgid "Button Text"
+msgstr ""
+
+#: admin/class-fito-tryon-admin.php:670
+msgid "Custom storefront button label. Leave blank to use default \"Try It On with AI\"."
+msgstr ""
+
+#: admin/class-fito-tryon-admin.php:675
+msgid "Button Placement"
+msgstr ""
+
+#: admin/class-fito-tryon-admin.php:678
+msgid "Below Add to Cart button (Recommended)"
+msgstr ""
+
+#: admin/class-fito-tryon-admin.php:679
+msgid "Above Add to Cart button"
+msgstr ""
+
+#: admin/class-fito-tryon-admin.php:680
+msgid "In a custom Product Tab"
+msgstr ""
+
+#: admin/class-fito-tryon-admin.php:681
+msgid "Shortcode only [elfit_tryon]"
+msgstr ""
+
+#: admin/class-fito-tryon-admin.php:683
+msgid "Choose where the AI Virtual Try-On button appears on single product pages."
+msgstr ""
+
+#: admin/class-fito-tryon-admin.php:694
+msgid "3. Abuse Prevention & Data Privacy"
+msgstr ""
+
+#: admin/class-fito-tryon-admin.php:699
+msgid "Access Control"
+msgstr ""
+
+#: admin/class-fito-tryon-admin.php:702
+msgid "Allow everyone (Guests and registered users)"
+msgstr ""
+
+#: admin/class-fito-tryon-admin.php:703
+msgid "Only logged-in users"
+msgstr ""
+
+#: admin/class-fito-tryon-admin.php:705
+msgid "Choose whether guests can try on items immediately or must sign up / log in to access the virtual fitting room."
+msgstr ""
+
+#: admin/class-fito-tryon-admin.php:709
+msgid "Login / Signup Page URL"
+msgstr ""
+
+#: admin/class-fito-tryon-admin.php:713
+msgid "Use My Account URL"
+msgstr ""
+
+#: admin/class-fito-tryon-admin.php:715
+msgid "Destination URL where guests are directed to sign up or log in. Visitors will be seamlessly returned back to their product page after logging in."
+msgstr ""
+
+#: admin/class-fito-tryon-admin.php:719
+msgid "Signup / Login Prompt Message"
+msgstr ""
+
+#: admin/class-fito-tryon-admin.php:722
+msgid "Message displayed inside the modal when an unregistered visitor clicks the try-on button."
+msgstr ""
+
+#: admin/class-fito-tryon-admin.php:726
+msgid "Guest Sample Try-On Image"
+msgstr ""
+
+#: admin/class-fito-tryon-admin.php:730
+msgid "Sample try-on preview"
+msgstr ""
+
+#: admin/class-fito-tryon-admin.php:735
+msgid "Upload Sample Image"
+msgstr ""
+
+#: admin/class-fito-tryon-admin.php:738
+msgid "Remove"
+msgstr ""
+
+#: admin/class-fito-tryon-admin.php:742
+msgid "Upload a sample virtual try-on or Before/After transformation image to display to guest visitors inside the modal. If empty, the built-in high resolution sample showcase is displayed."
+msgstr ""
+
+#: admin/class-fito-tryon-admin.php:747
+msgid "Rate Limiting"
+msgstr ""
+
+#: admin/class-fito-tryon-admin.php:752
+msgid "Enforce try-on limits per user account"
+msgstr ""
+
+#: admin/class-fito-tryon-admin.php:755
+msgid "Enforce try-on limits per device cookie & IP"
+msgstr ""
+
+#: admin/class-fito-tryon-admin.php:759
+msgid "Max try-ons:"
+msgstr ""
+
+#: admin/class-fito-tryon-admin.php:762
+msgid "per minute"
+msgstr ""
+
+#: admin/class-fito-tryon-admin.php:763
+msgid "per hour"
+msgstr ""
+
+#: admin/class-fito-tryon-admin.php:764
+msgid "per day"
+msgstr ""
+
+#: admin/class-fito-tryon-admin.php:768
+msgid "Throttle repeated virtual try-ons per registered customer account to protect your API balance."
+msgstr ""
+
+#: admin/class-fito-tryon-admin.php:771
+msgid "Tracks each guest device via a persistent browser cookie so family members sharing the same home WiFi/IP keep independent try-on allowances, backed by an IP safety ceiling against abuse."
+msgstr ""
+
+#: admin/class-fito-tryon-admin.php:776
+msgid "Log Retention in Database"
+msgstr ""
+
+#: admin/class-fito-tryon-admin.php:779
+msgid "Do not log"
+msgstr ""
+
+#: admin/class-fito-tryon-admin.php:780
+msgid "1 day"
+msgstr ""
+
+#: admin/class-fito-tryon-admin.php:781
+msgid "3 days"
+msgstr ""
+
+#: admin/class-fito-tryon-admin.php:782
+msgid "1 week"
+msgstr ""
+
+#: admin/class-fito-tryon-admin.php:783
+msgid "30 days"
+msgstr ""
+
+#: admin/class-fito-tryon-admin.php:784
+msgid "Never clear logs"
+msgstr ""
+
+#: admin/class-fito-tryon-admin.php:786
+msgid "Choose how long try-on audit log records are preserved in the database before being automatically purged, or disable logging entirely."
+msgstr ""
+
+#: admin/class-fito-tryon-admin.php:790
+msgid "Consent Notice Text"
+msgstr ""
+
+#: admin/class-fito-tryon-admin.php:803
+msgid "4. Enabled Product Categories"
+msgstr ""
+
+#: admin/class-fito-tryon-admin.php:804
+msgid "Leave all unchecked to enable virtual try-on across your entire store."
+msgstr ""
+
+#: admin/class-fito-tryon-admin.php:817
+msgid "No product categories found."
+msgstr ""
+
+#: admin/class-fito-tryon-admin.php:826
+msgid "Save Changes"
+msgstr ""
+
+#: admin/class-fito-tryon-admin.php:835
+msgid "Manual Photo Purge"
+msgstr ""
+
+#: admin/class-fito-tryon-admin.php:838
+msgid "Immediately delete all temporary customer photos and generated preview files from the server disk."
+msgstr ""
+
+#: admin/class-fito-tryon-admin.php:839
+msgid "Are you sure you want to purge all stored photos?"
+msgstr ""
+
+#: admin/class-fito-tryon-admin.php:843
+msgid "Purge All Stored Photos"
+msgstr ""
+
+#: admin/class-fito-tryon-admin.php:874 admin/class-fito-tryon-admin.php:968 admin/class-fito-tryon-admin.php:1199
+msgid "Unauthorized."
+msgstr ""
+
+#: admin/class-fito-tryon-admin.php:981
+msgid "Unauthorized access."
+msgstr ""
+
+#. Description of the plugin
+#: elfit-ai-virtual-try-on-for-woocommerce.php
+msgid "Enable customers to virtually try on clothing, shoes, glasses, jewelry, and accessories directly in WooCommerce using OpenRouter AI."
+msgstr ""
+
+#. Plugin URI of the plugin
+#: elfit-ai-virtual-try-on-for-woocommerce.php
+msgid "https://wordpress.org/plugins/elfit-ai-virtual-try-on-for-woocommerce/"
+msgstr ""
+
+#. Author of the plugin
+#: elfit-ai-virtual-try-on-for-woocommerce.php
+msgid "micromax"
+msgstr ""
+
+#. Plugin Name of the plugin
+#: elfit-ai-virtual-try-on-for-woocommerce.php:62 includes/class-fito-tryon-privacy.php:96 elfit-ai-virtual-try-on-for-woocommerce.php
 msgid "Elfit AI Virtual Try-On for WooCommerce"
 msgstr ""
 
@@ -725,228 +717,166 @@ msgstr ""
 msgid "requires WooCommerce to be installed and active."
 msgstr ""
 
-#: includes/class-fito-tryon-account.php:33 includes/class-fito-tryon-account.php:37
-msgid "My Try-Ons"
+#. Block title
+#: includes/blocks/tryon-button/block.json includes/blocks/tryon-button/index.js:12
+msgid "AI Try-On Button"
 msgstr ""
 
-#: includes/class-fito-tryon-account.php:47 includes/class-fito-tryon-account.php:53
-msgid "Save to account"
+#. Block description
+#: includes/blocks/tryon-button/block.json
+msgid "Insert a virtual AI Try-On button into your product templates or posts."
 msgstr ""
 
-#: includes/class-fito-tryon-account.php:95
-msgid "My Virtual Try-On History"
+#: includes/blocks/tryon-button/index.js:37
+msgid "Button Settings"
 msgstr ""
 
-#: includes/class-fito-tryon-account.php:98
-msgid "You have not saved any try-on previews to your account yet."
+#: includes/blocks/tryon-button/index.js:39
+msgid "Button Label"
 msgstr ""
 
-#: includes/class-fito-tryon-account.php:129
-msgid "View Product"
-msgstr ""
-
-#: includes/class-fito-tryon-account.php:165
-msgid "Invalid parameters or unauthenticated request."
-msgstr ""
-
-#: includes/class-fito-tryon-account.php:174
-msgid "Saved to your account!"
-msgstr ""
-
-#: includes/class-fito-tryon-account.php:175
-msgid "Failed to save try-on."
-msgstr ""
-
-#: includes/class-fito-tryon-database.php:125
+#: includes/class-fito-tryon-database.php:122
 msgid "Preparing try-on request..."
 msgstr ""
 
-#: includes/class-fito-tryon-database.php:510
+#: includes/class-fito-tryon-database.php:452
 msgid "Unknown Product"
 msgstr ""
 
-#: includes/class-fito-tryon-openrouter.php:229 includes/class-fito-tryon-openrouter.php:274
-msgid "Image Generation"
-msgstr ""
-
-#: includes/class-fito-tryon-openrouter.php:128
-msgid "Connection failed: %s"
-msgstr ""
-
-#: includes/class-fito-tryon-openrouter.php:356 includes/class-fito-tryon-openrouter.php:357
-msgid "Missing or unreadable user photo."
-msgstr ""
-
-#: includes/class-fito-tryon-openrouter.php:54
-msgid "State-of-the-art photorealism, skin textures, and fabric lighting."
-msgstr ""
-
-#: includes/class-fito-tryon-openrouter.php:64
-msgid "Direct diffusion generation optimized for speed."
-msgstr ""
-
-#: includes/class-fito-tryon-openrouter.php:74
-msgid "Ultra-fast diffusion try-on generation."
-msgstr ""
-
-#: includes/class-fito-tryon-openrouter.php:84
-msgid "Native Google image generation and multi-reference editing model."
-msgstr ""
-
-#: includes/class-fito-tryon-openrouter.php:94
-msgid "OpenAI native image generation with multi-reference image-to-image support."
-msgstr ""
-
-#: includes/class-fito-tryon-openrouter.php:111
+#: includes/class-fito-tryon-openrouter.php:107
 msgid "Please enter an OpenRouter API key before testing."
 msgstr ""
 
-#: includes/class-fito-tryon-openrouter.php:137
+#: includes/class-fito-tryon-openrouter.php:124
+msgid "Connection failed: %s"
+msgstr ""
+
+#: includes/class-fito-tryon-openrouter.php:133
 msgid "Default Key"
 msgstr ""
 
-#: includes/class-fito-tryon-openrouter.php:146
+#: includes/class-fito-tryon-openrouter.php:142
 msgid "Connection verified! Key: \"%1$s\" (Total spend: $%2$s%3$s)"
 msgstr ""
 
-#: includes/class-fito-tryon-openrouter.php:155
+#: includes/class-fito-tryon-openrouter.php:151
 msgid "Authentication failed. Check your API key."
 msgstr ""
 
-#: includes/class-fito-tryon-openrouter.php:318
+#: includes/class-fito-tryon-openrouter.php:225 includes/class-fito-tryon-openrouter.php:270
+msgid "Image Generation"
+msgstr ""
+
+#: includes/class-fito-tryon-openrouter.php:314
 msgid "OpenRouter API key is not configured in settings."
 msgstr ""
 
-#: includes/class-fito-tryon-openrouter.php:441
+#: includes/class-fito-tryon-openrouter.php:340 includes/class-fito-tryon-openrouter.php:341
+msgid "Missing or unreadable user photo."
+msgstr ""
+
+#: includes/class-fito-tryon-openrouter.php:425
 msgid "AI request timed out or network error: %s"
 msgstr ""
 
-#: includes/class-fito-tryon-openrouter.php:471
+#: includes/class-fito-tryon-openrouter.php:455
 msgid "Empty response returned from AI model."
 msgstr ""
 
-#: includes/class-fito-tryon-openrouter.php:509
+#: includes/class-fito-tryon-openrouter.php:493
 msgid "This item cannot be virtually fitted due to AI clothing category restrictions. Please try another product."
 msgstr ""
 
-#: includes/class-fito-tryon-openrouter.php:511 includes/class-fito-tryon-openrouter.php:954
+#: includes/class-fito-tryon-openrouter.php:495 includes/class-fito-tryon-openrouter.php:938
 msgid "The AI provider rejected the request due to content safety/moderation policies. Please try a different photo or clothing item."
 msgstr ""
 
-#: includes/class-fito-tryon-openrouter.php:514
+#: includes/class-fito-tryon-openrouter.php:498
 msgid "AI Model Notice: %s"
 msgstr ""
 
-#: includes/class-fito-tryon-openrouter.php:516
+#: includes/class-fito-tryon-openrouter.php:50
+msgid "State-of-the-art photorealism, skin textures, and fabric lighting."
+msgstr ""
+
+#: includes/class-fito-tryon-openrouter.php:500
 msgid "The AI model responded with text but was unable to generate an image."
 msgstr ""
 
-#: includes/class-fito-tryon-openrouter.php:589
+#: includes/class-fito-tryon-openrouter.php:573
 msgid "OpenRouter Image API request failed."
 msgstr ""
 
-#: includes/class-fito-tryon-openrouter.php:602
+#: includes/class-fito-tryon-openrouter.php:586
 msgid "OpenRouter Image API did not return data."
 msgstr ""
 
-#: includes/class-fito-tryon-openrouter.php:612
+#: includes/class-fito-tryon-openrouter.php:596
 msgid "OpenRouter Image API returned empty image."
 msgstr ""
 
-#: includes/class-fito-tryon-openrouter.php:823
+#: includes/class-fito-tryon-openrouter.php:60
+msgid "Direct diffusion generation optimized for speed."
+msgstr ""
+
+#: includes/class-fito-tryon-openrouter.php:70
+msgid "Ultra-fast diffusion try-on generation."
+msgstr ""
+
+#: includes/class-fito-tryon-openrouter.php:80
+msgid "Native Google image generation and multi-reference editing model."
+msgstr ""
+
+#: includes/class-fito-tryon-openrouter.php:807
 msgid "Selected product variation attributes: %s."
 msgstr ""
 
-#: includes/class-fito-tryon-openrouter.php:959
+#: includes/class-fito-tryon-openrouter.php:90
+msgid "OpenAI native image generation with multi-reference image-to-image support."
+msgstr ""
+
+#: includes/class-fito-tryon-openrouter.php:943
 msgid "The virtual try-on service is temporarily unavailable. Please try again in a few moments or contact store support."
 msgstr ""
 
-#: includes/class-fito-tryon-openrouter.php:963
+#: includes/class-fito-tryon-openrouter.php:947
 msgid "Invalid OpenRouter API Key. Please verify your key in Settings."
 msgstr ""
 
-#: includes/class-fito-tryon-openrouter.php:966
+#: includes/class-fito-tryon-openrouter.php:950
 msgid "OpenRouter account quota exceeded. Please top up your credits."
 msgstr ""
 
-#: includes/class-fito-tryon-openrouter.php:969
+#: includes/class-fito-tryon-openrouter.php:953
 msgid "OpenRouter rate limit reached. Please wait a moment and try again."
 msgstr ""
 
-#: includes/class-fito-tryon-openrouter.php:972
+#: includes/class-fito-tryon-openrouter.php:956
 msgid "The AI model provider is temporarily unavailable. Please try again in a few moments."
 msgstr ""
 
-#: includes/class-fito-tryon-openrouter.php:976
+#: includes/class-fito-tryon-openrouter.php:960
 msgid "AI Service Error: %s"
 msgstr ""
 
-#: includes/class-fito-tryon-openrouter.php:979
+#: includes/class-fito-tryon-openrouter.php:963
 msgid "AI request returned status %d."
 msgstr ""
 
-#: includes/class-fito-tryon-placements.php:43
-msgid "Save to My Account"
-msgstr ""
-
-#: includes/class-fito-tryon-placements.php:44
-msgid "Saved to account"
-msgstr ""
-
-#: includes/class-fito-tryon-placements.php:45 includes/class-fito-tryon-placements.php:46 includes/class-fito-tryon-placements.php:88
-msgid "Try On This Look"
-msgstr ""
-
-#: includes/class-fito-tryon-placements.php:58
-msgid "Quick Try-On"
-msgstr ""
-
-#: includes/class-fito-tryon-placements.php:120
-msgid "Try On This Variation"
-msgstr ""
-
-#: includes/class-fito-tryon-privacy.php:92
-msgid "AI Virtual Try-On"
-msgstr ""
-
-#: includes/class-fito-tryon-privacy.php:93
-msgid "When you use our virtual try-on feature, your uploaded or camera-captured photo is temporarily transmitted to our AI processing service provider solely to render the preview."
-msgstr ""
-
-#: includes/class-fito-tryon-privacy.php:94
-msgid "Customer photos are automatically deleted from server storage after temporary processing. Photos are never used to train third-party public models."
-msgstr ""
-
-#: includes/class-fito-tryon-privacy.php:108
+#: includes/class-fito-tryon-privacy.php:106
 msgid "I consent to my photo being processed by AI to generate a virtual try-on preview."
 msgstr ""
 
-#: includes/class-fito-tryon-public.php:91 includes/class-fito-tryon-public.php:492
-msgid "Connecting to fitting engine..."
+#: includes/class-fito-tryon-privacy.php:90
+msgid "AI Virtual Try-On"
 msgstr ""
 
-#: includes/class-fito-tryon-public.php:92
-msgid "Analyzing pose and camera angle..."
+#: includes/class-fito-tryon-privacy.php:91
+msgid "When you use our virtual try-on feature, your uploaded or camera-captured photo is temporarily transmitted to our AI processing service provider solely to render the preview."
 msgstr ""
 
-#: includes/class-fito-tryon-public.php:93
-msgid "Fitting garment drape and contours..."
-msgstr ""
-
-#: includes/class-fito-tryon-public.php:94
-msgid "Matching lighting and surface reflections..."
-msgstr ""
-
-#: includes/class-fito-tryon-public.php:95
-msgid "Finalizing your try-on preview..."
-msgstr ""
-
-#: includes/class-fito-tryon-public.php:98
-msgid "Choose a JPG, PNG, or WebP image."
-msgstr ""
-
-#: includes/class-fito-tryon-public.php:99
-msgid "Choose an image smaller than 10 MB."
+#: includes/class-fito-tryon-privacy.php:92
+msgid "Customer photos are automatically deleted from server storage after temporary processing. Photos are never used to train third-party public models."
 msgstr ""
 
 #: includes/class-fito-tryon-public.php:100
@@ -1093,12 +1023,40 @@ msgstr ""
 msgid "Share"
 msgstr ""
 
-#: includes/class-fito-tryon-public.php:544
+#: includes/class-fito-tryon-public.php:543
 msgid "Try another photo"
 msgstr ""
 
-#: includes/class-fito-tryon-public.php:547
+#: includes/class-fito-tryon-public.php:546
 msgid "Back to product"
+msgstr ""
+
+#: includes/class-fito-tryon-public.php:91 includes/class-fito-tryon-public.php:492
+msgid "Connecting to fitting engine..."
+msgstr ""
+
+#: includes/class-fito-tryon-public.php:92
+msgid "Analyzing pose and camera angle..."
+msgstr ""
+
+#: includes/class-fito-tryon-public.php:93
+msgid "Fitting garment drape and contours..."
+msgstr ""
+
+#: includes/class-fito-tryon-public.php:94
+msgid "Matching lighting and surface reflections..."
+msgstr ""
+
+#: includes/class-fito-tryon-public.php:95
+msgid "Finalizing your try-on preview..."
+msgstr ""
+
+#: includes/class-fito-tryon-public.php:98
+msgid "Choose a JPG, PNG, or WebP image."
+msgstr ""
+
+#: includes/class-fito-tryon-public.php:99
+msgid "Choose an image smaller than 10 MB."
 msgstr ""
 
 #: includes/class-fito-tryon-rate-limiter.php:100
@@ -1145,88 +1103,60 @@ msgstr ""
 msgid "Failed to process uploaded photo."
 msgstr ""
 
-#: includes/class-fito-tryon-rest.php:237
-msgid "Preview loaded from cache."
-msgstr ""
-
-#: includes/class-fito-tryon-rest.php:249
-msgid "Try-on complete!"
-msgstr ""
-
-#: includes/class-fito-tryon-rest.php:257
+#: includes/class-fito-tryon-rest.php:235
 msgid "Analyzing photo and product geometry..."
 msgstr ""
 
-#: includes/class-fito-tryon-rest.php:287
+#: includes/class-fito-tryon-rest.php:265
 msgid "Failed to save generated try-on image."
 msgstr ""
 
-#: includes/class-fito-tryon-rest.php:335
+#: includes/class-fito-tryon-rest.php:304
 msgid "Fitting successfully generated!"
 msgstr ""
 
-#: includes/class-fito-tryon-rest.php:376
+#: includes/class-fito-tryon-rest.php:337
 msgid "Virtual try-on completed successfully!"
 msgstr ""
 
-#: includes/class-fito-tryon-rest.php:381
+#: includes/class-fito-tryon-rest.php:342
 msgid "Failed to generate virtual try-on."
 msgstr ""
 
-#: includes/class-fito-tryon-rest.php:424
+#: includes/class-fito-tryon-rest.php:381
 msgid "Please sign in to view try-on status."
 msgstr ""
 
-#: includes/class-fito-tryon-rest.php:432
+#: includes/class-fito-tryon-rest.php:389
 msgid "Try-on job not found."
 msgstr ""
 
-#: includes/class-fito-tryon-rest.php:439
+#: includes/class-fito-tryon-rest.php:396
 msgid "The AI generation request timed out or was interrupted. Please try again."
 msgstr ""
 
-#: includes/class-fito-tryon-rest.php:503
+#: includes/class-fito-tryon-rest.php:460
 msgid "Rate limit exceeded for client error reporting."
 msgstr ""
 
-#: includes/class-fito-tryon-rest.php:526
+#: includes/class-fito-tryon-rest.php:483
 msgid "Client/network error reported: %s"
 msgstr ""
 
-#: includes/class-fito-tryon-rest.php:546 includes/class-fito-tryon-rest.php:573
+#: includes/class-fito-tryon-rest.php:499 includes/class-fito-tryon-rest.php:522
 msgid "Invalid or unsupported AI provider specified."
 msgstr ""
 
-#: includes/class-fito-tryon-rest.php:559
+#: includes/class-fito-tryon-rest.php:508
 msgid "Provider connection testing is not available."
 msgstr ""
 
-#: includes/class-fito-tryon-rest.php:617
+#: includes/class-fito-tryon-rest.php:560
 msgid "Logs updated successfully."
 msgstr ""
 
-#: includes/class-fito-tryon-rest.php:617
+#: includes/class-fito-tryon-rest.php:560
 msgid "Failed to update logs."
-msgstr ""
-
-#: includes/class-fito-tryon-storage.php:72
-msgid "No valid uploaded file found."
-msgstr ""
-
-#: includes/class-fito-tryon-storage.php:81 includes/class-fito-tryon-storage.php:182
-msgid "Image size exceeds maximum limit of %d MB."
-msgstr ""
-
-#: includes/class-fito-tryon-storage.php:89
-msgid "File is not a valid or recognizable image."
-msgstr ""
-
-#: includes/class-fito-tryon-storage.php:95 includes/class-fito-tryon-storage.php:196
-msgid "Only JPG, PNG, and WebP images are supported."
-msgstr ""
-
-#: includes/class-fito-tryon-storage.php:99 includes/class-fito-tryon-storage.php:200
-msgid "Image dimensions too small (minimum 150x150 pixels required)."
 msgstr ""
 
 #: includes/class-fito-tryon-storage.php:148 includes/class-fito-tryon-storage.php:215
@@ -1247,5 +1177,25 @@ msgstr ""
 
 #: includes/class-fito-tryon-storage.php:256
 msgid "Unrecognized image format received."
+msgstr ""
+
+#: includes/class-fito-tryon-storage.php:72
+msgid "No valid uploaded file found."
+msgstr ""
+
+#: includes/class-fito-tryon-storage.php:81 includes/class-fito-tryon-storage.php:182
+msgid "Image size exceeds maximum limit of %d MB."
+msgstr ""
+
+#: includes/class-fito-tryon-storage.php:89
+msgid "File is not a valid or recognizable image."
+msgstr ""
+
+#: includes/class-fito-tryon-storage.php:95 includes/class-fito-tryon-storage.php:196
+msgid "Only JPG, PNG, and WebP images are supported."
+msgstr ""
+
+#: includes/class-fito-tryon-storage.php:99 includes/class-fito-tryon-storage.php:200
+msgid "Image dimensions too small (minimum 150x150 pixels required)."
 msgstr ""
 

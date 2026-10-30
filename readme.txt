@@ -2,7 +2,7 @@
 Contributors: micromax2
 Tags: try on, virtual fitting, woocommerce, fashion, ai
 Requires at least: 6.2
-Tested up to: 7.1
+Tested up to: 6.7
 Requires PHP: 8.0
 Requires Plugins: woocommerce
 Stable tag: 1.7.0
@@ -109,28 +109,25 @@ No. All assets, including Chart.js for analytics, are bundled locally within the
 2. Interactive Before/After split comparison slider with drag handle.
 3. Immersive full-screen try-on stage preview.
 4. Admin analytics dashboard with try-on metrics and Chart.js activity graph.
-5. Searchable audit logs with prompt and response code inspector, plus Before/After thumbnail popovers.
-6. AI Prompts manager with mutually exclusive category mapping, custom prompts, and row duplication.
+5. Searchable audit logs with prompt and response inspector.
+6. AI Prompts manager with mutually exclusive category mapping and preset prompt editing.
 7. Abuse prevention, rate limiting, and customer data privacy settings.
 
 == Changelog ==
 
 = 1.7.0 =
-* Complete Free Release: 100% standalone and all-inclusive with zero commercial gating or add-on dependencies.
-* OpenRouter BYOK: Dedicated support for OpenRouter with automated secondary model failover.
-* Customer Tools: Customer account history and Before/After visual audit log inspector.
-* Storefront Integration: Direct button placements for catalog archive loops, product gallery thumbnails, and variation swatches.
-* Maintenance: Synchronized block metadata and translation catalog to version 1.7.0.
+* Standalone Release: Pure open-source virtual try-on engine for WooCommerce.
+* Database: Streamlined job records and automated privacy purge retention.
+* Block & Assets: Synchronized block metadata and script handles.
+* Compliance: Complete WordPress.org guideline alignment and zero-dependency standalone execution.
 
 = 1.6.0 =
-* Feature: Unified all virtual fitting capabilities into a single, 100% free standalone plugin.
-* Feature: Smart transient result caching with configurable duration and atomic cache flush.
-* Feature: Storefront button placements for catalog archive loops, product gallery thumbnails, variation swatches, and custom CSS selectors.
-* Feature: Customer Account "My Try-Ons" tab in WooCommerce My Account with result modal save actions.
-* Feature: Unlimited custom category prompt profiles with 1-click duplication.
-* Feature: Visual audit logs with customer Before/After image storage and 240px hover zoom previews.
-* Cleanup: Removed external upsell references and retired separate add-on requirement.
-* Maintenance: Bumped database schema version to 1.4.0 with account-saving and visual logging columns.
+* Feature: Bring-Your-Own-Key (BYOK) architecture for OpenRouter AI vision models.
+* Feature: Responsive Before/After split comparison slider with drag handle.
+* Feature: Integrated camera snapshot and drag-and-drop file upload.
+* Feature: Category-specific AI fitting prompt instructions and system prompt manager.
+* Feature: Rate limiting and automated 24-hour photo cleanup via WP-Cron.
+* Feature: Admin analytics dashboard with try-on metrics and Chart.js activity graph.
 
 = 1.5.0 =
 * Security: Hardened database SQL queries with $wpdb->prepare() using %i identifier placeholders.

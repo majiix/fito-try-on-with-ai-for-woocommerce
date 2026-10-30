@@ -341,7 +341,6 @@ class Fito_Tryon_Admin {
                             <th width="130"><?php esc_html_e('Date / Time', 'elfit-ai-virtual-try-on-for-woocommerce'); ?></th>
                             <th width="115"><?php esc_html_e('User', 'elfit-ai-virtual-try-on-for-woocommerce'); ?></th>
                             <th><?php esc_html_e('Product', 'elfit-ai-virtual-try-on-for-woocommerce'); ?></th>
-                            <?php do_action('fito_tryon_admin_logs_table_header'); ?>
                             <th><?php esc_html_e('Model Used', 'elfit-ai-virtual-try-on-for-woocommerce'); ?></th>
                             <th width="95"><?php esc_html_e('Status', 'elfit-ai-virtual-try-on-for-woocommerce'); ?></th>
                             <th width="85"><?php esc_html_e('Duration', 'elfit-ai-virtual-try-on-for-woocommerce'); ?></th>
@@ -424,7 +423,6 @@ class Fito_Tryon_Admin {
                                             <?php endif; ?>
                                         </div>
                                     </td>
-                                    <?php do_action('fito_tryon_admin_logs_table_cell', $log); ?>
                                     <td><code><?php echo esc_html($log->model_used ?: '-'); ?></code></td>
                                     <td>
                                         <span class="fito-badge fito-badge--<?php echo esc_attr($log->status); ?>">
@@ -562,21 +560,6 @@ class Fito_Tryon_Admin {
                         <?php
                         // translators: %d: Number of deleted temporary photo files
                         printf(esc_html__('Stored photos purged successfully (%d files deleted).', 'elfit-ai-virtual-try-on-for-woocommerce'), absint($photos_purged));
-                        ?>
-                    </p>
-                </div>
-            <?php endif; ?>
-
-            <?php
-            // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Read-only notification flag and count.
-            $cache_flushed = isset($_GET['cache_flushed']) ? absint(wp_unslash($_GET['cache_flushed'])) : null;
-            if ($cache_flushed !== null) :
-            ?>
-                <div class="notice notice-success is-dismissible">
-                    <p>
-                        <?php
-                        // translators: %d: Number of purged cache entries
-                        printf(esc_html__('Try-on result cache flushed successfully (%d cached items removed).', 'elfit-ai-virtual-try-on-for-woocommerce'), absint($cache_flushed));
                         ?>
                     </p>
                 </div>
@@ -1103,15 +1086,9 @@ class Fito_Tryon_Admin {
                                         <div class="fito-prompt-header-left">
                                             <span class="dashicons dashicons-menu fito-prompt-drag-handle" title="<?php esc_attr_e('Drag to reorder', 'elfit-ai-virtual-try-on-for-woocommerce'); ?>"></span>
                                             <input type="text" name="prompts[<?php echo esc_attr($index); ?>][title]" value="<?php echo esc_attr($p_title); ?>" class="regular-text fito-prompt-title-input" placeholder="<?php esc_attr_e('Prompt Title', 'elfit-ai-virtual-try-on-for-woocommerce'); ?>" required>
-                                            <?php if ($p_is_system) : ?>
-                                                <span class="fito-prompt-badge fito-badge-system">
-                                                    <?php esc_html_e('Built-in Preset', 'elfit-ai-virtual-try-on-for-woocommerce'); ?>
-                                                </span>
-                                            <?php else : ?>
-                                                <span class="fito-prompt-badge fito-badge-custom">
-                                                    <?php esc_html_e('Custom Prompt', 'elfit-ai-virtual-try-on-for-woocommerce'); ?>
-                                                </span>
-                                            <?php endif; ?>
+                                            <span class="fito-prompt-badge fito-badge-system">
+                                                <?php esc_html_e('Built-in Preset', 'elfit-ai-virtual-try-on-for-woocommerce'); ?>
+                                            </span>
                                         </div>
                                         <div class="fito-prompt-header-right">
                                             <span class="fito-prompt-cat-count" data-count="<?php echo esc_attr($cat_count); ?>">
@@ -1274,7 +1251,7 @@ class Fito_Tryon_Admin {
             $sanitized_prompts[] = [
                 'id'         => $id,
                 'title'      => $title,
-                'is_system'  => $is_system,
+                'is_system'  => true,
                 'categories' => array_values(array_unique($cats)),
                 'prompt'     => $prompt,
             ];

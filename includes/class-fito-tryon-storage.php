@@ -5,6 +5,7 @@
 
 defined('ABSPATH') || exit;
 
+if (!class_exists('Fito_Tryon_Storage')) {
 class Fito_Tryon_Storage {
     public const UPLOAD_DIR_NAME = 'fito-tryon';
 
@@ -421,4 +422,5 @@ class Fito_Tryon_Storage {
         }
         return false;
     }
+}
 }

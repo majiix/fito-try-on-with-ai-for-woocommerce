@@ -5,6 +5,7 @@
 
 defined('ABSPATH') || exit;
 
+if (!class_exists('Fito_Tryon')) {
 class Fito_Tryon {
     private static ?Fito_Tryon $instance = null;
 
@@ -160,4 +161,5 @@ class Fito_Tryon {
         }
         return $this->openrouter->generate_tryon($params);
     }
+}
 }

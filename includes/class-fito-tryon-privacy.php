@@ -5,6 +5,7 @@
 
 defined('ABSPATH') || exit;
 
+if (!class_exists('Fito_Tryon_Privacy')) {
 class Fito_Tryon_Privacy {
     public const CRON_HOOK = 'fito_tryon_cleanup_cron';
 
@@ -105,4 +106,5 @@ class Fito_Tryon_Privacy {
         }
         return __('I consent to my photo being processed by AI to generate a virtual try-on preview.', 'elfit-ai-virtual-try-on-for-woocommerce');
     }
+}
 }

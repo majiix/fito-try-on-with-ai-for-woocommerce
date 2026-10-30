@@ -1,9 +1,9 @@
 # Elfit AI Virtual Try-On for WooCommerce
 
 ## Overview
-Elfit AI Virtual Try-On for WooCommerce is a complete, enterprise-grade WordPress and WooCommerce plugin that adds an AI-driven virtual fitting room experience to single product pages and catalog loops. Customers upload an existing photo or capture a fresh photo via their mobile/desktop camera to view realistic try-on results of apparel, footwear, eyewear, jewelry, watches, hats, and accessories.
+Elfit AI Virtual Try-On for WooCommerce is an open-source WordPress and WooCommerce plugin that adds an AI-driven virtual fitting room experience to single product pages. Customers upload an existing photo or capture a fresh photo via their mobile or desktop camera to view realistic try-on results of apparel, footwear, eyewear, jewelry, watches, hats, and accessories.
 
-All features and capabilities of the free plugin are 100% native, standalone, and fully functional out of the box with zero subscriptions, zero trialware, and zero recurring SaaS markups. Store owners connect their own developer API key via Bring-Your-Own-Key (BYOK) architecture for OpenRouter. Direct API clients (such as Google Gemini Direct API and OpenAI Direct API) are reserved for the Pro edition (`elfit-ai-virtual-try-on-for-woocommerce-pro`).
+All features and capabilities of the free plugin are 100% native, standalone, and fully functional out of the box with zero subscriptions, zero trialware, and zero recurring SaaS markups. Store owners connect their own developer API key via Bring-Your-Own-Key (BYOK) architecture for OpenRouter. Direct provider integrations (such as Google Gemini Direct API and OpenAI Direct API), account history, storefront catalog loop placements, and smart result caching are reserved for the separate Pro edition (`elfit-ai-virtual-try-on-for-woocommerce-pro`).
 
 ## Tech Stack & Dependencies
 - **Language**: PHP 8.0+ (Tested up to PHP 8.3)
@@ -19,7 +19,7 @@ All features and capabilities of the free plugin are 100% native, standalone, an
 ```
 elfit-ai-virtual-try-on-for-woocommerce/
 ├── elfit-ai-virtual-try-on-for-woocommerce.php  # Plugin bootstrap, constants & lifecycle hooks
-├── uninstall.php                                # Complete cleanup on deletion
+├── uninstall.php                                # Data-safe uninstallation (preserves data by default)
 ├── includes/
 │   ├── class-fito-tryon.php                     # Master orchestrator & provider registration
 │   ├── class-fito-tryon-database.php            # dbDelta schema and database queries
@@ -51,10 +51,9 @@ elfit-ai-virtual-try-on-for-woocommerce/
 ## All-Inclusive Free Features
 1. **OpenRouter AI Engine**:
    - Bring-Your-Own-Key (BYOK) architecture with customizable API key and primary model selection.
-   - Access to top vision models (such as Google Gemini Flash Image, Qwen, Flux, and SDXL) through OpenRouter.
+   - Access to top vision models (such as Kling AI and Fashn AI) through OpenRouter.
    - Live Model Discovery: Asynchronous fetching and transient caching of available image generation models.
    - Direct Execution: Single-model streamlined processing with direct error diagnostics.
-   - Extensible Provider Filter: Seamlessly extended by the Pro plugin via `fito_tryon_allowed_providers` and `fito_tryon_resolve_provider_client`.
 2. **Storefront Single Product Placements**:
    - Single product page button (above or below Add to Cart, or in custom product tab).
    - Shortcode `[elfit_tryon]` and native Gutenberg block.
@@ -75,21 +74,25 @@ elfit-ai-virtual-try-on-for-woocommerce/
    - 14-day interactive volume graph via local Chart.js.
    - Searchable, filterable audit log table with duration and cost estimates.
    - Sent prompt and received response payload inspector.
+6. **Coexistence Data Safety on Uninstall**:
+   - Free Uninstall Guard: Checks if another edition of the plugin is running in memory, listed in active plugins, or installed on disk (using only generic class and folder prefix checks without referencing Pro names or paid features). If detected, uninstallation returns immediately to preserve all shared database tables, media, and settings.
+   - Pro Uninstall Guard: Checks if the Free edition is active or installed on disk. If detected, uninstallation returns immediately to prevent clearing shared settings or tables needed by Free.
+   - Zero Pro Leftovers: Free `uninstall.php` contains zero Pro options, zero Pro constants, and zero Pro keywords.
 
 ## Verification & Testing Commands
 - **PHP Syntax Verification**:
   ```powershell
-  rtk powershell -Command "Get-ChildItem -Recurse -Filter *.php | ForEach-Object { php -l $_.FullName }"
+  rtk php -l admin/class-fito-tryon-admin.php elfit-ai-virtual-try-on-for-woocommerce.php includes/class-fito-tryon-database.php includes/class-fito-tryon-openrouter.php includes/class-fito-tryon-privacy.php includes/class-fito-tryon-public.php includes/class-fito-tryon-rate-limiter.php includes/class-fito-tryon-rest.php includes/class-fito-tryon-storage.php includes/class-fito-tryon.php uninstall.php tests/test-all-inclusive-free-plugin.php
   ```
-- **JavaScript Syntax Verification**:
-  ```powershell
-  rtk powershell -Command "node -c assets/js/admin.js; node -c assets/js/public.js"
-  ```
-- **Unit and Feature Test Suite**:
+- **Unit and Feature Test Suite (53 tests)**:
   ```powershell
   rtk php tests/test-all-inclusive-free-plugin.php
   ```
+- **Coexistence Scenarios Verification**:
+  ```powershell
+  rtk php scratch/test_uninstall_scenarios.php
+  ```
 - **Em Dash Compliance Check**:
   ```powershell
-  rtk powershell -Command "Select-String -Path 'admin/*.php', 'includes/*.php', 'assets/js/*.js', 'assets/css/*.css', 'docs/*.md', 'readme.txt' -Pattern '[\u2014]'"
+  rtk php scratch/check_em_dashes.php
   ```

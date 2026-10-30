@@ -228,29 +228,7 @@ class Fito_Tryon_Rest {
             'model_used'        => $model,
         ]);
 
-        // 6. Check Cache via Filter (handled by caching addons)
-        $cached_result = apply_filters('fito_tryon_get_cached_result', null, $user_img_data['path'], $product_id, $variation_id, $model);
-        if (!empty($cached_result)) {
-            $this->plugin->db->update_job_by_token($token, [
-                'status'           => 'completed',
-                'progress'         => 100,
-                'status_message'   => __('Preview loaded from cache.', 'elfit-ai-virtual-try-on-for-woocommerce'),
-                'result_image_url' => $cached_result,
-            ]);
-            $this->plugin->rate_limiter->increment_limit($user_id, $device_id);
-
-            return new WP_REST_Response([
-                'success'          => true,
-                'token'            => $token,
-                'status'           => 'completed',
-                'progress'         => 100,
-                'result_image_url' => $cached_result,
-                'user_image_url'   => $user_img_data['url'],
-                'message'          => __('Try-on complete!', 'elfit-ai-virtual-try-on-for-woocommerce'),
-            ], 200);
-        }
-
-        // 7. Execute AI Generation
+        // 6. Execute AI Generation
         $this->plugin->db->update_job_by_token($token, [
             'status'         => 'processing',
             'progress'       => 45,
@@ -307,10 +285,6 @@ class Fito_Tryon_Rest {
                     'prompt_text'       => $ai_response['prompt'] ?? '',
                     'response_text'     => !empty($ai_response['response_text']) ? $ai_response['response_text'] : Fito_Tryon_OpenRouter::sanitize_json_response($ai_response),
                 ];
-                $fail_log = (array) apply_filters('fito_tryon_log_data', $fail_log, [
-                    'user_image_url'   => $user_img_data['url'] ?? '',
-                    'result_image_url' => '',
-                ]);
                 $this->plugin->db->add_log($fail_log);
 
                 return new WP_REST_Response([
@@ -323,8 +297,6 @@ class Fito_Tryon_Rest {
 
             $final_url = $saved_result['url'];
             $final_path = $saved_result['path'] ?? '';
-
-            do_action('fito_tryon_set_cached_result', $user_img_data['path'], $product_id, $variation_id, $ai_response['model'], $final_url);
 
             $this->plugin->db->update_job_by_token($token, [
                 'status'            => 'completed',
@@ -350,10 +322,6 @@ class Fito_Tryon_Rest {
                 'prompt_text'       => $ai_response['prompt'] ?? '',
                 'response_text'     => !empty($ai_response['response_text']) ? $ai_response['response_text'] : Fito_Tryon_OpenRouter::sanitize_json_response($ai_response),
             ];
-            $success_log = (array) apply_filters('fito_tryon_log_data', $success_log, [
-                'user_image_url'   => $user_img_data['url'] ?? '',
-                'result_image_url' => $final_url,
-            ]);
             $this->plugin->db->add_log($success_log);
 
             $this->plugin->rate_limiter->increment_limit($user_id, $device_id);
@@ -395,10 +363,6 @@ class Fito_Tryon_Rest {
             'prompt_text'       => $ai_response['prompt'] ?? '',
             'response_text'     => !empty($ai_response['response_text']) ? $ai_response['response_text'] : Fito_Tryon_OpenRouter::sanitize_json_response(!empty($ai_response) ? $ai_response : ['error' => $raw_err]),
         ];
-        $err_log = (array) apply_filters('fito_tryon_log_data', $err_log, [
-            'user_image_url'   => $user_img_data['url'] ?? '',
-            'result_image_url' => '',
-        ]);
         $this->plugin->db->add_log($err_log);
 
         return new WP_REST_Response([
@@ -518,10 +482,6 @@ class Fito_Tryon_Rest {
                 // translators: %s: Error message reported by client browser
                 'response_text'     => Fito_Tryon_OpenRouter::sanitize_json_response(['error' => sprintf(__('Client/network error reported: %s', 'elfit-ai-virtual-try-on-for-woocommerce'), $error_message)]),
             ];
-            $client_err_log = (array) apply_filters('fito_tryon_log_data', $client_err_log, [
-                'user_image_url'   => $user_image_url,
-                'result_image_url' => '',
-            ]);
             $this->plugin->db->add_log($client_err_log);
         }
 
