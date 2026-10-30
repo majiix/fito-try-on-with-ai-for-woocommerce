@@ -377,27 +377,5 @@ class Fito_Tryon_Storage {
 
         return '';
     }
-
-    /**
-     * Delete a storage file by its public URL.
-     *
-     * @param string|null $url
-     * @return bool
-     */
-    public static function delete_file_by_url(?string $url): bool {
-        if (empty($url)) {
-            return false;
-        }
-        $base_url = self::get_base_url();
-        if (!str_starts_with($url, $base_url)) {
-            return false;
-        }
-        $rel_path = ltrim(substr($url, strlen($base_url)), '/\\');
-        $full_path = trailingslashit(self::get_base_dir()) . $rel_path;
-        if (file_exists($full_path) && is_file($full_path)) {
-            return (bool) wp_delete_file($full_path);
-        }
-        return false;
-    }
 }
 }

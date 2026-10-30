@@ -305,6 +305,22 @@ assert_test(in_array('fito-tryon-settings', $registered_submenus, true), "Admin 
 assert_test(in_array('fito-tryon-prompts', $registered_submenus, true), "Admin submenus include 'fito-tryon-prompts'");
 assert_test(in_array('fito-tryon-logs', $registered_submenus, true), "Admin submenus include 'fito-tryon-logs'");
 
+// 8. Pro Upsell Sidebar Card Compliance
+assert_test(method_exists($admin, 'render_pro_upsell_card'), "Admin has render_pro_upsell_card() method");
+ob_start();
+$admin->render_pro_upsell_card();
+$upsell_html = ob_get_clean();
+assert_test(str_contains($upsell_html, 'https://violo.ir/?p=721'), "Pro upsell card links to https://violo.ir/?p=721");
+assert_test(str_contains($upsell_html, 'target="_blank"') && str_contains($upsell_html, 'rel="noopener noreferrer"'), "Pro upsell link opens safely in new tab");
+assert_test(str_contains($upsell_html, 'PRO EDITION'), "Pro upsell card has PRO EDITION badge");
+assert_test(str_contains($upsell_html, 'Direct OpenAI & Gemini:'), "Pro upsell card highlights Direct OpenAI & Gemini");
+assert_test(str_contains($upsell_html, 'Automated Fallback Model:'), "Pro upsell card highlights Automated Fallback Model");
+assert_test(str_contains($upsell_html, 'Brand Watermark & Logo:'), "Pro upsell card highlights Brand Watermark & Logo");
+assert_test(str_contains($upsell_html, 'Smart Result Caching:'), "Pro upsell card highlights Smart Result Caching");
+assert_test(str_contains($upsell_html, 'Storefront Placements Studio:'), "Pro upsell card highlights Storefront Placements Studio");
+assert_test(str_contains($upsell_html, 'Customer Account Try-On History:'), "Pro upsell card highlights Customer Account History");
+assert_test(str_contains($upsell_html, 'Visual Log Previews with Zoom:'), "Pro upsell card highlights Visual Log Previews with Zoom");
+
 // 8. Prompts 7 Built-in Presets
 $default_prompts = Fito_Tryon_OpenRouter::get_default_prompts();
 assert_test(count($default_prompts) === 7, "Default prompts contains 7 built-in system presets");
@@ -314,6 +330,7 @@ $storage_content = file_get_contents(FITO_TRYON_PATH . 'includes/class-fito-tryo
 assert_test(!str_contains($storage_content, 'unlink('), "Storage does not call raw unlink()");
 assert_test(!str_contains($storage_content, 'fito_tryon_max_upload_size'), "Storage does not reference orphaned fito_tryon_max_upload_size option");
 assert_test(!str_contains($storage_content, 'get_results_dir'), "Storage does not define dead get_results_dir() method");
+assert_test(!str_contains($storage_content, 'delete_file_by_url'), "Storage does not define dead delete_file_by_url() method");
 
 // 10. In-Memory Guard on Uninstall
 $uninstall_content = file_get_contents(FITO_TRYON_PATH . 'uninstall.php');
@@ -328,6 +345,11 @@ assert_test(!str_contains($openrouter_content, 'is_fallback'), "OpenRouter does 
 
 $public_content = file_get_contents(FITO_TRYON_PATH . 'includes/class-fito-tryon-public.php');
 assert_test(!str_contains($public_content, 'customer account tab'), "Public class docblock does not reference customer account tab");
+assert_test(!str_contains($public_content, 'fito_tryon_is_product_allowed'), "Public does not register orphaned fito_tryon_is_product_allowed filter");
+assert_test(!str_contains($public_content, 'filter_is_product_allowed'), "Public does not define dead filter_is_product_allowed() method");
+
+$admin_js_content = file_get_contents(FITO_TRYON_PATH . 'assets/js/admin.js');
+assert_test(!str_contains($admin_js_content, 'fito_log_modal_opened'), "Admin JS does not dispatch dead fito_log_modal_opened event");
 
 $pot_content = file_get_contents(FITO_TRYON_PATH . 'languages/elfit-ai-virtual-try-on-for-woocommerce.pot');
 assert_test(!str_contains($pot_content, 'Invalid or unsupported AI provider specified.'), "POT catalog does not contain orphaned provider validation string");

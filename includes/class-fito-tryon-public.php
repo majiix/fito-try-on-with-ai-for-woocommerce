@@ -31,9 +31,6 @@ class Fito_Tryon_Public {
         // Modal output in footer
         add_action('wp_footer', [$this, 'render_modal_markup']);
 
-        // Filter contract for external plugins to query product eligibility cleanly.
-        add_filter('fito_tryon_is_product_allowed', [$this, 'filter_is_product_allowed'], 10, 2);
-
         // Allow extensions to attach public hooks.
         do_action('fito_tryon_public_init', $this);
     }
@@ -202,17 +199,6 @@ class Fito_Tryon_Public {
 
         $memo[$product_id] = false;
         return false;
-    }
-
-    /**
-     * Filter callback to check whether a product is allowed for virtual try-on.
-     *
-     * @param bool $default
-     * @param mixed $product_or_id
-     * @return bool
-     */
-    public function filter_is_product_allowed(bool $default, mixed $product_or_id): bool {
-        return $this->is_product_allowed($product_or_id);
     }
 
     public function render_product_button(): void {

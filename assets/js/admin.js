@@ -265,7 +265,6 @@
                 html += '</div>';
 
                 $('#fito-log-modal-content').html(html);
-                $(document).trigger('fito_log_modal_opened', [$btn, $row, $('#fito-log-modal-content')]);
                 $('#fito-log-modal').fadeIn(150);
             });
 

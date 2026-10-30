@@ -133,6 +133,133 @@ class Fito_Tryon_Admin {
         ]);
     }
 
+    public function render_pro_upsell_card(): void {
+        ?>
+        <div class="fito-pro-card">
+            <div class="fito-pro-card-header">
+                <h3 class="fito-pro-card-title">
+                    <svg class="fito-pro-star" viewBox="0 0 24 24">
+                        <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
+                    </svg>
+                    <?php esc_html_e('Upgrade to Pro', 'elfit-ai-virtual-try-on-for-woocommerce'); ?>
+                </h3>
+                <span class="fito-pro-badge"><?php esc_html_e('PRO EDITION', 'elfit-ai-virtual-try-on-for-woocommerce'); ?></span>
+            </div>
+            <div class="fito-pro-card-body">
+                <p class="fito-pro-intro">
+                    <?php esc_html_e('Unlock advanced enterprise tools to convert shoppers and maximize virtual try-on sales:', 'elfit-ai-virtual-try-on-for-woocommerce'); ?>
+                </p>
+
+                <div class="fito-pro-features">
+                    <!-- Feature 1: Direct OpenAI & Gemini -->
+                    <div class="fito-pro-feature-item">
+                        <div class="fito-pro-feature-icon">
+                            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M17.5 19H9a7 7 0 1 1 6.71-9h1.79a4.5 4.5 0 1 1 0 9Z"/>
+                            </svg>
+                        </div>
+                        <div class="fito-pro-feature-text">
+                            <strong><?php esc_html_e('Direct OpenAI & Gemini:', 'elfit-ai-virtual-try-on-for-woocommerce'); ?></strong>
+                            <?php esc_html_e('Connect directly to Google AI Studio and OpenAI with zero middleware fees.', 'elfit-ai-virtual-try-on-for-woocommerce'); ?>
+                        </div>
+                    </div>
+
+                    <!-- Feature 2: Automated Fallback Model -->
+                    <div class="fito-pro-feature-item">
+                        <div class="fito-pro-feature-icon">
+                            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <polyline points="23 4 23 10 17 10"/>
+                                <path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/>
+                            </svg>
+                        </div>
+                        <div class="fito-pro-feature-text">
+                            <strong><?php esc_html_e('Automated Fallback Model:', 'elfit-ai-virtual-try-on-for-woocommerce'); ?></strong>
+                            <?php esc_html_e('Auto-route to backup models when primary reaches quota or downtime.', 'elfit-ai-virtual-try-on-for-woocommerce'); ?>
+                        </div>
+                    </div>
+
+                    <!-- Feature 3: Brand Watermark & Logo -->
+                    <div class="fito-pro-feature-item">
+                        <div class="fito-pro-feature-icon">
+                            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+                                <path d="m9 12 2 2 4-4"/>
+                            </svg>
+                        </div>
+                        <div class="fito-pro-feature-text">
+                            <strong><?php esc_html_e('Brand Watermark & Logo:', 'elfit-ai-virtual-try-on-for-woocommerce'); ?></strong>
+                            <?php esc_html_e('Stamp store logos or site address with 7-position layout and opacity slider.', 'elfit-ai-virtual-try-on-for-woocommerce'); ?>
+                        </div>
+                    </div>
+
+                    <!-- Feature 4: Smart Result Caching -->
+                    <div class="fito-pro-feature-item">
+                        <div class="fito-pro-feature-icon">
+                            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <ellipse cx="12" cy="5" rx="9" ry="3"/>
+                                <path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/>
+                                <path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/>
+                            </svg>
+                        </div>
+                        <div class="fito-pro-feature-text">
+                            <strong><?php esc_html_e('Smart Result Caching:', 'elfit-ai-virtual-try-on-for-woocommerce'); ?></strong>
+                            <?php esc_html_e('Cache identical photo and product fittings to slash duplicate API bills.', 'elfit-ai-virtual-try-on-for-woocommerce'); ?>
+                        </div>
+                    </div>
+
+                    <!-- Feature 5: Storefront Placements Studio -->
+                    <div class="fito-pro-feature-item">
+                        <div class="fito-pro-feature-icon">
+                            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <rect width="14" height="14" x="8" y="8" rx="2" ry="2"/>
+                                <path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/>
+                            </svg>
+                        </div>
+                        <div class="fito-pro-feature-text">
+                            <strong><?php esc_html_e('Storefront Placements Studio:', 'elfit-ai-virtual-try-on-for-woocommerce'); ?></strong>
+                            <?php esc_html_e('Display try-on buttons in shop catalog loops, product galleries, and swatches.', 'elfit-ai-virtual-try-on-for-woocommerce'); ?>
+                        </div>
+                    </div>
+
+                    <!-- Feature 6: Customer Account Try-On History -->
+                    <div class="fito-pro-feature-item">
+                        <div class="fito-pro-feature-icon">
+                            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/>
+                                <circle cx="12" cy="7" r="4"/>
+                            </svg>
+                        </div>
+                        <div class="fito-pro-feature-text">
+                            <strong><?php esc_html_e('Customer Account Try-On History:', 'elfit-ai-virtual-try-on-for-woocommerce'); ?></strong>
+                            <?php esc_html_e('Dedicated "My Try-Ons" tab in WooCommerce My Account to boost retention.', 'elfit-ai-virtual-try-on-for-woocommerce'); ?>
+                        </div>
+                    </div>
+
+                    <!-- Feature 7: Visual Log Previews with Zoom -->
+                    <div class="fito-pro-feature-item">
+                        <div class="fito-pro-feature-icon">
+                            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <circle cx="11" cy="11" r="8"/>
+                                <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+                                <line x1="11" y1="8" x2="11" y2="14"/>
+                                <line x1="8" y1="11" x2="14" y2="11"/>
+                            </svg>
+                        </div>
+                        <div class="fito-pro-feature-text">
+                            <strong><?php esc_html_e('Visual Log Previews with Zoom:', 'elfit-ai-virtual-try-on-for-woocommerce'); ?></strong>
+                            <?php esc_html_e('Before/After thumbnail inspection in audit logs with 240px hover zoom popover.', 'elfit-ai-virtual-try-on-for-woocommerce'); ?>
+                        </div>
+                    </div>
+                </div>
+
+                <a href="<?php echo esc_url('https://violo.ir/?p=721'); ?>" target="_blank" rel="noopener noreferrer" class="fito-pro-cta-btn">
+                    <span><?php esc_html_e('Upgrade to Pro', 'elfit-ai-virtual-try-on-for-woocommerce'); ?> <span class="fito-pro-cta-arrow">&rarr;</span></span>
+                </a>
+            </div>
+        </div>
+        <?php
+    }
+
     public function render_dashboard_page(): void {
         $summary = $this->plugin->db->get_analytics_summary();
         $top_products = $this->plugin->db->get_top_products(5);
@@ -159,92 +286,99 @@ class Fito_Tryon_Admin {
                 </div>
             </header>
 
-            <!-- KPI Cards Grid -->
-            <div class="fito-kpi-grid">
-                <div class="fito-kpi-card">
-                    <div class="fito-kpi-title"><?php esc_html_e('Today / This Week', 'elfit-ai-virtual-try-on-for-woocommerce'); ?></div>
-                    <div class="fito-kpi-val"><?php echo esc_html($summary['today']); ?> <span class="fito-kpi-sub">/ <?php echo esc_html($summary['week']); ?></span></div>
-                    <div class="fito-kpi-desc"><?php esc_html_e('Try-on generations completed', 'elfit-ai-virtual-try-on-for-woocommerce'); ?></div>
-                </div>
+            <div class="fito-admin-layout">
+                <div class="fito-admin-main">
+                    <!-- KPI Cards Grid -->
+                    <div class="fito-kpi-grid">
+                        <div class="fito-kpi-card">
+                            <div class="fito-kpi-title"><?php esc_html_e('Today / This Week', 'elfit-ai-virtual-try-on-for-woocommerce'); ?></div>
+                            <div class="fito-kpi-val"><?php echo esc_html($summary['today']); ?> <span class="fito-kpi-sub">/ <?php echo esc_html($summary['week']); ?></span></div>
+                            <div class="fito-kpi-desc"><?php esc_html_e('Try-on generations completed', 'elfit-ai-virtual-try-on-for-woocommerce'); ?></div>
+                        </div>
 
-                <div class="fito-kpi-card">
-                    <div class="fito-kpi-title"><?php esc_html_e('Monthly Total', 'elfit-ai-virtual-try-on-for-woocommerce'); ?></div>
-                    <div class="fito-kpi-val"><?php echo esc_html($summary['month']); ?></div>
-                    <div class="fito-kpi-desc">
-                        <?php
-                        // translators: %d: Total all-time try-on count
-                        printf(esc_html__('Lifetime all-time: %d', 'elfit-ai-virtual-try-on-for-woocommerce'), absint($summary['total']));
-                        ?>
+                        <div class="fito-kpi-card">
+                            <div class="fito-kpi-title"><?php esc_html_e('Monthly Total', 'elfit-ai-virtual-try-on-for-woocommerce'); ?></div>
+                            <div class="fito-kpi-val"><?php echo esc_html($summary['month']); ?></div>
+                            <div class="fito-kpi-desc">
+                                <?php
+                                // translators: %d: Total all-time try-on count
+                                printf(esc_html__('Lifetime all-time: %d', 'elfit-ai-virtual-try-on-for-woocommerce'), absint($summary['total']));
+                                ?>
+                            </div>
+                        </div>
+
+                        <div class="fito-kpi-card">
+                            <div class="fito-kpi-title"><?php esc_html_e('Success Rate', 'elfit-ai-virtual-try-on-for-woocommerce'); ?></div>
+                            <div class="fito-kpi-val fito-val--accent"><?php echo esc_html($summary['success_rate']); ?>%</div>
+                            <div class="fito-kpi-desc"><?php esc_html_e('Healthy AI provider completion', 'elfit-ai-virtual-try-on-for-woocommerce'); ?></div>
+                        </div>
+
+                        <div class="fito-kpi-card">
+                            <div class="fito-kpi-title"><?php esc_html_e('Avg Generation Time', 'elfit-ai-virtual-try-on-for-woocommerce'); ?></div>
+                            <div class="fito-kpi-val"><?php echo esc_html($summary['avg_duration']); ?>s</div>
+                            <div class="fito-kpi-desc"><?php esc_html_e('Customer wait time before preview', 'elfit-ai-virtual-try-on-for-woocommerce'); ?></div>
+                        </div>
+
+                        <div class="fito-kpi-card">
+                            <div class="fito-kpi-title"><?php esc_html_e('Estimated API Spend', 'elfit-ai-virtual-try-on-for-woocommerce'); ?></div>
+                            <div class="fito-kpi-val">$<?php echo esc_html(number_format($summary['total_spend'], 4)); ?></div>
+                            <div class="fito-kpi-desc"><?php esc_html_e('Direct AI provider usage', 'elfit-ai-virtual-try-on-for-woocommerce'); ?></div>
+                        </div>
+                    </div>
+
+                    <!-- Chart & Top Products Row -->
+                    <div class="fito-dashboard-grid">
+                        <!-- Volume Chart -->
+                        <div class="fito-card fito-chart-card">
+                            <div class="fito-card-header">
+                                <h3><?php esc_html_e('Try-On Volume (Past 14 Days)', 'elfit-ai-virtual-try-on-for-woocommerce'); ?></h3>
+                            </div>
+                            <div class="fito-card-body">
+                                <canvas id="fitoAnalyticsChart" height="260"></canvas>
+                            </div>
+                        </div>
+
+                        <!-- Top Tried-On Products -->
+                        <div class="fito-card fito-top-products-card">
+                            <div class="fito-card-header">
+                                <h3><?php esc_html_e('Top Tried-On Products', 'elfit-ai-virtual-try-on-for-woocommerce'); ?></h3>
+                            </div>
+                            <div class="fito-card-body">
+                                <?php if (empty($top_products)) : ?>
+                                    <p class="fito-muted"><?php esc_html_e('No product try-on records recorded yet.', 'elfit-ai-virtual-try-on-for-woocommerce'); ?></p>
+                                <?php else : ?>
+                                    <ul class="fito-top-list">
+                                        <?php foreach ($top_products as $item) : ?>
+                                            <li class="fito-top-item">
+                                                <div class="fito-top-thumb">
+                                                    <?php if (!empty($item['image'])) : ?>
+                                                        <img src="<?php echo esc_url($item['image']); ?>" alt="<?php echo esc_attr($item['name']); ?>">
+                                                    <?php else : ?>
+                                                        <div class="fito-placeholder-thumb"></div>
+                                                    <?php endif; ?>
+                                                </div>
+                                                <div class="fito-top-info">
+                                                    <a href="<?php echo esc_url($item['url']); ?>" target="_blank" class="fito-top-title">
+                                                        <?php echo esc_html($item['name']); ?>
+                                                    </a>
+                                                    <span class="fito-top-sub">
+                                                        <?php
+                                                        // translators: 1: Total try-on count, 2: Success rate percentage
+                                                        printf(esc_html__('%1$d try-ons (%2$d%% success)', 'elfit-ai-virtual-try-on-for-woocommerce'), absint($item['tryon_count']), absint($item['tryon_count'] > 0 ? round(($item['success_count'] / $item['tryon_count']) * 100) : 0));
+                                                        ?>
+                                                    </span>
+                                                </div>
+                                            </li>
+                                        <?php endforeach; ?>
+                                    </ul>
+                                <?php endif; ?>
+                            </div>
+                        </div>
                     </div>
                 </div>
-
-                <div class="fito-kpi-card">
-                    <div class="fito-kpi-title"><?php esc_html_e('Success Rate', 'elfit-ai-virtual-try-on-for-woocommerce'); ?></div>
-                    <div class="fito-kpi-val fito-val--accent"><?php echo esc_html($summary['success_rate']); ?>%</div>
-                    <div class="fito-kpi-desc"><?php esc_html_e('Healthy AI provider completion', 'elfit-ai-virtual-try-on-for-woocommerce'); ?></div>
-                </div>
-
-                <div class="fito-kpi-card">
-                    <div class="fito-kpi-title"><?php esc_html_e('Avg Generation Time', 'elfit-ai-virtual-try-on-for-woocommerce'); ?></div>
-                    <div class="fito-kpi-val"><?php echo esc_html($summary['avg_duration']); ?>s</div>
-                    <div class="fito-kpi-desc"><?php esc_html_e('Customer wait time before preview', 'elfit-ai-virtual-try-on-for-woocommerce'); ?></div>
-                </div>
-
-                <div class="fito-kpi-card">
-                    <div class="fito-kpi-title"><?php esc_html_e('Estimated API Spend', 'elfit-ai-virtual-try-on-for-woocommerce'); ?></div>
-                    <div class="fito-kpi-val">$<?php echo esc_html(number_format($summary['total_spend'], 4)); ?></div>
-                    <div class="fito-kpi-desc"><?php esc_html_e('Direct AI provider usage', 'elfit-ai-virtual-try-on-for-woocommerce'); ?></div>
-                </div>
-            </div>
-
-            <!-- Chart & Top Products Row -->
-            <div class="fito-dashboard-grid">
-                <!-- Volume Chart -->
-                <div class="fito-card fito-chart-card">
-                    <div class="fito-card-header">
-                        <h3><?php esc_html_e('Try-On Volume (Past 14 Days)', 'elfit-ai-virtual-try-on-for-woocommerce'); ?></h3>
-                    </div>
-                    <div class="fito-card-body">
-                        <canvas id="fitoAnalyticsChart" height="260"></canvas>
-                    </div>
-                </div>
-
-                <!-- Top Tried-On Products -->
-                <div class="fito-card fito-top-products-card">
-                    <div class="fito-card-header">
-                        <h3><?php esc_html_e('Top Tried-On Products', 'elfit-ai-virtual-try-on-for-woocommerce'); ?></h3>
-                    </div>
-                    <div class="fito-card-body">
-                        <?php if (empty($top_products)) : ?>
-                            <p class="fito-muted"><?php esc_html_e('No product try-on records recorded yet.', 'elfit-ai-virtual-try-on-for-woocommerce'); ?></p>
-                        <?php else : ?>
-                            <ul class="fito-top-list">
-                                <?php foreach ($top_products as $item) : ?>
-                                    <li class="fito-top-item">
-                                        <div class="fito-top-thumb">
-                                            <?php if (!empty($item['image'])) : ?>
-                                                <img src="<?php echo esc_url($item['image']); ?>" alt="<?php echo esc_attr($item['name']); ?>">
-                                            <?php else : ?>
-                                                <div class="fito-placeholder-thumb"></div>
-                                            <?php endif; ?>
-                                        </div>
-                                        <div class="fito-top-info">
-                                            <a href="<?php echo esc_url($item['url']); ?>" target="_blank" class="fito-top-title">
-                                                <?php echo esc_html($item['name']); ?>
-                                            </a>
-                                            <span class="fito-top-sub">
-                                                <?php
-                                                // translators: 1: Total try-on count, 2: Success rate percentage
-                                                printf(esc_html__('%1$d try-ons (%2$d%% success)', 'elfit-ai-virtual-try-on-for-woocommerce'), absint($item['tryon_count']), absint($item['tryon_count'] > 0 ? round(($item['success_count'] / $item['tryon_count']) * 100) : 0));
-                                                ?>
-                                            </span>
-                                        </div>
-                                    </li>
-                                <?php endforeach; ?>
-                            </ul>
-                        <?php endif; ?>
-                    </div>
-                </div>
+                <aside class="fito-admin-sidebar">
+                    <?php $this->render_pro_upsell_card(); ?>
+                </aside>
             </div>
         </div>
         <?php
@@ -309,8 +443,10 @@ class Fito_Tryon_Admin {
                 </div>
             </header>
 
-            <!-- Filters -->
-            <div class="fito-logs-filter-bar">
+            <div class="fito-admin-layout">
+                <div class="fito-admin-main">
+                    <!-- Filters -->
+                    <div class="fito-logs-filter-bar">
                 <form method="get" action="">
                     <input type="hidden" name="page" value="fito-tryon-logs">
                     <input type="search" name="s" value="<?php echo esc_attr($search); ?>" placeholder="<?php esc_attr_e('Search model, IP, error...', 'elfit-ai-virtual-try-on-for-woocommerce'); ?>" class="regular-text">
@@ -485,6 +621,11 @@ class Fito_Tryon_Admin {
                 <?php endif; ?>
             </div>
         </div>
+        <aside class="fito-admin-sidebar">
+            <?php $this->render_pro_upsell_card(); ?>
+        </aside>
+    </div>
+</div>
 
         <!-- Log Inspect Modal -->
         <div id="fito-log-modal" class="fito-admin-modal" style="display: none;">
@@ -560,7 +701,9 @@ class Fito_Tryon_Admin {
                 </div>
             <?php endif; ?>
 
-            <form method="post" action="<?php echo esc_url(admin_url('admin-post.php')); ?>">
+            <div class="fito-admin-layout">
+                <div class="fito-admin-main">
+                    <form method="post" action="<?php echo esc_url(admin_url('admin-post.php')); ?>">
                 <input type="hidden" name="action" value="fito_tryon_save_settings">
                 <?php wp_nonce_field('fito_tryon_save_settings_nonce'); ?>
 
@@ -826,6 +969,11 @@ class Fito_Tryon_Admin {
                 </div>
             </div>
         </div>
+        <aside class="fito-admin-sidebar">
+            <?php $this->render_pro_upsell_card(); ?>
+        </aside>
+    </div>
+</div>
         <?php
     }
 
@@ -978,7 +1126,9 @@ class Fito_Tryon_Admin {
                 </div>
             <?php endif; ?>
 
-            <form method="post" action="<?php echo esc_url(admin_url('admin-post.php')); ?>" id="fitoPromptsForm">
+            <div class="fito-admin-layout">
+                <div class="fito-admin-main">
+                    <form method="post" action="<?php echo esc_url(admin_url('admin-post.php')); ?>" id="fitoPromptsForm">
                 <input type="hidden" name="action" value="fito_tryon_save_prompts">
                 <?php wp_nonce_field('fito_tryon_save_prompts_nonce'); ?>
 
@@ -1134,6 +1284,11 @@ class Fito_Tryon_Admin {
                 </div>
             </form>
         </div>
+        <aside class="fito-admin-sidebar">
+            <?php $this->render_pro_upsell_card(); ?>
+        </aside>
+    </div>
+</div>
         <?php
     }
 

@@ -78,6 +78,17 @@ elfit-ai-virtual-try-on-for-woocommerce/
    - In-Memory Guard: Checks if the plugin is running in memory (`class_exists('Fito_Tryon') || defined('FITO_TRYON_VERSION')`). Avoids brittle directory sniffing or active plugins scanning.
    - Clean Database & Storage Removal: Drops `wp_fito_tryon_jobs` and `wp_fito_tryon_logs`, removes all registered settings, and deletes temporary upload files.
 
+7. **Admin Two-Column Layout & Pro Upsell Sidebar**:
+   - Two-column responsive admin layout (`.fito-admin-layout`) across all administrative screens (Overview, Settings, Prompts, and Logs).
+   - Sticky sidebar box (`.fito-admin-sidebar`, 340px width) showcasing 7 real Pro features with custom SVG icons, modern gradient header, and direct safe link to Pro purchase page.
+   - Fully responsive for mobile and tablet devices (<1024px) with RTL language support.
+
+8. **WordPress.org Guideline 5 Compliance**:
+   - Zero paid-feature methods, hooks, or dead branches in free codebase.
+   - Removed orphaned `delete_file_by_url()` helper from Storage class.
+   - Removed orphaned `fito_tryon_is_product_allowed` filter hook and proxy method from Public class.
+   - Removed orphaned `fito_log_modal_opened` custom event trigger from Admin JavaScript.
+
 ## Database Schema (v1.4.2)
 - `wp_fito_tryon_jobs`: Background asynchronous job queuing and polling (`id`, `token`, `status`, `product_id`, `variation_id`, `user_id`, `guest_uuid`, `created_at`, `updated_at`).
 - `wp_fito_tryon_logs`: Execution audit trail and analytics (`id`, `created_at`, `status`, `product_id`, `user_id`, `guest_uuid`, `ip_address`, `duration_ms`, `estimated_cost`, `model_name`, `error_message`, `prompt_text`, `response_text`). Unused image URLs are completely omitted to ensure minimal database footprint.
@@ -87,7 +98,7 @@ elfit-ai-virtual-try-on-for-woocommerce/
   ```powershell
   rtk php -l admin/class-fito-tryon-admin.php elfit-ai-virtual-try-on-for-woocommerce.php includes/class-fito-tryon-database.php includes/class-fito-tryon-openrouter.php includes/class-fito-tryon-privacy.php includes/class-fito-tryon-public.php includes/class-fito-tryon-rate-limiter.php includes/class-fito-tryon-rest.php includes/class-fito-tryon-storage.php includes/class-fito-tryon.php uninstall.php tests/test-all-inclusive-free-plugin.php
   ```
-- **Unit and Feature Test Suite (37 tests)**:
+- **Unit and Feature Test Suite (52 tests)**:
   ```powershell
   rtk php tests/test-all-inclusive-free-plugin.php
   ```
