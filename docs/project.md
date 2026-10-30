@@ -3,7 +3,7 @@
 ## Overview
 Elfit AI Virtual Try-On for WooCommerce is an open-source WordPress and WooCommerce plugin that adds an AI-driven virtual fitting room experience to single product pages. Customers upload an existing photo or capture a fresh photo via their mobile or desktop camera to view realistic try-on results of apparel, footwear, eyewear, jewelry, watches, hats, and accessories.
 
-All features and capabilities of the free plugin are 100% native, standalone, and fully functional out of the box with zero subscriptions, zero trialware, and zero recurring SaaS markups. Store owners connect their own developer API key via Bring-Your-Own-Key (BYOK) architecture for OpenRouter. Direct provider integrations (such as Google Gemini Direct API and OpenAI Direct API), account history, storefront catalog loop placements, and smart result caching are reserved for the separate Pro edition (`elfit-ai-virtual-try-on-for-woocommerce-pro`).
+All features and capabilities of the plugin are 100% native, standalone, and fully functional out of the box with zero subscriptions, zero trialware, and zero recurring SaaS markups. Store owners connect their own developer API key via Bring-Your-Own-Key (BYOK) architecture for OpenRouter.
 
 ## Tech Stack & Dependencies
 - **Language**: PHP 8.0+ (Tested up to PHP 8.3)
@@ -11,7 +11,7 @@ All features and capabilities of the free plugin are 100% native, standalone, an
 - **Frontend Architecture**: Vanilla JavaScript (ES6+), Canvas API, Web Share API, MediaDevices API
 - **Styling**: CSS Custom Properties, modern Flexbox/Grid, clean Light Mode UI, RTL support
 - **REST Endpoints**: WordPress REST API (`/wp-json/fito-tryon/v1/...`)
-- **Database Engine**: Custom MySQL tables (`wp_fito_tryon_jobs`, `wp_fito_tryon_logs`) managed via `dbDelta` (Schema Version 1.4.0)
+- **Database Engine**: Custom MySQL tables (`wp_fito_tryon_jobs`, `wp_fito_tryon_logs`) managed via `dbDelta` (Schema Version 1.4.1)
 - **Charts & Data Visualization**: Local Chart.js v4.5.1 for admin analytics dashboards
 - **Internationalization**: WordPress i18n (`__()`, `_e()`, `esc_html__()`), bundled English and Persian (fa_IR) translations
 
@@ -74,25 +74,16 @@ elfit-ai-virtual-try-on-for-woocommerce/
    - 14-day interactive volume graph via local Chart.js.
    - Searchable, filterable audit log table with duration and cost estimates.
    - Sent prompt and received response payload inspector.
-6. **Coexistence Data Safety on Uninstall**:
-   - Free Uninstall Guard: Checks if another edition of the plugin is running in memory, listed in active plugins, or installed on disk (using only generic class and folder prefix checks without referencing Pro names or paid features). If detected, uninstallation returns immediately to preserve all shared database tables, media, and settings.
-   - Pro Uninstall Guard: Checks if the Free edition is active or installed on disk. If detected, uninstallation returns immediately to prevent clearing shared settings or tables needed by Free.
-   - Zero Pro Leftovers: Free `uninstall.php` contains zero Pro options, zero Pro constants, and zero Pro keywords.
+6. **Safe Uninstallation**:
+   - In-Memory Guard: Checks if the plugin is running in memory (`class_exists('Fito_Tryon') || defined('FITO_TRYON_VERSION')`). Avoids brittle directory sniffing or active plugins scanning.
+   - Clean Database & Storage Removal: Drops `wp_fito_tryon_jobs` and `wp_fito_tryon_logs`, removes all registered settings, and deletes temporary upload files.
 
 ## Verification & Testing Commands
 - **PHP Syntax Verification**:
   ```powershell
   rtk php -l admin/class-fito-tryon-admin.php elfit-ai-virtual-try-on-for-woocommerce.php includes/class-fito-tryon-database.php includes/class-fito-tryon-openrouter.php includes/class-fito-tryon-privacy.php includes/class-fito-tryon-public.php includes/class-fito-tryon-rate-limiter.php includes/class-fito-tryon-rest.php includes/class-fito-tryon-storage.php includes/class-fito-tryon.php uninstall.php tests/test-all-inclusive-free-plugin.php
   ```
-- **Unit and Feature Test Suite (53 tests)**:
+- **Unit and Feature Test Suite (31 tests)**:
   ```powershell
   rtk php tests/test-all-inclusive-free-plugin.php
-  ```
-- **Coexistence Scenarios Verification**:
-  ```powershell
-  rtk php scratch/test_uninstall_scenarios.php
-  ```
-- **Em Dash Compliance Check**:
-  ```powershell
-  rtk php scratch/check_em_dashes.php
   ```

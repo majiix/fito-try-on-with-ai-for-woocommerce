@@ -100,7 +100,7 @@ class Fito_Tryon {
      * @return array<int, string>
      */
     public function get_allowed_providers(): array {
-        return (array) apply_filters('fito_tryon_allowed_providers', ['openrouter']);
+        return ['openrouter'];
     }
 
     /**
@@ -109,12 +109,7 @@ class Fito_Tryon {
      * @return string
      */
     public function get_active_provider(): string {
-        $provider = (string) get_option('fito_tryon_ai_provider', 'openrouter');
-        $allowed  = $this->get_allowed_providers();
-        if (!in_array($provider, $allowed, true)) {
-            return 'openrouter';
-        }
-        return $provider;
+        return 'openrouter';
     }
 
     /**
@@ -124,13 +119,10 @@ class Fito_Tryon {
      * @return object|null
      */
     public function get_provider_client(string $provider = ''): ?object {
-        if (empty($provider)) {
-            $provider = $this->get_active_provider();
-        }
-        if ($provider === 'openrouter') {
+        if (empty($provider) || $provider === 'openrouter') {
             return $this->openrouter;
         }
-        return apply_filters('fito_tryon_resolve_provider_client', null, $provider);
+        return null;
     }
 
     /**
@@ -139,11 +131,6 @@ class Fito_Tryon {
      * @return string
      */
     public function get_active_primary_model(): string {
-        $provider = $this->get_active_provider();
-        $client = $this->get_provider_client($provider);
-        if ($client && method_exists($client, 'get_primary_model')) {
-            return $client->get_primary_model();
-        }
         return $this->openrouter->get_primary_model();
     }
 
@@ -154,11 +141,6 @@ class Fito_Tryon {
      * @return array<string, mixed>
      */
     public function generate_tryon(array $params): array {
-        $provider = $this->get_active_provider();
-        $client = $this->get_provider_client($provider);
-        if ($client && method_exists($client, 'generate_tryon')) {
-            return $client->generate_tryon($params);
-        }
         return $this->openrouter->generate_tryon($params);
     }
 }

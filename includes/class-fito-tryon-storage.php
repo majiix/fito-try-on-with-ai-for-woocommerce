@@ -47,18 +47,6 @@ class Fito_Tryon_Storage {
         }
     }
 
-    public function get_results_dir(): string {
-        $dir = trailingslashit(self::get_base_dir()) . 'results';
-        if (!is_dir($dir)) {
-            wp_mkdir_p($dir);
-        }
-        return $dir;
-    }
-
-    public function get_results_url(): string {
-        return trailingslashit(self::get_base_url()) . 'results';
-    }
-
     /**
      * Handle uploaded customer photo file using wp_handle_upload().
      *
@@ -73,14 +61,14 @@ class Fito_Tryon_Storage {
             return ['success' => false, 'message' => __('No valid uploaded file found.', 'elfit-ai-virtual-try-on-for-woocommerce')];
         }
 
-        $max_size = (int) get_option('fito_tryon_max_upload_size', 10) * 1024 * 1024;
+        $max_size = 10 * 1024 * 1024;
         if (!empty($file['size']) && $file['size'] > $max_size) {
             return [
                 'success' => false,
                 'message' => sprintf(
                     // translators: %d: Maximum allowed upload size in megabytes
                     __('Image size exceeds maximum limit of %d MB.', 'elfit-ai-virtual-try-on-for-woocommerce'),
-                    (int) get_option('fito_tryon_max_upload_size', 10)
+                    10
                 ),
             ];
         }
@@ -174,14 +162,14 @@ class Fito_Tryon_Storage {
             return ['success' => false, 'message' => __('Invalid base64 image data received.', 'elfit-ai-virtual-try-on-for-woocommerce')];
         }
 
-        $max_size = (int) get_option('fito_tryon_max_upload_size', 10) * 1024 * 1024;
+        $max_size = 10 * 1024 * 1024;
         if (strlen($binary) > $max_size) {
             return [
                 'success' => false,
                 'message' => sprintf(
                     // translators: %d: Maximum allowed upload size in megabytes
                     __('Image size exceeds maximum limit of %d MB.', 'elfit-ai-virtual-try-on-for-woocommerce'),
-                    (int) get_option('fito_tryon_max_upload_size', 10)
+                    10
                 ),
             ];
         }
@@ -322,10 +310,6 @@ class Fito_Tryon_Storage {
         return 'data:' . $mime . ';base64,' . base64_encode($data);
     }
 
-    public static function file_to_base64(string $path): string {
-        return self::image_to_base64($path);
-    }
-
     /**
      * Resolve image path, URL, or attachment ID into a base64 data URI string.
      *
@@ -392,10 +376,6 @@ class Fito_Tryon_Storage {
         }
 
         return '';
-    }
-
-    public static function resolve_to_base64(string $path_or_url, int $attachment_id = 0): string {
-        return self::resolve_image_base64($path_or_url, $attachment_id);
     }
 
     /**

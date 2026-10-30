@@ -8,40 +8,10 @@ defined('WP_UNINSTALL_PLUGIN') || exit;
 global $wpdb;
 
 /**
- * 1. Check if another edition of this plugin is present on the site.
- * If another edition is active in memory, registered in active plugins,
- * or present in the plugins directory, abort uninstallation immediately
- * to preserve all shared settings, database tables, and media files.
+ * 1. Abort uninstallation if the plugin is still loaded in memory.
  */
-$current_plugin_dir = basename(__DIR__);
-
-// Check if another instance is already running in memory.
 if (class_exists('Fito_Tryon') || defined('FITO_TRYON_VERSION')) {
     return;
-}
-
-// Check if another edition is active in the WordPress active plugins list.
-$active_plugins = (array) get_option('active_plugins', []);
-if (is_multisite()) {
-    $active_plugins = array_merge($active_plugins, array_keys((array) get_site_option('active_sitewide_plugins', [])));
-}
-foreach ($active_plugins as $active_plugin) {
-    $plugin_dir = dirname($active_plugin);
-    if ($plugin_dir !== '.' && $plugin_dir !== $current_plugin_dir && str_starts_with($plugin_dir, 'elfit-ai-virtual-try-on')) {
-        return;
-    }
-}
-
-// Check if another edition directory exists in the plugins directory.
-if (defined('WP_PLUGIN_DIR')) {
-    $sister_dirs = glob(WP_PLUGIN_DIR . '/elfit-ai-virtual-try-on*', GLOB_ONLYDIR);
-    if (is_array($sister_dirs)) {
-        foreach ($sister_dirs as $sister_dir) {
-            if (basename($sister_dir) !== $current_plugin_dir) {
-                return;
-            }
-        }
-    }
 }
 
 // 2. Clear scheduled cron tasks
@@ -65,7 +35,6 @@ $wpdb->query("DROP TABLE IF EXISTS {$wpdb->prefix}fito_tryon_logs");
 
 // 5. Delete registered options
 $fito_tryon_options = [
-    'fito_tryon_ai_provider',
     'fito_tryon_openrouter_api_key',
     'fito_tryon_primary_model',
     'fito_tryon_timeout_seconds',
@@ -85,7 +54,6 @@ $fito_tryon_options = [
     'fito_tryon_login_notice',
     'fito_tryon_sample_image_id',
     'fito_tryon_allowed_categories',
-    'fito_tryon_max_upload_size',
 ];
 
 foreach ($fito_tryon_options as $fito_tryon_opt) {

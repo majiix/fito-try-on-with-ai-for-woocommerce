@@ -214,12 +214,10 @@ class Fito_Tryon_Rest {
         }
 
         // 5. Create database job
-        $session_id = wp_get_session_token() ?: md5($this->plugin->rate_limiter->get_client_ip());
         $model = $this->plugin->get_active_primary_model();
 
         $token = $this->plugin->db->create_job([
             'user_id'           => $user_id,
-            'session_id'        => $session_id,
             'product_id'        => $product_id,
             'variation_id'      => $variation_id,
             'user_image_path'   => $user_img_data['path'],
@@ -489,57 +487,20 @@ class Fito_Tryon_Rest {
     }
 
     public function handle_test_connection(WP_REST_Request $request): WP_REST_Response {
-        $provider = sanitize_key((string) ($request->get_param('provider') ?: 'openrouter'));
         $api_key = $request->get_param('api_key');
-
-        $allowed = $this->plugin->get_allowed_providers();
-        if (!in_array($provider, $allowed, true)) {
-            return new WP_REST_Response([
-                'success' => false,
-                'message' => __('Invalid or unsupported AI provider specified.', 'elfit-ai-virtual-try-on-for-woocommerce'),
-            ], 400);
-        }
-
-        if ($provider === 'openrouter') {
-            $result = $this->plugin->openrouter->test_connection($api_key);
-        } else {
-            $result = apply_filters('fito_tryon_test_connection', [
-                'success' => false,
-                'message' => __('Provider connection testing is not available.', 'elfit-ai-virtual-try-on-for-woocommerce'),
-            ], $provider, $api_key);
-        }
+        $result  = $this->plugin->openrouter->test_connection($api_key);
 
         return new WP_REST_Response($result, !empty($result['success']) ? 200 : 400);
     }
 
     public function handle_get_models(WP_REST_Request $request): WP_REST_Response {
-        $provider = sanitize_key((string) ($request->get_param('provider') ?: 'openrouter'));
-
-        $allowed = $this->plugin->get_allowed_providers();
-        if (!in_array($provider, $allowed, true)) {
-            return new WP_REST_Response([
-                'success' => false,
-                'message' => __('Invalid or unsupported AI provider specified.', 'elfit-ai-virtual-try-on-for-woocommerce'),
-            ], 400);
-        }
-
-        $force = $request->get_param('refresh') === '1' || $request->get_param('force') === '1';
-        $api_key = $request->get_param('api_key');
-        if ($api_key !== null) {
-            $api_key = sanitize_text_field(trim((string) $api_key));
-        }
-
-        if ($provider === 'openrouter') {
-            $was_cached = !$force && !empty($this->plugin->openrouter->get_cached_models());
-            $models = $this->plugin->openrouter->fetch_live_models($force);
-        } else {
-            $was_cached = false;
-            $models = (array) apply_filters('fito_tryon_fetch_models', [], $provider, $api_key, $force);
-        }
+        $force      = $request->get_param('refresh') === '1' || $request->get_param('force') === '1';
+        $was_cached = !$force && !empty($this->plugin->openrouter->get_cached_models());
+        $models     = $this->plugin->openrouter->fetch_live_models($force);
 
         return new WP_REST_Response([
             'success'  => true,
-            'provider' => $provider,
+            'provider' => 'openrouter',
             'models'   => $models,
             'count'    => count($models),
             'cached'   => $was_cached,

@@ -498,11 +498,6 @@ class Fito_Tryon_Admin {
     }
 
     public function render_settings_page(): void {
-        $allowed_providers    = $this->plugin->get_allowed_providers();
-        $ai_provider          = (string) get_option('fito_tryon_ai_provider', 'openrouter');
-        if (!in_array($ai_provider, $allowed_providers, true)) {
-            $ai_provider = 'openrouter';
-        }
         $api_key              = get_option('fito_tryon_openrouter_api_key', '');
         $primary_model        = get_option('fito_tryon_primary_model', 'google/gemini-2.5-flash-image');
         $timeout              = get_option('fito_tryon_timeout_seconds', 60);
@@ -591,7 +586,6 @@ class Fito_Tryon_Admin {
                             <tr>
                                 <th scope="row"><label><?php esc_html_e('AI Engine', 'elfit-ai-virtual-try-on-for-woocommerce'); ?></label></th>
                                 <td>
-                                    <input type="hidden" id="fito_ai_provider" name="fito_tryon_ai_provider" value="openrouter">
                                     <div style="display: flex; align-items: center; gap: 8px;">
                                         <span class="fito-provider-badge" style="display: inline-flex; align-items: center; padding: 4px 10px; background: #e0f2fe; color: #0369a1; font-weight: 600; border-radius: 4px; font-size: 13px;">
                                             <?php esc_html_e('OpenRouter (Multi-Model Aggregator)', 'elfit-ai-virtual-try-on-for-woocommerce'); ?>
@@ -630,19 +624,8 @@ class Fito_Tryon_Admin {
                                         </div>
                                     </td>
                                 </tr>
-                                <?php do_action('fito_tryon_admin_provider_extra_fields', 'openrouter'); ?>
                             </table>
                         </div>
-
-                        <?php
-                        /**
-                         * Action to render additional AI provider configuration panels.
-                         *
-                         * @param string $ai_provider Currently active AI provider.
-                         * @param array<int, string> $allowed_providers Permitted AI providers.
-                         */
-                        do_action('fito_tryon_admin_provider_panels', $ai_provider, $allowed_providers);
-                        ?>
 
                         <!-- Common Request Timeout -->
                         <table class="form-table" style="margin-top: 10px;">
@@ -683,7 +666,6 @@ class Fito_Tryon_Admin {
                                     <p class="description"><?php esc_html_e('Choose where the AI Virtual Try-On button appears on single product pages.', 'elfit-ai-virtual-try-on-for-woocommerce'); ?></p>
                                 </td>
                             </tr>
-                            <?php do_action('fito_tryon_admin_appearance_settings'); ?>
                         </table>
                     </div>
                 </div>
@@ -792,7 +774,6 @@ class Fito_Tryon_Admin {
                                     <textarea id="fito_consent_text" name="fito_tryon_consent_text" rows="3" class="large-text"><?php echo esc_textarea($consent_text); ?></textarea>
                                 </td>
                             </tr>
-                            <?php do_action('fito_tryon_admin_privacy_settings'); ?>
                         </table>
                     </div>
                 </div>
@@ -818,8 +799,6 @@ class Fito_Tryon_Admin {
                         <?php endif; ?>
                     </div>
                 </div>
-
-                <?php do_action('fito_tryon_settings_form_bottom'); ?>
 
                 <div class="fito-settings-submit-bar">
                     <button type="submit" class="button button-primary button-hero">
@@ -850,25 +829,6 @@ class Fito_Tryon_Admin {
         <?php
     }
 
-    /**
-     * Recursively unslash and sanitize an input array.
-     *
-     * @param array<mixed, mixed> $data Raw input array.
-     * @return array<string, mixed> Sanitized array with sanitized keys and scalar values.
-     */
-    private function sanitize_post_array(array $data): array {
-        $clean = [];
-        foreach ($data as $key => $value) {
-            $clean_key = sanitize_key((string) $key);
-            if (is_array($value)) {
-                $clean[$clean_key] = $this->sanitize_post_array($value);
-            } elseif (is_scalar($value)) {
-                $clean[$clean_key] = sanitize_text_field(wp_unslash((string) $value));
-            }
-        }
-        return $clean;
-    }
-
     public function handle_save_settings(): void {
         if (!current_user_can('manage_woocommerce') && !current_user_can('manage_options')) {
             wp_die(esc_html__('Unauthorized.', 'elfit-ai-virtual-try-on-for-woocommerce'));
@@ -876,29 +836,12 @@ class Fito_Tryon_Admin {
 
         check_admin_referer('fito_tryon_save_settings_nonce');
 
-        $allowed_providers = $this->plugin->get_allowed_providers();
-        $ai_provider       = (string) get_option('fito_tryon_ai_provider', 'openrouter');
-        if (isset($_POST['fito_tryon_ai_provider'])) {
-            $provider    = sanitize_key(wp_unslash($_POST['fito_tryon_ai_provider']));
-            $ai_provider = in_array($provider, $allowed_providers, true) ? $provider : 'openrouter';
-            update_option('fito_tryon_ai_provider', $ai_provider, false);
-        }
-
         if (isset($_POST['fito_tryon_openrouter_api_key'])) {
             update_option('fito_tryon_openrouter_api_key', sanitize_text_field(wp_unslash($_POST['fito_tryon_openrouter_api_key'])), false);
         }
         if (isset($_POST['fito_tryon_primary_model'])) {
             update_option('fito_tryon_primary_model', sanitize_text_field(wp_unslash($_POST['fito_tryon_primary_model'])), false);
         }
-
-        /**
-         * Action to handle saving settings for additional AI providers.
-         *
-         * @param string $ai_provider Currently selected AI provider.
-         * @param array<string, mixed> $post_data Pre-sanitized submitted POST data.
-         */
-        $sanitized_post = !empty($_POST) && is_array($_POST) ? $this->sanitize_post_array($_POST) : [];
-        do_action('fito_tryon_admin_save_provider_settings', $ai_provider, $sanitized_post);
 
         if (isset($_POST['fito_tryon_timeout_seconds'])) {
             update_option('fito_tryon_timeout_seconds', max(15, absint(wp_unslash($_POST['fito_tryon_timeout_seconds']))), false);
@@ -1265,14 +1208,6 @@ class Fito_Tryon_Admin {
                 $sanitized_prompts[] = $default_item;
             }
         }
-
-        /**
-         * Filter sanitized prompts before saving configuration.
-         *
-         * @param array<int, array<string, mixed>> $sanitized_prompts
-         * @param array<int, array<string, mixed>> $raw_prompts
-         */
-        $sanitized_prompts = (array) apply_filters('fito_tryon_save_prompts_config', $sanitized_prompts, $raw_prompts);
 
         update_option('fito_tryon_prompts_config', $sanitized_prompts, false);
 

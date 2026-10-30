@@ -25,7 +25,7 @@ class Fito_Tryon_Privacy {
     }
 
     public function get_retention_hours(): int {
-        return (int) apply_filters('fito_tryon_retention_hours', 24);
+        return 24;
     }
 
     public function run_cleanup(): void {

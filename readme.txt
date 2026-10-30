@@ -77,7 +77,7 @@ This plugin bundles the following open-source third-party library:
 == Frequently Asked Questions ==
 
 = Which AI providers are supported? =
-The plugin supports OpenRouter out of the box with Bring-Your-Own-Key (BYOK) architecture, giving you direct access to top vision models with zero middleman fees. Additional direct providers are supported via developer filters and the Pro edition.
+The plugin supports OpenRouter out of the box with Bring-Your-Own-Key (BYOK) architecture, giving you direct access to top vision models with zero middleman fees.
 
 = Is this plugin completely free? =
 Yes. Core virtual try-on capabilities, including OpenRouter integration, single-product button placements, split comparison slider, rate limiting, and custom category fitting prompts, are 100% free and included directly in this plugin.

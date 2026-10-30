@@ -235,76 +235,51 @@ function assert_test($condition, $description) {
 }
 
 // 1. Master Class & Component Instantiation
-update_option('fito_tryon_db_version', '1.4.0');
+update_option('fito_tryon_db_version', '1.4.1');
 $plugin = Fito_Tryon::instance();
 $plugin->boot();
 assert_test($plugin instanceof Fito_Tryon, "Fito_Tryon master singleton instantiates successfully");
 assert_test($plugin->openrouter instanceof Fito_Tryon_OpenRouter, "Fito_Tryon::\$openrouter is an instance of Fito_Tryon_OpenRouter");
-assert_test(!property_exists($plugin, 'gemini'), "Fito_Tryon does not have \$gemini property in free version");
-assert_test(!property_exists($plugin, 'openai'), "Fito_Tryon does not have \$openai property in free version");
-assert_test(!property_exists($plugin, 'watermark'), "Fito_Tryon does not have \$watermark property in free version");
-assert_test(!property_exists($plugin, 'cache'), "Fito_Tryon does not have \$cache property in free version");
-assert_test(!property_exists($plugin, 'placements'), "Fito_Tryon does not have \$placements property in free version");
-assert_test(!property_exists($plugin, 'account'), "Fito_Tryon does not have \$account property in free version");
 assert_test($plugin->public instanceof Fito_Tryon_Public, "Fito_Tryon::\$public is an instance of Fito_Tryon_Public");
+assert_test($plugin->db instanceof Fito_Tryon_Database, "Fito_Tryon::\$db is an instance of Fito_Tryon_Database");
+assert_test($plugin->storage instanceof Fito_Tryon_Storage, "Fito_Tryon::\$storage is an instance of Fito_Tryon_Storage");
+assert_test($plugin->privacy instanceof Fito_Tryon_Privacy, "Fito_Tryon::\$privacy is an instance of Fito_Tryon_Privacy");
+assert_test($plugin->rate_limiter instanceof Fito_Tryon_Rate_Limiter, "Fito_Tryon::\$rate_limiter is an instance of Fito_Tryon_Rate_Limiter");
 
-// 2. Allowed Providers
+// 2. AI Provider Settings & Client Resolution
 $allowed_providers = $plugin->get_allowed_providers();
-assert_test(in_array('openrouter', $allowed_providers, true), "Allowed providers includes 'openrouter'");
-assert_test(!in_array('gemini', $allowed_providers, true), "Allowed providers does not include 'gemini' in free version");
-assert_test(!in_array('openai', $allowed_providers, true), "Allowed providers does not include 'openai' in free version");
-assert_test($plugin->get_active_provider() === 'openrouter', "Active provider defaults strictly to 'openrouter'");
-
-// 3. Provider Resolution & Fallback
+assert_test($allowed_providers === ['openrouter'], "Allowed providers contains exclusively 'openrouter'");
+assert_test($plugin->get_active_provider() === 'openrouter', "Active provider returns 'openrouter'");
 assert_test($plugin->get_provider_client('openrouter') instanceof Fito_Tryon_OpenRouter, "Provider client for 'openrouter' resolves correctly");
-assert_test($plugin->get_provider_client('gemini') === null, "Provider client for 'gemini' returns null in free version");
-assert_test($plugin->get_provider_client('openai') === null, "Provider client for 'openai' returns null in free version");
+assert_test($plugin->get_provider_client('unknown') === null, "Provider client for unknown provider returns null");
 
-// 4. Extensibility via Pro Hooks
-add_filter('fito_tryon_allowed_providers', function($providers) {
-    $providers[] = 'custom_pro_provider';
-    return $providers;
-});
-$extended_providers = $plugin->get_allowed_providers();
-assert_test(in_array('custom_pro_provider', $extended_providers, true), "Allowed providers is extensible via fito_tryon_allowed_providers filter");
-
-// 5. OpenRouter Primary Model Direct Execution (No Fallback in Free)
+// 3. OpenRouter Model Resolution
 $openrouter = $plugin->openrouter;
 assert_test(method_exists($openrouter, 'get_primary_model'), "Fito_Tryon_OpenRouter has get_primary_model() method");
-assert_test(!method_exists($openrouter, 'get_fallback_model'), "Fito_Tryon_OpenRouter does not have get_fallback_model() method in free version");
+assert_test($plugin->get_active_primary_model() === $openrouter->get_primary_model(), "Active primary model delegates to OpenRouter");
 
 if (!defined('HOUR_IN_SECONDS')) {
     define('HOUR_IN_SECONDS', 3600);
 }
 
-// 6. No Smart Result Caching Engine in Free
-assert_test(!class_exists('Fito_Tryon_Cache'), "Fito_Tryon_Cache class does not exist in free version");
-assert_test(!method_exists($plugin->admin, 'handle_flush_cache'), "Admin does not have handle_flush_cache() in free version");
-
-// 7. Storefront Single Product Button & Appearance
+// 4. Storefront Single Product Button & Appearance
 $public = $plugin->public;
 assert_test(method_exists($public, 'render_product_button'), "Fito_Tryon_Public has render_product_button() method");
 assert_test(method_exists($public, 'render_block'), "Fito_Tryon_Public has render_block() method");
-assert_test(!class_exists('Fito_Tryon_Placements'), "Fito_Tryon_Placements class does not exist in free version");
 
-// 8. No Account History Engine in Free
-assert_test(!class_exists('Fito_Tryon_Account'), "Fito_Tryon_Account class does not exist in free version");
-
-// 9. Database Schema & Standalone Free Data Model
-assert_test(Fito_Tryon_Database::DB_VERSION === '1.4.0', "Database schema version is 1.4.0");
+// 5. Database Schema & Data Model
+assert_test(Fito_Tryon_Database::DB_VERSION === '1.4.1', "Database schema version is 1.4.1");
 $db_file_content = file_get_contents(FITO_TRYON_PATH . 'includes/class-fito-tryon-database.php');
-assert_test(!str_contains($db_file_content, 'is_saved_to_account'), "Jobs table schema does not define is_saved_to_account column in free version");
-assert_test(!method_exists($plugin->db, 'save_job_to_account'), "Database does not have save_job_to_account() method in free version");
-assert_test(!method_exists($plugin->db, 'get_user_jobs'), "Database does not have get_user_jobs() method in free version");
-assert_test(!method_exists($plugin->db, 'delete_user_job'), "Database does not have delete_user_job() method in free version");
+assert_test(!str_contains($db_file_content, 'session_id'), "Jobs table schema does not define unused session_id column");
+assert_test(method_exists($plugin->db, 'create_job'), "Database has create_job() method");
+assert_test(method_exists($plugin->db, 'get_job_by_token'), "Database has get_job_by_token() method");
+assert_test(method_exists($plugin->db, 'update_job_by_token'), "Database has update_job_by_token() method");
 
-// 10. Fixed 24h Photo Retention Policy in Free
+// 6. Fixed 24h Photo Retention Policy
 $privacy = $plugin->privacy;
-assert_test($privacy->get_retention_hours() === 24, "Privacy retention window defaults to fixed 24 hours in free version");
-add_filter('fito_tryon_retention_hours', function() { return 12; });
-assert_test($privacy->get_retention_hours() === 12, "Privacy retention window remains filterable via hook");
+assert_test($privacy->get_retention_hours() === 24, "Privacy retention window is fixed 24 hours");
 
-// 11. Admin Submenu Cleanup (No Upsell or Gated Menus)
+// 7. Admin Submenu Configuration
 $admin = $plugin->admin;
 $registered_submenus = [];
 function add_submenu_page($parent, $page_title, $menu_title, $cap, $menu_slug, $callback = '') {
@@ -312,44 +287,25 @@ function add_submenu_page($parent, $page_title, $menu_title, $cap, $menu_slug, $
     $registered_submenus[] = $menu_slug;
 }
 $admin->register_admin_menus();
-assert_test(!in_array('fito-tryon-go-pro', $registered_submenus, true), "Admin submenus do not include legacy 'fito-tryon-go-pro'");
+assert_test(in_array('fito-tryon-settings', $registered_submenus, true), "Admin submenus include 'fito-tryon-settings'");
+assert_test(in_array('fito-tryon-prompts', $registered_submenus, true), "Admin submenus include 'fito-tryon-prompts'");
+assert_test(in_array('fito-tryon-logs', $registered_submenus, true), "Admin submenus include 'fito-tryon-logs'");
 
-// 12. Prompts 7 Built-in Presets in Free
+// 8. Prompts 7 Built-in Presets
 $default_prompts = Fito_Tryon_OpenRouter::get_default_prompts();
 assert_test(count($default_prompts) === 7, "Default prompts contains 7 built-in system presets");
 
-$admin_content = file_get_contents(FITO_TRYON_PATH . 'admin/class-fito-tryon-admin.php');
-assert_test(!str_contains($admin_content, 'id="fito-btn-add-prompt"'), "Admin prompts screen does not contain top add prompt button in free version");
-assert_test(!str_contains($admin_content, 'id="fito-btn-add-prompt-bottom"'), "Admin prompts screen does not contain bottom add prompt button in free version");
-assert_test(!str_contains($admin_content, 'class="button button-small fito-prompt-duplicate"'), "Admin prompts screen does not contain duplicate prompt button in free version");
-assert_test(!str_contains($admin_content, 'id="fitoPromptRowTemplate"'), "Admin prompts screen does not contain dynamic row template in free version");
+// 9. Storage & Clean Execution
+$storage_content = file_get_contents(FITO_TRYON_PATH . 'includes/class-fito-tryon-storage.php');
+assert_test(!str_contains($storage_content, 'fito_tryon_max_upload_size'), "Storage does not reference orphaned fito_tryon_max_upload_size option");
+assert_test(!str_contains($storage_content, 'get_results_dir'), "Storage does not define dead get_results_dir() method");
 
-$admin_js_content = file_get_contents(FITO_TRYON_PATH . 'assets/js/admin.js');
-assert_test(!str_contains($admin_js_content, 'bindPromptActions'), "Admin JS does not contain bindPromptActions in free version");
-assert_test(!str_contains($admin_js_content, '.fito-prompt-duplicate'), "Admin JS does not contain duplicate prompt click handler in free version");
-assert_test(!str_contains($admin_js_content, '.fito-btn-add-prompt-action'), "Admin JS does not contain add prompt click handler in free version");
-
-// 13. Leftover Hooks & CSS Sweep
-$rest_content = file_get_contents(FITO_TRYON_PATH . 'includes/class-fito-tryon-rest.php');
-assert_test(!str_contains($rest_content, 'fito_tryon_get_cached_result'), "REST class does not contain fito_tryon_get_cached_result in free version");
-assert_test(!str_contains($rest_content, 'fito_tryon_set_cached_result'), "REST class does not contain fito_tryon_set_cached_result in free version");
-assert_test(!str_contains($rest_content, 'fito_tryon_log_data'), "REST class does not contain fito_tryon_log_data in free version");
-
-$public_content = file_get_contents(FITO_TRYON_PATH . 'includes/class-fito-tryon-public.php');
-assert_test(!str_contains($public_content, 'fito_tryon_modal_result_actions'), "Public class does not contain fito_tryon_modal_result_actions in free version");
-
-$css_content = file_get_contents(FITO_TRYON_PATH . 'assets/css/admin.css');
-assert_test(!str_contains($css_content, '.fito-badge-custom'), "Admin CSS does not contain .fito-badge-custom");
-assert_test(!str_contains($css_content, '.fito-prompt-delete'), "Admin CSS does not contain .fito-prompt-delete");
-
-// 14. Data Preservation on Uninstall
+// 10. In-Memory Guard on Uninstall
 $uninstall_content = file_get_contents(FITO_TRYON_PATH . 'uninstall.php');
 assert_test(str_contains($uninstall_content, "class_exists('Fito_Tryon')"), "uninstall.php aborts if another active instance is running in memory");
-assert_test(str_contains($uninstall_content, 'elfit-ai-virtual-try-on*'), "uninstall.php aborts if a sister edition exists on disk");
-assert_test(!str_contains($uninstall_content, 'fito_tryon_gemini_api_key'), "uninstall.php does not reference Pro gemini settings");
-assert_test(!str_contains($uninstall_content, 'fito_tryon_openai_api_key'), "uninstall.php does not reference Pro openai settings");
-assert_test(!str_contains($uninstall_content, 'fito_tryon_watermark_enabled'), "uninstall.php does not reference Pro watermark settings");
-assert_test(!str_contains($uninstall_content, 'fito_tryon_save_to_account'), "uninstall.php does not reference Pro save to account settings");
+assert_test(!str_contains($uninstall_content, 'elfit-ai-virtual-try-on*'), "uninstall.php does not perform sister directory sniffing");
+assert_test(!str_contains($uninstall_content, 'fito_tryon_ai_provider'), "uninstall.php does not reference deleted fito_tryon_ai_provider option");
+assert_test(!str_contains($uninstall_content, 'fito_tryon_max_upload_size'), "uninstall.php does not reference deleted fito_tryon_max_upload_size option");
 
 echo "\n=======================================================\n";
 echo "Test Results: {$tests_passed} / {$tests_total} tests passed.\n";

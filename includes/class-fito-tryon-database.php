@@ -7,7 +7,7 @@ defined('ABSPATH') || exit;
 
 if (!class_exists('Fito_Tryon_Database')) {
 class Fito_Tryon_Database {
-    public const DB_VERSION = '1.4.0';
+    public const DB_VERSION = '1.4.1';
 
     /**
      * Create custom database tables using dbDelta.
@@ -23,7 +23,6 @@ class Fito_Tryon_Database {
             id bigint(20) unsigned NOT NULL AUTO_INCREMENT,
             job_token varchar(64) NOT NULL,
             user_id bigint(20) unsigned NOT NULL DEFAULT 0,
-            session_id varchar(64) NOT NULL DEFAULT '',
             product_id bigint(20) unsigned NOT NULL,
             variation_id bigint(20) unsigned NOT NULL DEFAULT 0,
             status varchar(20) NOT NULL DEFAULT 'pending',
@@ -40,7 +39,6 @@ class Fito_Tryon_Database {
             PRIMARY KEY  (id),
             KEY job_token (job_token),
             KEY user_id (user_id),
-            KEY session_id (session_id),
             KEY product_id (product_id),
             KEY status (status),
             KEY created_at (created_at),
@@ -115,7 +113,6 @@ class Fito_Tryon_Database {
         $insert_data = [
             'job_token'           => $token,
             'user_id'             => isset($data['user_id']) ? absint($data['user_id']) : 0,
-            'session_id'          => isset($data['session_id']) ? sanitize_text_field($data['session_id']) : '',
             'product_id'          => absint($data['product_id']),
             'variation_id'        => isset($data['variation_id']) ? absint($data['variation_id']) : 0,
             'status'              => 'pending',
@@ -141,15 +138,6 @@ class Fito_Tryon_Database {
         $table = $wpdb->prefix . 'fito_tryon_jobs';
         // phpcs:disable WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, PluginCheck.Security.DirectDB.UnescapedDBParameter
         $row = $wpdb->get_row($wpdb->prepare('SELECT * FROM %i WHERE job_token = %s LIMIT 1', $table, $token));
-        // phpcs:enable
-        return $row ?: null;
-    }
-
-    public function get_job(int $job_id): ?object {
-        global $wpdb;
-        $table = $wpdb->prefix . 'fito_tryon_jobs';
-        // phpcs:disable WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, PluginCheck.Security.DirectDB.UnescapedDBParameter
-        $row = $wpdb->get_row($wpdb->prepare('SELECT * FROM %i WHERE id = %d LIMIT 1', $table, $job_id));
         // phpcs:enable
         return $row ?: null;
     }
@@ -213,15 +201,6 @@ class Fito_Tryon_Database {
         do_action('fito_tryon_after_log_created', $insert_id, $data);
 
         return $insert_id;
-    }
-
-    public function get_log(int $log_id): ?object {
-        global $wpdb;
-        $table = $wpdb->prefix . 'fito_tryon_logs';
-        // phpcs:disable WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, PluginCheck.Security.DirectDB.UnescapedDBParameter
-        $row = $wpdb->get_row($wpdb->prepare('SELECT * FROM %i WHERE id = %d LIMIT 1', $table, $log_id));
-        // phpcs:enable
-        return $row ?: null;
     }
 
     public function get_logs(array $args = []): array {

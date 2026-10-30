@@ -869,14 +869,6 @@ class Fito_Tryon_OpenRouter {
         return null;
     }
 
-    public function extract_image_from_content($content): ?string {
-        if (is_array($content)) {
-            return $this->extract_image_from_choice(['content' => $content]);
-        }
-        return is_string($content) ? $this->extract_image_from_text($content) : null;
-    }
-
-
     public function resolve_image_base64(string $path_or_url, int $attachment_id = 0): string {
         return Fito_Tryon_Storage::resolve_image_base64($path_or_url, $attachment_id);
     }

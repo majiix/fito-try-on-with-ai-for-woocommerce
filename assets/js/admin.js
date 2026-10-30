@@ -8,7 +8,6 @@
     const FitoAdmin = {
         init: function () {
             this.initChart();
-            this.bindProviderToggle();
             this.bindConnectionTest();
             this.bindAccessControl();
             this.bindLogInspection();
@@ -74,21 +73,11 @@
             });
         },
 
-        bindProviderToggle: function () {
-            const self = this;
-            $('#fito_ai_provider').on('change', function () {
-                const provider = $(this).val();
-                $('.fito-provider-panel').hide();
-                $('#fito-panel-' + provider).fadeIn(150);
-                self.loadModelsWithSkeleton(false, provider);
-            });
-        },
-
         bindConnectionTest: function () {
             $(document).on('click', '.fito-btn-test-connection, #fito-btn-test-connection', function () {
                 const $btn = $(this);
-                const provider = $btn.data('provider') || $('#fito_ai_provider').val() || 'openrouter';
-                const $panel = $btn.closest('.fito-provider-panel').length ? $btn.closest('.fito-provider-panel') : $('#fito-panel-' + provider);
+                const provider = 'openrouter';
+                const $panel = $btn.closest('.fito-provider-panel').length ? $btn.closest('.fito-provider-panel') : $('#fito-panel-openrouter');
                 const $result = $panel.find('.fito-connection-test-result, #fito-connection-test-result');
                 const $input = $panel.find('input[type="password"]');
                 const key = $input.length && $input.val() ? $input.val().trim() : '';
@@ -326,22 +315,20 @@
 
         bindModelSync: function () {
             const self = this;
-            const activeProvider = $('#fito_ai_provider').val() || 'openrouter';
 
-            // Load models on page load for current provider
+            // Load models on page load for OpenRouter
             if ($('.fito-provider-table, #fito-models-wrapper').length) {
-                self.loadModelsWithSkeleton(false, activeProvider);
+                self.loadModelsWithSkeleton(false, 'openrouter');
             }
 
             // Manual refresh button
             $('#fito-btn-sync-models').on('click', function () {
-                const currentProvider = $('#fito_ai_provider').val() || 'openrouter';
-                self.loadModelsWithSkeleton(true, currentProvider);
+                self.loadModelsWithSkeleton(true, 'openrouter');
             });
         },
 
         loadModelsWithSkeleton: function (forceRefresh, provider) {
-            const activeProvider = provider || $('#fito_ai_provider').val() || 'openrouter';
+            const activeProvider = provider || 'openrouter';
             const $btn = $('#fito-btn-sync-models');
             const $status = $('#fito-sync-models-status');
             const originalHtml = $btn.length ? $btn.html() : '';
@@ -415,7 +402,7 @@
                         });
 
                         if (forceRefresh) {
-                            const providerTitle = $('#fito_ai_provider option:selected').text() || 'OpenRouter';
+                            const providerTitle = 'OpenRouter';
                             $status.text('✓ Cache cleared! ' + imageGenModels.length + ' models refreshed for ' + providerTitle + ' (cached for 24h).').fadeIn();
                             setTimeout(function () {
                                 $status.fadeOut(300);
