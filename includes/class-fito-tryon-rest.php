@@ -1,6 +1,6 @@
 <?php
 /**
- * REST API routes for Elfit AI Virtual Try-On for WooCommerce.
+ * REST API routes for Fitotry AI Virtual Try-On for WooCommerce.
  */
 
 defined('ABSPATH') || exit;
@@ -101,7 +101,7 @@ class Fito_Tryon_Rest {
         if ($access_level === 'logged_in_only' && !is_user_logged_in()) {
             return new WP_REST_Response([
                 'success' => false,
-                'message' => __('Please sign up or log in to your account to use the AI Virtual Try-On feature.', 'elfit-ai-virtual-try-on-for-woocommerce'),
+                'message' => __('Please sign up or log in to your account to use the AI Virtual Try-On feature.', 'fitotry-ai-virtual-try-on-for-woocommerce'),
             ], 401);
         }
 
@@ -110,7 +110,7 @@ class Fito_Tryon_Rest {
         if (empty($consent) || $consent === 'false' || $consent === '0') {
             return new WP_REST_Response([
                 'success' => false,
-                'message' => __('You must consent to AI photo processing to use the virtual try-on.', 'elfit-ai-virtual-try-on-for-woocommerce'),
+                'message' => __('You must consent to AI photo processing to use the virtual try-on.', 'fitotry-ai-virtual-try-on-for-woocommerce'),
             ], 400);
         }
 
@@ -130,14 +130,14 @@ class Fito_Tryon_Rest {
         if (!$product) {
             return new WP_REST_Response([
                 'success' => false,
-                'message' => __('Invalid WooCommerce product selected.', 'elfit-ai-virtual-try-on-for-woocommerce'),
+                'message' => __('Invalid WooCommerce product selected.', 'fitotry-ai-virtual-try-on-for-woocommerce'),
             ], 400);
         }
 
         if (!$this->plugin->public->is_product_allowed($product_id)) {
             return new WP_REST_Response([
                 'success' => false,
-                'message' => __('Virtual try-on is not enabled for this product category.', 'elfit-ai-virtual-try-on-for-woocommerce'),
+                'message' => __('Virtual try-on is not enabled for this product category.', 'fitotry-ai-virtual-try-on-for-woocommerce'),
             ], 403);
         }
 
@@ -153,7 +153,7 @@ class Fito_Tryon_Rest {
         }
 
         if (empty($user_img_data) || empty($user_img_data['success'])) {
-            $err = $user_img_data['message'] ?? __('Failed to process uploaded photo.', 'elfit-ai-virtual-try-on-for-woocommerce');
+            $err = $user_img_data['message'] ?? __('Failed to process uploaded photo.', 'fitotry-ai-virtual-try-on-for-woocommerce');
             return new WP_REST_Response(['success' => false, 'message' => $err], 400);
         }
 
@@ -230,7 +230,7 @@ class Fito_Tryon_Rest {
         $this->plugin->db->update_job_by_token($token, [
             'status'         => 'processing',
             'progress'       => 45,
-            'status_message' => __('Analyzing photo and product geometry...', 'elfit-ai-virtual-try-on-for-woocommerce'),
+            'status_message' => __('Analyzing photo and product geometry...', 'fitotry-ai-virtual-try-on-for-woocommerce'),
         ]);
 
         try {
@@ -260,7 +260,7 @@ class Fito_Tryon_Rest {
         if ($ai_response['success'] && !empty($ai_response['result_image_data'])) {
             $saved_result = $this->plugin->storage->save_result_image($ai_response['result_image_data']);
             if (empty($saved_result['success']) || empty($saved_result['url'])) {
-                $storage_err = $saved_result['message'] ?? __('Failed to save generated try-on image.', 'elfit-ai-virtual-try-on-for-woocommerce');
+                $storage_err = $saved_result['message'] ?? __('Failed to save generated try-on image.', 'fitotry-ai-virtual-try-on-for-woocommerce');
                 $this->plugin->db->update_job_by_token($token, [
                     'status'         => 'failed',
                     'progress'       => 100,
@@ -299,7 +299,7 @@ class Fito_Tryon_Rest {
             $this->plugin->db->update_job_by_token($token, [
                 'status'            => 'completed',
                 'progress'          => 100,
-                'status_message'    => __('Fitting successfully generated!', 'elfit-ai-virtual-try-on-for-woocommerce'),
+                'status_message'    => __('Fitting successfully generated!', 'fitotry-ai-virtual-try-on-for-woocommerce'),
                 'result_image_url'  => $final_url,
                 'result_image_path' => $final_path,
                 'model_used'        => $ai_response['model'],
@@ -332,12 +332,12 @@ class Fito_Tryon_Rest {
                 'result_image_url' => $final_url,
                 'user_image_url'   => $user_img_data['url'],
                 'product_image_url'=> $prod_img_url,
-                'message'          => __('Virtual try-on completed successfully!', 'elfit-ai-virtual-try-on-for-woocommerce'),
+                'message'          => __('Virtual try-on completed successfully!', 'fitotry-ai-virtual-try-on-for-woocommerce'),
             ], 200);
         }
 
         // Failure handling
-        $fail_msg = $ai_response['message'] ?? __('Failed to generate virtual try-on.', 'elfit-ai-virtual-try-on-for-woocommerce');
+        $fail_msg = $ai_response['message'] ?? __('Failed to generate virtual try-on.', 'fitotry-ai-virtual-try-on-for-woocommerce');
         $raw_err = !empty($ai_response['raw_error']) ? $ai_response['raw_error'] : $fail_msg;
         $this->plugin->db->update_job_by_token($token, [
             'status'         => 'failed',
@@ -376,7 +376,7 @@ class Fito_Tryon_Rest {
         if ($access_level === 'logged_in_only' && !is_user_logged_in()) {
             return new WP_REST_Response([
                 'success' => false,
-                'message' => __('Please sign in to view try-on status.', 'elfit-ai-virtual-try-on-for-woocommerce'),
+                'message' => __('Please sign in to view try-on status.', 'fitotry-ai-virtual-try-on-for-woocommerce'),
             ], 401);
         }
 
@@ -384,14 +384,14 @@ class Fito_Tryon_Rest {
         $job = $this->plugin->db->get_job_by_token($token);
 
         if (!$job) {
-            return new WP_REST_Response(['success' => false, 'message' => __('Try-on job not found.', 'elfit-ai-virtual-try-on-for-woocommerce')], 404);
+            return new WP_REST_Response(['success' => false, 'message' => __('Try-on job not found.', 'fitotry-ai-virtual-try-on-for-woocommerce')], 404);
         }
 
         // Auto-fail stale jobs stuck in processing for more than 90 seconds
         if ($job->status === 'processing') {
             $created = !empty($job->created_at) ? strtotime($job->created_at) : 0;
             if ($created > 0 && (time() - $created) > 90) {
-                $timeout_msg = __('The AI generation request timed out or was interrupted. Please try again.', 'elfit-ai-virtual-try-on-for-woocommerce');
+                $timeout_msg = __('The AI generation request timed out or was interrupted. Please try again.', 'fitotry-ai-virtual-try-on-for-woocommerce');
                 $this->plugin->db->update_job_by_token($token, [
                     'status'         => 'failed',
                     'progress'       => 100,
@@ -454,7 +454,7 @@ class Fito_Tryon_Rest {
         if ($flood_count >= 10) {
             return new WP_REST_Response([
                 'success' => false,
-                'message' => __('Rate limit exceeded for client error reporting.', 'elfit-ai-virtual-try-on-for-woocommerce'),
+                'message' => __('Rate limit exceeded for client error reporting.', 'fitotry-ai-virtual-try-on-for-woocommerce'),
             ], 429);
         }
         set_transient($flood_key, $flood_count + 1, MINUTE_IN_SECONDS);
@@ -477,7 +477,7 @@ class Fito_Tryon_Rest {
                 'error_message'     => $error_message,
                 'prompt_text'       => '',
                 // translators: %s: Error message reported by client browser
-                'response_text'     => Fito_Tryon_OpenRouter::sanitize_json_response(['error' => sprintf(__('Client/network error reported: %s', 'elfit-ai-virtual-try-on-for-woocommerce'), $error_message)]),
+                'response_text'     => Fito_Tryon_OpenRouter::sanitize_json_response(['error' => sprintf(__('Client/network error reported: %s', 'fitotry-ai-virtual-try-on-for-woocommerce'), $error_message)]),
             ];
             $this->plugin->db->add_log($client_err_log);
         }
@@ -517,7 +517,7 @@ class Fito_Tryon_Rest {
 
         return new WP_REST_Response([
             'success' => $success,
-            'message' => $success ? __('Logs updated successfully.', 'elfit-ai-virtual-try-on-for-woocommerce') : __('Failed to update logs.', 'elfit-ai-virtual-try-on-for-woocommerce'),
+            'message' => $success ? __('Logs updated successfully.', 'fitotry-ai-virtual-try-on-for-woocommerce') : __('Failed to update logs.', 'fitotry-ai-virtual-try-on-for-woocommerce'),
         ], $success ? 200 : 500);
     }
 }

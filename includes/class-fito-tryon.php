@@ -1,6 +1,6 @@
 <?php
 /**
- * Master orchestrator class for Elfit AI Virtual Try-On for WooCommerce.
+ * Master orchestrator class for Fitotry AI Virtual Try-On for WooCommerce.
  */
 
 defined('ABSPATH') || exit;
@@ -78,7 +78,7 @@ class Fito_Tryon {
      */
     public function add_action_links(array $links): array {
         $settings_url = admin_url('admin.php?page=fito-tryon-settings');
-        $settings_link = '<a href="' . esc_url($settings_url) . '">' . esc_html__('Settings', 'elfit-ai-virtual-try-on-for-woocommerce') . '</a>';
+        $settings_link = '<a href="' . esc_url($settings_url) . '">' . esc_html__('Settings', 'fitotry-ai-virtual-try-on-for-woocommerce') . '</a>';
         array_unshift($links, $settings_link);
 
         return $links;

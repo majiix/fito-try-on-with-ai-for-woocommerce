@@ -1,6 +1,6 @@
 <?php
 /**
- * Database operations and schema manager for Elfit AI Virtual Try-On for WooCommerce.
+ * Database operations and schema manager for Fitotry AI Virtual Try-On for WooCommerce.
  */
 
 defined('ABSPATH') || exit;
@@ -118,7 +118,7 @@ class Fito_Tryon_Database {
             'variation_id'        => isset($data['variation_id']) ? absint($data['variation_id']) : 0,
             'status'              => 'pending',
             'progress'            => 10,
-            'status_message'      => __('Preparing try-on request...', 'elfit-ai-virtual-try-on-for-woocommerce'),
+            'status_message'      => __('Preparing try-on request...', 'fitotry-ai-virtual-try-on-for-woocommerce'),
             'user_image_path'     => isset($data['user_image_path']) ? sanitize_text_field($data['user_image_path']) : '',
             'user_image_url'      => isset($data['user_image_url']) ? esc_url_raw($data['user_image_url']) : '',
             'product_image_url'   => isset($data['product_image_url']) ? esc_url_raw($data['product_image_url']) : '',
@@ -412,9 +412,9 @@ class Fito_Tryon_Database {
                     $prod_fallback = $product->get_name();
                 } elseif ($pid > 0) {
                     // translators: %d: Product ID number
-                    $prod_fallback = sprintf(__('Deleted Product (ID %d)', 'elfit-ai-virtual-try-on-for-woocommerce'), $pid);
+                    $prod_fallback = sprintf(__('Deleted Product (ID %d)', 'fitotry-ai-virtual-try-on-for-woocommerce'), $pid);
                 } else {
-                    $prod_fallback = __('Unknown Product', 'elfit-ai-virtual-try-on-for-woocommerce');
+                    $prod_fallback = __('Unknown Product', 'fitotry-ai-virtual-try-on-for-woocommerce');
                 }
                 $top[] = [
                     'id'            => $pid,

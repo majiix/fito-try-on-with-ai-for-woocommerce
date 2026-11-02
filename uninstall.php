@@ -1,6 +1,6 @@
 <?php
 /**
- * Elfit AI Virtual Try-On for WooCommerce - Uninstall Cleanup
+ * Fitotry AI Virtual Try-On for WooCommerce - Uninstall Cleanup
  */
 
 defined('WP_UNINSTALL_PLUGIN') || exit;

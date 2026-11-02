@@ -1,5 +1,5 @@
 /**
- * Elfit AI Virtual Try-On for WooCommerce - Admin Interactivity & Data Visualization
+ * Fitotry AI Virtual Try-On for WooCommerce - Admin Interactivity & Data Visualization
  */
 
 (function ($) {

@@ -87,13 +87,13 @@ class Fito_Tryon_Privacy {
 
         $content = sprintf(
             '<h2>%s</h2><p>%s</p><p>%s</p>',
-            esc_html__('AI Virtual Try-On', 'elfit-ai-virtual-try-on-for-woocommerce'),
-            esc_html__('When you use our virtual try-on feature, your uploaded or camera-captured photo is temporarily transmitted to our AI processing service provider solely to render the preview.', 'elfit-ai-virtual-try-on-for-woocommerce'),
-            esc_html__('Customer photos are automatically deleted from server storage after temporary processing. Photos are never used to train third-party public models.', 'elfit-ai-virtual-try-on-for-woocommerce')
+            esc_html__('AI Virtual Try-On', 'fitotry-ai-virtual-try-on-for-woocommerce'),
+            esc_html__('When you use our virtual try-on feature, your uploaded or camera-captured photo is temporarily transmitted to our AI processing service provider solely to render the preview.', 'fitotry-ai-virtual-try-on-for-woocommerce'),
+            esc_html__('Customer photos are automatically deleted from server storage after temporary processing. Photos are never used to train third-party public models.', 'fitotry-ai-virtual-try-on-for-woocommerce')
         );
 
         wp_add_privacy_policy_content(
-            __('Elfit AI Virtual Try-On for WooCommerce', 'elfit-ai-virtual-try-on-for-woocommerce'),
+            __('Fitotry AI Virtual Try-On for WooCommerce', 'fitotry-ai-virtual-try-on-for-woocommerce'),
             wp_kses_post($content)
         );
     }
@@ -103,7 +103,7 @@ class Fito_Tryon_Privacy {
         if (!empty($custom)) {
             return $custom;
         }
-        return __('I consent to my photo being processed by AI to generate a virtual try-on preview.', 'elfit-ai-virtual-try-on-for-woocommerce');
+        return __('I consent to my photo being processed by AI to generate a virtual try-on preview.', 'fitotry-ai-virtual-try-on-for-woocommerce');
     }
 }
 }

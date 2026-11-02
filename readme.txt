@@ -1,4 +1,4 @@
-=== Elfit AI Virtual Try-On for WooCommerce ===
+=== Fitotry AI Virtual Try-On for WooCommerce ===
 Contributors: micromax2
 Tags: try on, virtual fitting, woocommerce, fashion, ai
 Requires at least: 6.2
@@ -13,7 +13,7 @@ AI-powered virtual try-on for WooCommerce products. Customers upload a photo or 
 
 == Description ==
 
-**Elfit AI Virtual Try-On for WooCommerce** brings studio-grade artificial intelligence virtual fitting technology directly into your WooCommerce store. Shoppers can upload a personal photo or snap a live selfie with their webcam or mobile camera to preview realistic try-ons of apparel, footwear, eyewear, jewelry, watches, hats, and accessories.
+**Fitotry AI Virtual Try-On for WooCommerce** brings studio-grade artificial intelligence virtual fitting technology directly into your WooCommerce store. Shoppers can upload a personal photo or snap a live selfie with their webcam or mobile camera to preview realistic try-ons of apparel, footwear, eyewear, jewelry, watches, hats, and accessories.
 
 All image generations are powered by a Bring-Your-Own-Key (BYOK) architecture with direct support for OpenRouter. Connect directly to upstream AI vision models with zero middleman fees, zero recurring SaaS markups, and complete data privacy control.
 
@@ -22,7 +22,7 @@ All image generations are powered by a Bring-Your-Own-Key (BYOK) architecture wi
 ### Key Features (100% Free & Standalone)
 
 * **OpenRouter Bring-Your-Own-Key (BYOK)**: Connect directly to OpenRouter using your personal developer API key with access to top vision models.
-* **Storefront Single Product Placements**: Display interactive try-on buttons on single product pages below or above the Add to Cart button, in a custom product tab, via the `[elfit_tryon]` shortcode, or via the Gutenberg block.
+* **Storefront Single Product Placements**: Display interactive try-on buttons on single product pages below or above the Add to Cart button, in a custom product tab, via the `[fitotry_tryon]` shortcode, or via the Gutenberg block.
 * **Interactive Comparison Split Slider**: Responsive mouse-drag and mobile touch-friendly split slider allowing shoppers to inspect exact Before and After fitting results.
 * **Fullscreen Try-On Stage**: Immersive full-screen view mode with mobile optimization and keyboard Escape key closing.
 * **Camera Capture & File Upload**: Drag-and-drop file upload zone supporting JPG, PNG, and WebP, plus integrated live webcam/mobile camera capture.
@@ -66,7 +66,7 @@ This plugin bundles the following open-source third-party library:
 
 == Installation ==
 
-1. Upload the `elfit-ai-virtual-try-on-for-woocommerce` folder to your `/wp-content/plugins/` directory.
+1. Upload the `fitotry-ai-virtual-try-on-for-woocommerce` folder to your `/wp-content/plugins/` directory.
 2. Activate the plugin through the 'Plugins' menu in WordPress.
 3. Navigate to **AI Try-On > Settings** in your WordPress admin menu.
 4. Enter your OpenRouter API Key and click **Test Connection** to verify connectivity.

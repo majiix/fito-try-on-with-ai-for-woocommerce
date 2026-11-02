@@ -14,10 +14,10 @@ if (!defined('FITO_TRYON_PATH')) {
     define('FITO_TRYON_PATH', dirname(__DIR__) . '/');
 }
 if (!defined('FITO_TRYON_URL')) {
-    define('FITO_TRYON_URL', 'http://example.com/wp-content/plugins/elfit-ai-virtual-try-on-for-woocommerce/');
+    define('FITO_TRYON_URL', 'http://example.com/wp-content/plugins/fitotry-ai-virtual-try-on-for-woocommerce/');
 }
 if (!defined('FITO_TRYON_BASENAME')) {
-    define('FITO_TRYON_BASENAME', 'elfit-ai-virtual-try-on-for-woocommerce/elfit-ai-virtual-try-on-for-woocommerce.php');
+    define('FITO_TRYON_BASENAME', 'fitotry-ai-virtual-try-on-for-woocommerce/fitotry-ai-virtual-try-on-for-woocommerce.php');
 }
 if (!defined('WP_CONTENT_DIR')) {
     define('WP_CONTENT_DIR', ABSPATH . 'wp-content');
@@ -335,7 +335,7 @@ assert_test(!str_contains($storage_content, 'delete_file_by_url'), "Storage does
 // 10. In-Memory Guard on Uninstall
 $uninstall_content = file_get_contents(FITO_TRYON_PATH . 'uninstall.php');
 assert_test(str_contains($uninstall_content, "class_exists('Fito_Tryon')"), "uninstall.php aborts if another active instance is running in memory");
-assert_test(!str_contains($uninstall_content, 'elfit-ai-virtual-try-on*'), "uninstall.php does not perform sister directory sniffing");
+assert_test(!str_contains($uninstall_content, 'fitotry-ai-virtual-try-on*'), "uninstall.php does not perform sister directory sniffing");
 assert_test(!str_contains($uninstall_content, 'fito_tryon_ai_provider'), "uninstall.php does not reference deleted fito_tryon_ai_provider option");
 assert_test(!str_contains($uninstall_content, 'fito_tryon_max_upload_size'), "uninstall.php does not reference deleted fito_tryon_max_upload_size option");
 
@@ -351,7 +351,7 @@ assert_test(!str_contains($public_content, 'filter_is_product_allowed'), "Public
 $admin_js_content = file_get_contents(FITO_TRYON_PATH . 'assets/js/admin.js');
 assert_test(!str_contains($admin_js_content, 'fito_log_modal_opened'), "Admin JS does not dispatch dead fito_log_modal_opened event");
 
-$pot_content = file_get_contents(FITO_TRYON_PATH . 'languages/elfit-ai-virtual-try-on-for-woocommerce.pot');
+$pot_content = file_get_contents(FITO_TRYON_PATH . 'languages/fitotry-ai-virtual-try-on-for-woocommerce.pot');
 assert_test(!str_contains($pot_content, 'Invalid or unsupported AI provider specified.'), "POT catalog does not contain orphaned provider validation string");
 assert_test(!str_contains($pot_content, 'Provider connection testing is not available.'), "POT catalog does not contain orphaned provider connection string");
 

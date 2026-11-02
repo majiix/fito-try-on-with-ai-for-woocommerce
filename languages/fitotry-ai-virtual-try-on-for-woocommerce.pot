@@ -1,8 +1,8 @@
 #, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: Elfit AI Virtual Try-On for WooCommerce 1.7.0\n"
-"Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/elfit-ai-virtual-try-on-for-woocommerce\n"
+"Project-Id-Version: Fitotry AI Virtual Try-On for WooCommerce 1.7.0\n"
+"Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/fitotry-ai-virtual-try-on-for-woocommerce\n"
 "POT-Creation-Date: 2026-10-29 20:36+0000\n"
 "PO-Revision-Date: 2026-10-29 20:36+0000\n"
 "Last-Translator: \n"
@@ -11,7 +11,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "X-Generator: Fito I18n Generator\n"
-"X-Domain: elfit-ai-virtual-try-on-for-woocommerce\n"
+"X-Domain: fitotry-ai-virtual-try-on-for-woocommerce\n"
 
 #: admin/class-fito-tryon-admin.php:1024
 msgid "AI Try-On Prompts"
@@ -514,7 +514,7 @@ msgid "In a custom Product Tab"
 msgstr ""
 
 #: admin/class-fito-tryon-admin.php:681
-msgid "Shortcode only [elfit_tryon]"
+msgid "Shortcode only [fitotry_tryon]"
 msgstr ""
 
 #: admin/class-fito-tryon-admin.php:683
@@ -694,26 +694,26 @@ msgid "Unauthorized access."
 msgstr ""
 
 #. Description of the plugin
-#: elfit-ai-virtual-try-on-for-woocommerce.php
+#: fitotry-ai-virtual-try-on-for-woocommerce.php
 msgid "Enable customers to virtually try on clothing, shoes, glasses, jewelry, and accessories directly in WooCommerce using OpenRouter AI."
 msgstr ""
 
 #. Plugin URI of the plugin
-#: elfit-ai-virtual-try-on-for-woocommerce.php
-msgid "https://wordpress.org/plugins/elfit-ai-virtual-try-on-for-woocommerce/"
+#: fitotry-ai-virtual-try-on-for-woocommerce.php
+msgid "https://wordpress.org/plugins/fitotry-ai-virtual-try-on-for-woocommerce/"
 msgstr ""
 
 #. Author of the plugin
-#: elfit-ai-virtual-try-on-for-woocommerce.php
+#: fitotry-ai-virtual-try-on-for-woocommerce.php
 msgid "micromax"
 msgstr ""
 
 #. Plugin Name of the plugin
-#: elfit-ai-virtual-try-on-for-woocommerce.php:62 includes/class-fito-tryon-privacy.php:96 elfit-ai-virtual-try-on-for-woocommerce.php
-msgid "Elfit AI Virtual Try-On for WooCommerce"
+#: fitotry-ai-virtual-try-on-for-woocommerce.php:62 includes/class-fito-tryon-privacy.php:96 fitotry-ai-virtual-try-on-for-woocommerce.php
+msgid "Fitotry AI Virtual Try-On for WooCommerce"
 msgstr ""
 
-#: elfit-ai-virtual-try-on-for-woocommerce.php:63
+#: fitotry-ai-virtual-try-on-for-woocommerce.php:63
 msgid "requires WooCommerce to be installed and active."
 msgstr ""
 

@@ -1,5 +1,5 @@
 /**
- * Elfit AI Virtual Try-On for WooCommerce - Public Frontend Widget & Comparison Engine
+ * Fitotry AI Virtual Try-On for WooCommerce - Public Frontend Widget & Comparison Engine
  */
 
 (function ($) {
